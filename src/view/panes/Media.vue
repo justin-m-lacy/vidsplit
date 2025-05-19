@@ -3,6 +3,7 @@ import { createMediaInfo, TMediaInfo } from '@/model/media';
 import { useEditTool } from '@/store/edit-tool';
 import { IsSliceEdit } from '@/tools/slice';
 import SliceScrubBar from '@/view/tools/SliceScrubBar.vue';
+import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
 
@@ -72,24 +73,29 @@ async function onFileSelected(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col">
-		<video ref="mediaRef" class="min-w-48 m-2" autoplay controls
+	<div class="flex flex-col items-stretch m-1">
+		<video ref="mediaRef" class="self-center min-w-48 w-1/2 m-1"
+			   autoplay controls="false"
 			   :src="sourceUrl"
 			   @loadedmetadata="onMetadata"
 			   @drop.prevent="fileDrop" @dragover="fileDrag"></video>
-		<ToolsBar :media="mediaInfo" />
-		<div class="flex">
-
-			<SliceScrubBar v-if="IsSliceEdit(editMode.curEdit)"
-						   class="flex grow"
-						   :edit="editMode.curEdit"
-						   :media="mediaRef!" />
-			<ScrubBar v-else-if="mediaRef" class="flex grow mx-1"
-					  :media="mediaRef" />
+		<MediaControls :media="mediaRef" class="justify-center">
+			<ToolsBar :media="mediaRef" />
 			<button type="button" class="btn" id="drop-file"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
 					name="[Load]">💾</button>
+		</MediaControls>
+		<div class="flex gap-x-0.5 items-center justify-center">
+
+			<SliceScrubBar v-if="IsSliceEdit(editMode.curEdit)"
+						   class="flex items-center grow rounded-md w-4/6 max-w-4/6"
+						   :edit="editMode.curEdit"
+						   :media="mediaRef!" />
+			<ScrubBar v-else-if="mediaRef"
+					  class="flex items-center grow  max-w-4/6 w-4/6 rounded-md"
+					  :media="mediaRef" />
+
 		</div>
 		<input ref="fileInput" type="file" accept="video/*"
 			   class="hidden" @change="onFileSelected">

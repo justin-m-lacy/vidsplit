@@ -10,7 +10,7 @@
     "build": "vite build"
   },
   "keywords": [],
-  "author": "",
+  "author": "justin lacy",
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
     "@vueuse/core": "^10.7.1",

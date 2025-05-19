@@ -4,21 +4,21 @@ import { useScrubBar } from '@/view/composables/scrub-bar';
 import Scrub from '../components/Scrub.vue';
 
 const props = defineProps<{
-	media: HTMLMediaElement|undefined
+	media: HTMLMediaElement | undefined
 }>();
 
 const scrubRef = shallowRef<HTMLElement>();
 const barRef = shallowRef<HTMLElement>();
-const {percent} = useScrubBar(()=>props.media, scrubRef, barRef);
+const { percent } = useScrubBar(() => props.media, scrubRef, barRef);
 
 function getClickPct(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
 	return (e.clientX - rect.left) / rect.width;
 }
 
-function onClick(e: MouseEvent) {
+function onBarClick(e: MouseEvent) {
 
-	if ( mediaReady(props.media)) {
+	if (mediaReady(props.media)) {
 
 		const pct = getClickPct(e);
 		props.media.currentTime = (pct * props.media.duration);
@@ -30,11 +30,11 @@ function onClick(e: MouseEvent) {
 
 </script>
 <template>
-	<div ref="barRef" class="w-full min-h-3 p-0 relative bg-green-500" @click="onClick">
+	<div ref="barRef" class="w-full min-h-2 p-0 relative bg-green-500"
+		 @click="onBarClick">
 
-		<Scrub ref="scrubRef" class="absolute bg-slate-500 rounded-xs"
-			:style="{left:`${percent}%`}"
-		/>
+		<Scrub ref="scrubRef" class="absolute h-3 min-h-3 bg-slate-500 rounded-xs"
+			   :style="{ left: `${percent}%` }" />
 
 	</div>
 </template>
