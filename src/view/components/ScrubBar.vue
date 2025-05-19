@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const scrubRef = shallowRef<HTMLElement>();
 const barRef = shallowRef<HTMLElement>();
-const scrubs = useScrubBar(()=>props.media, scrubRef, barRef);
+const {percent} = useScrubBar(()=>props.media, scrubRef, barRef);
 
 function getClickPct(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
@@ -18,9 +18,7 @@ function getClickPct(e: MouseEvent) {
 
 function onClick(e: MouseEvent) {
 
-	if (props.media && mediaReady(props.media)) {
-
-		if ( Number.isNaN(props.media.duration)) return;
+	if ( mediaReady(props.media)) {
 
 		const pct = getClickPct(e);
 		props.media.currentTime = (pct * props.media.duration);
@@ -32,9 +30,11 @@ function onClick(e: MouseEvent) {
 
 </script>
 <template>
-	<div ref="barRef" class="w-full min-h-3 p-0 relative bg-green-600" @click="onClick">
+	<div ref="barRef" class="w-full min-h-3 p-0 relative bg-green-500" @click="onClick">
 
-		<Scrub ref="scrubRef" class="absolute bg-slate-500 rounded-xs" />
+		<Scrub ref="scrubRef" class="absolute bg-slate-500 rounded-xs"
+			:style="{left:`${percent}%`}"
+		/>
 
 	</div>
 </template>

@@ -1,6 +1,6 @@
 
 /**
- * Get the x-percent where mouse was clicked on track control.
+ * Get the 1-based x-percent where mouse was clicked on track control.
  * @param e 
  * @returns 
  */
@@ -9,8 +9,8 @@ export function getClickPct(e: MouseEvent) {
 	return (e.clientX - rect.left) / rect.width;
 }
 
-export function mediaReady(media?: HTMLMediaElement) {
-	return media != null && media.readyState > 1;
+export function mediaReady(media?: HTMLMediaElement): media is HTMLMediaElement {
+	return media != null && media.duration > 0 && media.readyState > 1;
 }
 
 export function minmax(v: number, min: number, max: number): number {

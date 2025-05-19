@@ -8,6 +8,12 @@ export function useScrubBar(
 ) {
 
 	const dragging = shallowRef<boolean>(false);
+	const dragDone = shallowRef<boolean>(false);
+
+	/**
+	 * 100-based percent of play progress.
+	 */
+	const percent = shallowRef<number>(0);
 
 	useEventListener(barRef, 'click', (e: MouseEvent) => {
 
@@ -23,9 +29,22 @@ export function useScrubBar(
 
 	useEventListener(mediaRef, 'timeupdate', function (this: HTMLMediaElement) {
 
-		if (this) {
-			this.style.left = `${100 * this.currentTime / this.duration}%`;
+		if (dragging.value) return;
+		if (Number.isNaN(this.duration)) return;
+
+		if (dragDone.value) {
+
+			/**
+			 * current time is always invalid for first update after forced drag.
+			 * even if currentTime was updated multiple time during drag.
+			 */
+			this.currentTime = this.duration * (percent.value / 100);
+			dragDone.value = false;
+
+		} else {
+			percent.value = 100 * (this.currentTime / this.duration);
 		}
+
 	});
 
 	/// SCRUB DRAGGING
@@ -33,6 +52,7 @@ export function useScrubBar(
 	function startDrag(e: MouseEvent) {
 
 		dragging.value = true;
+
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
 
@@ -41,21 +61,24 @@ export function useScrubBar(
 	function onDrag(e: MouseEvent) {
 
 		const bnds = toValue(barRef)?.getBoundingClientRect();
+		if (!bnds) return;
 
-		if (bnds) {
-			const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
-			const media = toValue(mediaRef);
+		const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
+		percent.value = 100 * pct;
 
-			if (!media) return;
-			if (Number.isNaN(media.duration)) return;
+		const media = toValue(mediaRef);
+		if (!media) return;
+		if (Number.isNaN(media.duration)) return;
 
-			media.currentTime = (pct * media.duration);
-		}
+		media.currentTime = (pct * media.duration);
 
 	}
 
 	function endDrag() {
+
 		dragging.value = false;
+		dragDone.value = true;
+
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)
 	}
@@ -63,7 +86,7 @@ export function useScrubBar(
 	useEventListener(scrubRef, 'mousedown', startDrag, {});
 
 	return {
-
+		percent
 	}
 
 }
