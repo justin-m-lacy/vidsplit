@@ -18,7 +18,14 @@ export type TMediaInfo = {
 
 }
 
-export function createScrubPoint(media: TMediaInfo, pct: number): TrackPoint {
+export function createScrubAt(media: TMediaInfo, at: number): TrackPoint {
+	if (at < 0) at = 0;
+	else if (at > media.duration) at = media.duration;
+
+	return { id: window.crypto.randomUUID(), at };
+}
+
+export function createScrubPct(media: TMediaInfo, pct: number): TrackPoint {
 
 	if (pct > 1) pct = 1;
 	else if (pct < 0) pct = 0;

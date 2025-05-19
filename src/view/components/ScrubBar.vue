@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createScrubPoint, TMediaInfo, TrackPoint } from '@/model/media';
+import { createScrubPct, TMediaInfo, TrackPoint } from '@/model/media';
 
 
 const props = defineProps<{
@@ -16,7 +16,7 @@ function getClickPct(e: MouseEvent) {
 }
 
 function onClick(e: MouseEvent) {
-	createScrubPoint(props.media, getClickPct(e));
+	createScrubPct(props.media, getClickPct(e));
 }
 
 /**
