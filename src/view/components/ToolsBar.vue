@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { TMediaInfo } from '@/model/media';
-import { useEditMode } from '@/store/edit-mode';
-import { SliceMode } from '@/tools/slice';
+import { useEditTool } from '@/store/edit-tool';
+import { SliceTool } from '@/tools/slice';
 
 const props = defineProps<{
 	media?: TMediaInfo
 }>();
 
-const modes = useEditMode();
+const modes = useEditTool();
 
 function setSliceMode() {
-	modes.setMode(SliceMode);
+	modes.setMode(SliceTool);
 }
 
 </script>

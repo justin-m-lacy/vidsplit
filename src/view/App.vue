@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Media from './components/Media.vue';
+import Media from './panes/Media.vue';
 
 
 </script>

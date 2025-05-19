@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { createScrubPct, TrackPoint } from '@/model/media';
+import { SliceEdit } from '@/tools/slice';
 import { getClickPct, mediaReady } from '@/util/view';
+import { useSliceDrag } from '@/view/composables/slice-drag';
 
 const props = defineProps<{
+	edit: SliceEdit,
 	media: HTMLMediaElement
 }>();
 
-const barRef = shallowRef<HTMLElement>();
-const scrubStart = shallowRef<TrackPoint>(createScrubPct(props.media, 0));
-const scrubEnd = shallowRef<TrackPoint>(createScrubPct(props.media, 1));
+const barElm = shallowRef<HTMLElement>();
+const leftElm = shallowRef<HTMLElement>();
+const rightElm = shallowRef<HTMLElement>();
 
-const curDrag = shallowRef<TrackPoint | null>(null);
+const sliceDrags = useSliceDrag(props.edit, leftElm, rightElm, barElm);
 
 function onClick(e: MouseEvent) {
 
@@ -25,45 +27,22 @@ function onClick(e: MouseEvent) {
  * Get style position for time.
  * @param t 
  */
-function getPos(p: TrackPoint) {
+function getPos(pct: number) {
 	return {
-		left: 100 * (p.at / props.media.duration) + '%'
+		left: 100 * pct + '%'
 	}
-}
-
-function updatePos(e: MouseEvent, p?: TrackPoint | null) {
-	if (p) {
-		p.at = getClickPct(e) * props.media.duration;
-	}
-}
-
-function onDragStart(s: TrackPoint) {
-	curDrag.value = s;
-}
-function onDrag(e: DragEvent) {
-	updatePos(e, curDrag.value);
-}
-function onDragEnd(e: DragEvent) {
-	updatePos(e, curDrag.value);
-	curDrag.value = null;
 }
 </script>
 <template>
-	<div ref="barRef" class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
+	<div ref="barElm" class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
 
-		<Scrub class="absolute" :key="scrubStart.id"
+		<Scrub ref="leftElm" class="absolute"
 			   draggable
-			   :style="getPos(scrubStart)"
-			   @dragstart="onDragStart(scrubStart)"
-			   @drag="onDrag"
-			   @dragend="onDragEnd" />
+			   :style="getPos(edit.leftPct.value)" />
 
-		<Scrub class="absolute" :key="scrubEnd.id"
+		<Scrub ref="rightElm" class="absolute"
 			   draggable
-			   :style="getPos(scrubEnd)"
-			   @dragstart="onDragStart(scrubEnd)"
-			   @drag="onDrag"
-			   @dragend="onDragEnd" />
+			   :style="getPos(edit.rightPct.value)" />
 
 	</div>
 </template>

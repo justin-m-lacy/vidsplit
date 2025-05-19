@@ -1,10 +1,12 @@
+import type { SliceEdit } from "@/tools/slice";
 import { minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 
 export function useSliceDrag(
-	left: Ref<HTMLElement>,
-	right: Ref<HTMLElement>,
-	parent: Ref<HTMLElement>
+	edit: SliceEdit,
+	left: Ref<HTMLElement | undefined>,
+	right: Ref<HTMLElement | undefined>,
+	parent: Ref<HTMLElement | undefined>
 ) {
 
 	const curDrag = shallowRef<HTMLElement | null>(null);
@@ -32,24 +34,15 @@ export function useSliceDrag(
 			return;
 		}
 
-		let x = e.clientX;
+		const bnds = parent.value!.getBoundingClientRect();
+		const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
 
 		if (cur == left.value) {
-
-			const maxX = right.value.getBoundingClientRect().left;
-			if (x > maxX) x = maxX;
-
+			edit.leftPct.value = Math.min(pct, edit.rightPct.value);
 		} else if (cur == right.value) {
-
-			const minX = left.value.getBoundingClientRect().left;
-			if (x < minX) x = minX;
-
+			edit.rightPct.value = Math.max(pct, edit.leftPct.value);
 		}
 
-		const bnds = parent.value.getBoundingClientRect();
-		const offsetX = minmax((x - bnds.left) / bnds.width, 0, 1);
-
-		cur.style.left = `${100 * offsetX}%`;
 
 	}
 
