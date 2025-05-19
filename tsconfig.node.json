@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "baseUrl": "./",
+    "outDir": "dev",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "sourceMap": true,
+    "noErrorTruncation": true,
+    "noUnusedParameters": false,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "esnext"
+    ],
+    "paths": {
+      "#/*": [
+        "./electron/*"
+      ],
+    },
+  },
+  "typeAcquisition": {
+    "enable": true
+  },
+  "exclude": [
+    "assets/dist",
+    "node_modules"
+  ],
+  "include": [
+    "@types",
+    "./global.d.ts",
+    "electron"
+  ]
+}
