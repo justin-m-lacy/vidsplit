@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
 import { getClickPct, mediaReady } from '@/util/view';
+import Scrub from '@/view/components/Scrub.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 
 const props = defineProps<{

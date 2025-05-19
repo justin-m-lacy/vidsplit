@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { mediaReady } from '@/util/view';
-import { usePlayHead } from '../composables/play-head';
+import { useScrubBar } from '@/view/composables/scrub-bar';
+import Scrub from '../components/Scrub.vue';
 
 const props = defineProps<{
 	media: HTMLMediaElement
 }>();
 
-const {playTime} = usePlayHead( ()=>props.media );
+const scrubRef = shallowRef<HTMLElement>();
+const barRef = shallowRef<HTMLElement>();
+const scrubs = useScrubBar(()=>props.media, scrubRef, barRef);
 
 function getClickPct(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
@@ -22,20 +25,12 @@ function onClick(e: MouseEvent) {
 
 }
 
-const scrubCss=()=>{
-	if ( !props.media ) return '';
-	return {
-		left:`${100*(playTime.value/props.media.duration)}%`
-	}
-}
 
 </script>
 <template>
-	<div class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
+	<div ref="barRef" class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
 
-		<Scrub class="absolute"
-			:style="scrubCss()"
-		/>
+		<Scrub ref="scrubRef" class="absolute" />
 
 	</div>
 </template>
