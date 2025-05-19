@@ -73,7 +73,7 @@ async function onFileSelected(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col">
-		<video ref="mediaRef" class="min-w-72" autoplay controls
+		<video ref="mediaRef" class="min-w-48 m-2" autoplay controls
 			   :src="sourceUrl"
 			   @loadedmetadata="onMetadata"
 			   @drop.prevent="fileDrop" @dragover="fileDrag"></video>
@@ -84,7 +84,7 @@ async function onFileSelected(event: Event) {
 						   class="flex grow"
 						   :edit="editMode.curEdit"
 						   :media="mediaRef!" />
-			<ScrubBar v-else-if="mediaRef && mediaInfo" class="flex grow"
+			<ScrubBar v-else-if="mediaRef" class="flex grow mx-1"
 					  :media="mediaRef" />
 			<button type="button" class="btn" id="drop-file"
 					@click.stop.prevent="fileInput?.click()"

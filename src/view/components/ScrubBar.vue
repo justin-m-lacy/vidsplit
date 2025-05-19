@@ -4,7 +4,7 @@ import { useScrubBar } from '@/view/composables/scrub-bar';
 import Scrub from '../components/Scrub.vue';
 
 const props = defineProps<{
-	media: HTMLMediaElement
+	media: HTMLMediaElement|undefined
 }>();
 
 const scrubRef = shallowRef<HTMLElement>();
@@ -19,8 +19,12 @@ function getClickPct(e: MouseEvent) {
 function onClick(e: MouseEvent) {
 
 	if (props.media && mediaReady(props.media)) {
+
+		if ( Number.isNaN(props.media.duration)) return;
+
 		const pct = getClickPct(e);
-		props.media.fastSeek(pct * props.media.duration);
+		props.media.currentTime = (pct * props.media.duration);
+
 	}
 
 }
@@ -28,9 +32,9 @@ function onClick(e: MouseEvent) {
 
 </script>
 <template>
-	<div ref="barRef" class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
+	<div ref="barRef" class="w-full min-h-3 p-0 relative bg-green-600" @click="onClick">
 
-		<Scrub ref="scrubRef" class="absolute" />
+		<Scrub ref="scrubRef" class="absolute bg-slate-500 rounded-xs" />
 
 	</div>
 </template>

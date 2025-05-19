@@ -2,7 +2,7 @@ import { getClickPct, minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 
 export function useScrubBar(
-	mediaRef: MaybeRefOrGetter<HTMLMediaElement>,
+	mediaRef: MaybeRefOrGetter<HTMLMediaElement | undefined>,
 	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,
 	barRef: MaybeRefOrGetter<HTMLElement | undefined>
 ) {
@@ -12,18 +12,19 @@ export function useScrubBar(
 	useEventListener(barRef, 'click', (e: MouseEvent) => {
 
 		const media = toValue(mediaRef);
-		if (media) {
-			const pct = getClickPct(e);
-			media.fastSeek(pct * media.duration);
-		}
+		if (!media) return;
+		if (Number.isNaN(media.duration)) return;
+
+		const pct = getClickPct(e);
+		media.currentTime = (pct * media.duration);
+
 
 	});
 
 	useEventListener(mediaRef, 'timeupdate', function (this: HTMLMediaElement) {
 
-		const scrub = toValue(scrubRef);
-		if (scrub) {
-			scrub.style.left = `${100 * this.currentTime / this.duration}%`;
+		if (this) {
+			this.style.left = `${100 * this.currentTime / this.duration}%`;
 		}
 	});
 
@@ -44,9 +45,11 @@ export function useScrubBar(
 		if (bnds) {
 			const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
 			const media = toValue(mediaRef);
-			if (media) {
-				media.fastSeek(pct * media.duration);
-			}
+
+			if (!media) return;
+			if (Number.isNaN(media.duration)) return;
+
+			media.currentTime = (pct * media.duration);
 		}
 
 	}
