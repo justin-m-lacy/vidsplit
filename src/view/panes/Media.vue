@@ -2,6 +2,7 @@
 import { createMediaInfo, TMediaInfo } from '@/model/media';
 import { useEditTool } from '@/store/edit-tool';
 import { IsSliceEdit } from '@/tools/slice';
+import { usePlayState } from '@/view/composables/play-state';
 import SliceScrubBar from '@/view/tools/SliceScrubBar.vue';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
@@ -15,6 +16,8 @@ const sourceUrl = shallowRef<string>();
 const fileInput = ref<HTMLInputElement>();
 
 const editMode = useEditTool();
+
+const playState = usePlayState(mediaRef);
 
 function onMetadata(e: Event) {
 
@@ -73,13 +76,14 @@ async function onFileSelected(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch m-1">
+	<div class="flex flex-col items-stretch m-1 gap-y-1">
 		<video ref="mediaRef" class="self-center min-w-48 w-1/2 m-1"
-			   autoplay controls="false"
+			   autoplay :controls="false"
 			   :src="sourceUrl"
 			   @loadedmetadata="onMetadata"
 			   @drop.prevent="fileDrop" @dragover="fileDrag"></video>
-		<MediaControls :media="mediaRef" class="justify-center">
+		<MediaControls :state="playState"
+					   class="justify-center">
 			<ToolsBar :media="mediaRef" />
 			<button type="button" class="btn" id="drop-file"
 					@click.stop.prevent="fileInput?.click()"
