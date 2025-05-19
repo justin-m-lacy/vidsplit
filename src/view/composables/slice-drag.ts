@@ -17,7 +17,7 @@ export function useSliceDrag(
 		if (targ === left.value || targ === right.value) {
 			curDrag.value = e.target as HTMLElement;
 		} else {
-			console.log(`unknowing drag targ: ${targ.id}`);
+			console.log(`unknown drag targ: ${targ.id}`);
 			return;
 		}
 

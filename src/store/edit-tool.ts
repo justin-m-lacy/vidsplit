@@ -2,7 +2,7 @@ import { TEditTool, TMediaEdit } from "@/model/edit";
 import type { TMediaInfo } from "@/model/media";
 import { defineStore } from "pinia";
 
-export const useEditTool = defineStore('editMode', () => {
+export const useEditTool = defineStore('editTool', () => {
 
 	const curTool = shallowRef<TEditTool>();
 

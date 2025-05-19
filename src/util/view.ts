@@ -9,8 +9,8 @@ export function getClickPct(e: MouseEvent) {
 	return (e.clientX - rect.left) / rect.width;
 }
 
-export function mediaReady(media: HTMLMediaElement) {
-	return media.readyState > 1;
+export function mediaReady(media?: HTMLMediaElement) {
+	return media != null && media.readyState > 1;
 }
 
 export function minmax(v: number, min: number, max: number): number {

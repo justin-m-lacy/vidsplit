@@ -10,7 +10,11 @@ const props = defineProps<{
 const modes = useEditTool();
 
 function setSliceMode() {
-	modes.setMode(SliceTool);
+
+	if (props.media) {
+		modes.beginEdit(SliceTool, props.media);
+	}
+
 }
 
 </script>

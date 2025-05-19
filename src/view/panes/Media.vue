@@ -84,8 +84,8 @@ async function onFileSelected(event: Event) {
 						   class="flex grow"
 						   :edit="editMode.curEdit"
 						   :media="mediaRef!" />
-			<ScrubBar v-else-if="mediaInfo" class="flex grow"
-					  :media="mediaInfo" />
+			<ScrubBar v-else-if="mediaRef && mediaInfo" class="flex grow"
+					  :media="mediaRef" />
 			<button type="button" class="btn" id="drop-file"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"

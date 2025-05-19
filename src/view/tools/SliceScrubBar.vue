@@ -12,7 +12,7 @@ const barElm = shallowRef<HTMLElement>();
 const leftElm = shallowRef<HTMLElement>();
 const rightElm = shallowRef<HTMLElement>();
 
-const sliceDrags = useSliceDrag(props.edit, leftElm, rightElm, barElm);
+const dragging = useSliceDrag(props.edit, leftElm, rightElm, barElm);
 
 function onClick(e: MouseEvent) {
 

@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { createScrubPct, TMediaInfo, TrackPoint } from '@/model/media';
-
+import { mediaReady } from '@/util/view';
+import { usePlayHead } from '../composables/play-head';
 
 const props = defineProps<{
-	media: TMediaInfo
+	media: HTMLMediaElement
 }>();
 
-const scrubs = shallowRef<TrackPoint[]>();
-
-const curDrag = shallowRef<TrackPoint | null>(null);
+const {playTime} = usePlayHead( ()=>props.media );
 
 function getClickPct(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
@@ -16,45 +14,28 @@ function getClickPct(e: MouseEvent) {
 }
 
 function onClick(e: MouseEvent) {
-	createScrubPct(props.media, getClickPct(e));
+
+	if (props.media && mediaReady(props.media)) {
+		const pct = getClickPct(e);
+		props.media.fastSeek(pct * props.media.duration);
+	}
+
 }
 
-/**
- * Get style position for time.
- * @param t 
- */
-function getPos(p: TrackPoint) {
+const scrubCss=()=>{
+	if ( !props.media ) return '';
 	return {
-		left: 100 * (p.at / props.media.duration) + '%'
+		left:`${100*(playTime.value/props.media.duration)}%`
 	}
 }
 
-function updatePos(e: MouseEvent, p?: TrackPoint | null) {
-	if (p) {
-		p.at = getClickPct(e) * props.media.duration;
-	}
-}
-
-function onDragStart(s: TrackPoint) {
-	curDrag.value = s;
-}
-function onDrag(e: DragEvent) {
-	updatePos(e, curDrag.value);
-}
-function onDragEnd(e: DragEvent) {
-	updatePos(e, curDrag.value);
-	curDrag.value = null;
-}
 </script>
 <template>
 	<div class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
 
-		<Scrub v-for="s in scrubs" class="absolute" :key="s.id"
-			   draggable
-			   :style="getPos(s)"
-			   @dragstart="onDragStart(s)"
-			   @drag="onDrag"
-			   @dragend="onDragEnd" />
+		<Scrub class="absolute"
+			:style="scrubCss()"
+		/>
 
 	</div>
 </template>
