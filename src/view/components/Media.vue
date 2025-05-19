@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { createMediaInfo, TMediaInfo } from '@/model/media';
+import ToolsBar from '@/view/components/ToolsBar.vue';
 import ScrubBar from './ScrubBar.vue';
 
 const mediaRef = shallowRef<HTMLMediaElement>();
@@ -73,6 +74,7 @@ async function onFileSelected(event: Event) {
 			   :src="sourceUrl"
 			   @loadedmetadata="onMetadata"
 			   @drop.prevent="fileDrop" @dragover="fileDrag"></video>
+		<ToolsBar :media="mediaInfo" />
 		<div class="flex">
 			<ScrubBar v-if="mediaInfo" class="flex grow"
 					  :media="mediaInfo" />
