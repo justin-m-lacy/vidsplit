@@ -5,6 +5,11 @@ export type MediaSlice = {
 	right: number
 }
 
+export type OpResult = {
+	id: string,
+	mediaUrl: string
+}
+
 /**
  * Operation to slice media
  */
