@@ -25,8 +25,8 @@ function createSliceEdit(media: TMediaInfo) {
 
 		slices.value.push({
 			id: window.crypto.randomUUID(),
-			left: leftPct.value,
-			right: rightPct.value,
+			from: leftPct.value,
+			to: rightPct.value,
 		});
 
 		triggerRef(slices);

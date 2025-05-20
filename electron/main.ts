@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import { handleSlice } from './video-edit';
 
 const createWindow = () => {
 
@@ -11,12 +12,13 @@ const createWindow = () => {
 		}
 	});
 
+	handleSlice(ipcMain);
+
 	win.loadFile(path.join(__dirname, '../dist/renderer/index.html'));
 
 }
 
-ipcMain.on('saveSlice', () => {
-
-});
-
 app.whenReady().then(createWindow);
+app.on('window-all-closed', function () {
+	if (process.platform !== 'darwin') app.quit()
+})

@@ -1,11 +1,18 @@
 
 export type MediaSlice = {
 	id: string,
-	left: number,
-	right: number
+	from: number,
+	to: number
 }
 
 export type OpResult = {
+	// id of original operation.
+	id: string,
+	mediaUrl: string
+}
+
+export type Op = {
+	// unique id to identify operation.
 	id: string,
 	mediaUrl: string
 }
@@ -13,11 +20,8 @@ export type OpResult = {
 /**
  * Operation to slice media
  */
-export type SliceOp = {
+export type SliceOp = Op & {
 
-	// unique id to identify operation.
-	id: string,
-	mediaUrl: string,
 	slices: MediaSlice[],
 
 }
