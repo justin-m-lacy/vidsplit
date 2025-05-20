@@ -120,4 +120,8 @@ dist
 # SSL Certificate and keys.
 *.pem
 colors.txt
-mob-data.json
+
+test.webm
+test.mp4
+out.webm
+out.mp4
