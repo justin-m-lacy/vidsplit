@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { createMediaInfo, TMediaInfo } from '@/model/media';
 import { useEditTool } from '@/store/edit-tool';
+import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
-import { usePlayState } from '@/view/composables/play-state';
+import { useMediaState } from '@/view/composables/media-state';
 import SliceScrubBar from '@/view/tools/SliceScrubBar.vue';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
@@ -11,13 +12,15 @@ import ToolsBar from '../components/ToolsBar.vue';
 const mediaRef = shallowRef<HTMLMediaElement>();
 const mediaInfo = shallowRef<TMediaInfo>();
 
+const mediaStore = useMediaStore();
+
 const sourceUrl = shallowRef<string>();
 
 const fileInput = ref<HTMLInputElement>();
 
 const editMode = useEditTool();
 
-const playState = usePlayState(mediaRef);
+const playState = useMediaState(mediaRef);
 
 function onMetadata(e: Event) {
 
@@ -35,11 +38,8 @@ function onMetadata(e: Event) {
 
 async function loadFile(files: FileList) {
 	try {
-		if (files.length > 0) {
-			sourceUrl.value = URL.createObjectURL(files.item(0)!);
-		}
-	}
-	catch (err) {
+		mediaStore.setSource(files.item(0)!);
+	} catch (err) {
 		console.error(err);
 	}
 }
@@ -47,7 +47,7 @@ async function loadFile(files: FileList) {
 function fileDrop(e: DragEvent) {
 
 	const files = e.dataTransfer?.files;
-	if (files && files.length > 0) {
+	if (files) {
 		loadFile(files);
 	}
 
@@ -62,7 +62,7 @@ async function onFileSelected(event: Event) {
 	try {
 
 		const files = (event.target as HTMLInputElement).files;
-		if (files && files.length > 0) {
+		if (files) {
 			await loadFile(files);
 		}
 

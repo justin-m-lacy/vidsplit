@@ -1,15 +1,11 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
+import { MediaSlice } from '../../shared/edits';
 import { TMediaInfo } from '../model/media';
 
 export type SliceEdit = TMediaEdit & ReturnType<typeof createSliceEdit>;
 
-export type MediaSlice = {
-	id: string,
-	left: number,
-	right: number
-}
 export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
-	return edit != null && edit.tool === 'slice';
+	return edit != null && edit.toolId === SliceTool.id;
 }
 
 function createSliceEdit(media: TMediaInfo) {
@@ -44,9 +40,15 @@ function createSliceEdit(media: TMediaInfo) {
 
 	}
 
+	/// apply operation.
+	const apply = async () => {
+
+	}
+
 	return {
 		id: window.crypto.randomUUID(),
-		tool: 'slice',
+		toolId: Symbol('slice'),
+		apply,
 		media,
 		leftPct,
 		rightPct,
@@ -63,9 +65,6 @@ export const SliceTool: TEditTool<SliceEdit> = {
 
 	canUse: true,
 
-	init: createSliceEdit,
-
-	exec() {
-	}
+	init: createSliceEdit
 
 }

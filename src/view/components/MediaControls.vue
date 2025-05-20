@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MediaState } from '@/view/composables/play-state';
+import { MediaState } from '@/view/composables/media-state';
 import { Pause, Play, Repeat } from 'lucide-vue-next';
 
 const props = defineProps<{

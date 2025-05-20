@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 
 const createWindow = () => {
@@ -14,5 +14,9 @@ const createWindow = () => {
 	win.loadFile(path.join(__dirname, '../dist/renderer/index.html'));
 
 }
+
+ipcMain.on('saveSlice', () => {
+
+});
 
 app.whenReady().then(createWindow);

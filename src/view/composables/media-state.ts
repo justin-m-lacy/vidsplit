@@ -1,14 +1,14 @@
 import { useEventListener } from "@vueuse/core";
 import type { WatchSource } from "vue";
 
-export type MediaState = ReturnType<typeof usePlayState>;
+export type MediaState = ReturnType<typeof useMediaState>;
 
 /**
  * Reactive media states.
  * @param mediaRef 
  * @returns 
  */
-export function usePlayState(mediaRef: WatchSource<HTMLMediaElement | undefined>) {
+export function useMediaState(mediaRef: WatchSource<HTMLMediaElement | undefined>) {
 
 	const time = shallowRef<number>(0);
 	const playing = shallowRef<boolean>(false);

@@ -3,19 +3,24 @@ import { SliceEdit } from '@/tools/slice';
 import { getClickPct, mediaReady } from '@/util/view';
 import Scrub from '@/view/components/Scrub.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
+import { useScrubBar } from '../composables/scrub-bar';
 
 const props = defineProps<{
 	edit: SliceEdit,
-	media: HTMLMediaElement
+	media: HTMLMediaElement | undefined
 }>();
 
 const barElm = shallowRef<HTMLElement>();
+const scrubRef = shallowRef<HTMLElement>();
 const leftElm = shallowRef<HTMLElement>();
 const rightElm = shallowRef<HTMLElement>();
 
+const { percent } = useScrubBar(() => props.media, scrubRef, barElm);
+
+
 const dragging = useSliceDrag(props.edit, leftElm, rightElm, barElm);
 
-function onClick(e: MouseEvent) {
+function onBarClick(e: MouseEvent) {
 
 	if (mediaReady(props.media)) {
 		const pct = getClickPct(e);
@@ -35,13 +40,16 @@ function getPos(pct: number) {
 }
 </script>
 <template>
-	<div ref="barElm" class="w-full min-h-4 p-0 relative bg-green-700" @click="onClick">
+	<div ref="barElm" class="w-full min-h-2 p-0 relative bg-green-500" @click="onBarClick">
 
-		<Scrub ref="leftElm" class="absolute"
+		<Scrub ref="scrubRef" class="absolute h-3 min-h-3 bg-slate-500 rounded-xs"
+			   :style="{ left: `${percent}%` }" />
+
+		<Scrub ref="leftElm" class="absolute h-3 min-h-3 rounded-xs"
 			   draggable
 			   :style="getPos(edit.leftPct.value)" />
 
-		<Scrub ref="rightElm" class="absolute"
+		<Scrub ref="rightElm" class="absolute h-3 min-h-3 rounded-xs"
 			   draggable
 			   :style="getPos(edit.rightPct.value)" />
 

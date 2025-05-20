@@ -37,11 +37,9 @@
     "node_modules"
   ],
   "include": [
-    "@types",
-    "./global.d.ts",
+    "src/@types",
     "./src",
     "src/**/*.ts",
     "src/**/*.vue",
-    "auto-imports.d.ts"
   ]
 }

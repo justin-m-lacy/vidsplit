@@ -83,7 +83,8 @@ export function useScrubBar(
 		window.removeEventListener('mouseup', endDrag)
 	}
 
-	useEventListener(scrubRef, 'mousedown', startDrag, {});
+	useEventListener(barRef, 'mousedown', startDrag,);
+	useEventListener(scrubRef, 'mousedown', startDrag,);
 
 	return {
 		percent

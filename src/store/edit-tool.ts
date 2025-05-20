@@ -13,6 +13,14 @@ export const useEditTool = defineStore('editTool', () => {
 		curEdit.value = undefined;
 	}
 
+	function toggleTool(tool: TEditTool, media: TMediaInfo) {
+		if (curTool.value?.id == tool.id) {
+			clearTool();
+		} else {
+			beginEdit(tool, media)
+		}
+	}
+
 	function beginEdit(tool: TEditTool, media: TMediaInfo) {
 
 		if (curTool.value?.id != tool.id) {
@@ -25,6 +33,7 @@ export const useEditTool = defineStore('editTool', () => {
 	return {
 		curEdit,
 		tool: curTool,
+		toggleTool,
 		beginEdit,
 		clearTool,
 	}

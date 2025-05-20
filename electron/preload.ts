@@ -1,6 +1,13 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron';
+import type { SliceOp } from '../shared/edits';
 
 // Safe exposure of Node features
-contextBridge.exposeInMainWorld('api', {
-	hello: () => 'world',
-})
+contextBridge.exposeInMainWorld('electron', {
+
+	saveSlice: (edit: SliceOp) => {
+
+		ipcRenderer.send('saveSlice', edit);
+
+	}
+
+});
