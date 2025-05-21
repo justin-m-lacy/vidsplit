@@ -7,7 +7,7 @@ import type { MediaSlice } from "../../shared/edits";
  * @returns 
  */
 function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
-	return ` -map [${outTrack}v]` + (audio ? `[${outTrack}a]` : '') + ` ${outFile}`;
+	return ` -map [${outTrack}v]` + (audio ? ` -map [${outTrack}a]` : '') + ` ${outFile}`;
 }
 
 /**
@@ -32,6 +32,9 @@ function makeConcat(slices: MediaSlice[], audio?: boolean, outTrack = 'out') {
 	}
 }
 
+const trimNum = (n: number) => {
+	return (Math.round(n * 1000) / 1000).toFixed(2);
+}
 /**
  * Create single trim slice from video.
  * @param s 
@@ -40,6 +43,9 @@ function makeConcat(slices: MediaSlice[], audio?: boolean, outTrack = 'out') {
  */
 function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
+	const from = trimNum(s.from);
+	const to = trimNum(s.to);
+
 	///setpts=PTS=STARTPTS resets the frame count?
 	/// optional format change:
 	/// [0:v]trim=start=10.0:end=15.0,setpts=PTS-STARTPTS,format=yuv420p[0v];
@@ -47,12 +53,12 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
 		// trim input a/v track 0, write numbered output a/v tracks
 		//separate A/V
-		const vid = `[0:v]trim=start=${s.from}:end=${s.to},setpts=PTS-STARTPTS[${outnum}v];`;
-		const aud = `[0:a]atrim=start=${s.from}:end=${s.to},asetpts=PTS-STARTPTS[${outnum}a];`;
+		const vid = `[0:v]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outnum}v];`;
+		const aud = `[0:a]atrim=start=${from}:end=${to},asetpts=PTS-STARTPTS[${outnum}a];`;
 		return vid + aud;
 
 	} else {
-		return `[0]trim=start=${s.from}:end=${s.to},setpts=PTS-STARTPTS[${outnum}v];`;
+		return `[0]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outnum}v];`;
 	}
 
 }

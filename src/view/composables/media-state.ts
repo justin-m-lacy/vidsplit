@@ -11,7 +11,7 @@ export type MediaState = ReturnType<typeof useMediaState>;
 export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined>) {
 
 	/// path to file being viewed.
-	const filePath = shallowRef<string>();
+	const file = shallowRef<File>();
 
 	const time = shallowRef<number>(0);
 	const playing = shallowRef<boolean>(false);
@@ -55,8 +55,8 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	return {
 
-		get filePath() { return filePath.value },
-		set filePath(v: string | undefined) { filePath.value = v; },
+		get file() { return file.value },
+		set file(v: File | undefined) { file.value = v; },
 
 		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
 

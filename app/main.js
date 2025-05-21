@@ -1,14 +1,15 @@
 // electron/main.ts
-import { app, BrowserWindow, ipcMain } from "electron";
-import * as path from "path";
+import { app, BrowserWindow, ipcMain as ipcMain2 } from "electron";
+import * as path2 from "path";
 
 // electron/handlers.ts
 import { exec } from "child_process";
-import { dialog } from "electron";
+import { dialog, ipcMain } from "electron";
+import path from "path";
 
 // electron/ffmpeg/slice.ts
 function mapOutput(outFile, audio, outTrack = "out") {
-  return ` -map [${outTrack}v]` + (audio ? `[${outTrack}a]` : "") + ` ${outFile}`;
+  return ` -map [${outTrack}v]` + (audio ? ` -map [${outTrack}a]` : "") + ` ${outFile}`;
 }
 function makeConcat(slices, audio, outTrack = "out") {
   if (audio) {
@@ -19,13 +20,18 @@ function makeConcat(slices, audio, outTrack = "out") {
     return `${inputs}concat=n=${slices.length}[${outTrack}v]`;
   }
 }
+var trimNum = (n) => {
+  return (Math.round(n * 1e3) / 1e3).toFixed(2);
+};
 function makeTrimPart(s, outnum, audio) {
+  const from = trimNum(s.from);
+  const to = trimNum(s.to);
   if (audio) {
-    const vid = `[0:v]trim=start=${s.from}:end=${s.to},setpts=PTS-STARTPTS[${outnum}v];`;
-    const aud = `[0:a]atrim=start=${s.from}:end=${s.to},asetpts=PTS-STARTPTS[${outnum}a];`;
+    const vid = `[0:v]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outnum}v];`;
+    const aud = `[0:a]atrim=start=${from}:end=${to},asetpts=PTS-STARTPTS[${outnum}a];`;
     return vid + aud;
   } else {
-    return `[0]trim=start=${s.from}:end=${s.to},setpts=PTS-STARTPTS[${outnum}v];`;
+    return `[0]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outnum}v];`;
   }
 }
 function makeFilterInput(inUrl) {
@@ -40,20 +46,43 @@ function buildSliceCmd(slices, inUrl, outUrl, audio = true) {
 }
 
 // electron/handlers.ts
-function handleSlice(ipcMain2) {
-  ipcMain2.handle("save-slice", async (_, op) => {
+var fixPath = (p) => {
+  return p.replaceAll("\\", "/");
+};
+var useExt = (outPath, inPath) => {
+  if (path.extname(outPath) == "") {
+    return outPath + path.extname(inPath);
+  }
+  return outPath;
+};
+function handleOpenMedia() {
+  return ipcMain.handle("open-media", async (_) => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"]
+    });
+    if (result.canceled || result.filePaths.length == 0) return null;
+    return {
+      path: result.filePaths[0],
+      data: null
+    };
+  });
+}
+function handleSlice(ipcMain3, app2) {
+  ipcMain3.handle("save-slice", async (_, op) => {
     const dialogRes = await dialog.showSaveDialog({ title: "Save Output" });
     if (dialogRes.canceled) {
       return null;
     }
-    const outPath = dialogRes.filePath;
-    const cmd = buildSliceCmd(op.slices, op.mediaUrl, outPath);
-    return new Promise(
+    const inPath = fixPath(op.filePath);
+    const outPath = useExt(fixPath(dialogRes.filePath), inPath);
+    const cmd = buildSliceCmd(op.slices, inPath, outPath);
+    const result = await new Promise(
       (res, rej) => exec(cmd, (err) => {
         if (err) rej(err);
         else res(outPath);
       })
     );
+    return result;
   });
 }
 
@@ -63,14 +92,15 @@ var createWindow = () => {
     width: 1280,
     height: 800,
     webPreferences: {
-      preload: path.join(import.meta.dirname, "preload.js"),
+      preload: path2.join(import.meta.dirname, "preload.js"),
       contextIsolation: true
     }
   });
-  handleSlice(ipcMain);
-  win.loadFile(path.join(import.meta.dirname, "./render/index.html"));
+  handleOpenMedia();
+  handleSlice(ipcMain2, app);
+  win.loadFile(path2.join(import.meta.dirname, "./render/index.html"));
 };
 app.whenReady().then(createWindow);
-app.on("window-all-closed", function () {
+app.on("window-all-closed", function() {
   if (process.platform !== "darwin") app.quit();
 });

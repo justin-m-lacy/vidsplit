@@ -1,10 +1,10 @@
-import type { SliceOp } from "shared/edits"
+import type { WebSliceOp } from "shared/edits"
 
 declare global {
 	interface Window {
 
 		electron: {
-			saveSlice(edit: SliceOp): Promise<any>
+			saveSlice(edit: WebSliceOp): Promise<any>
 		}
 	}
 }

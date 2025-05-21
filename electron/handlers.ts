@@ -1,8 +1,19 @@
 import { exec } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
+import path from "path";
 import { SliceOp } from '../shared/edits';
 import { buildSliceCmd } from "./ffmpeg/slice";
 
+const fixPath = (p: string) => {
+	return p.replaceAll('\\', '/');
+}
+
+const useExt = (outPath: string, inPath: string) => {
+	if (path.extname(outPath) == '') {
+		return outPath + path.extname(inPath);
+	}
+	return outPath;
+}
 export function handleOpenMedia() {
 
 	return ipcMain.handle('open-media', async (_,) => {
@@ -30,15 +41,19 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 			return null;
 		}
 
-		const outPath = dialogRes.filePath;
-		const cmd = buildSliceCmd(op.slices, op.filePath, outPath);
-		return new Promise((res, rej) =>
+		const inPath = fixPath(op.filePath);
+		const outPath = useExt(fixPath(dialogRes.filePath), inPath);
+
+		const cmd = buildSliceCmd(op.slices, inPath, outPath);
+		const result = await new Promise((res, rej) =>
 
 			exec(cmd, (err) => {
 				if (err) rej(err);
 				else res(outPath);
 			})
 		);
+
+		return result;
 
 	});
 

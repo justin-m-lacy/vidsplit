@@ -123,6 +123,7 @@ colors.txt
 
 # app build
 app/
+app/**/*
 
 test.webm
 test.mp4

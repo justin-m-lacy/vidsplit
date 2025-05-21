@@ -15,9 +15,16 @@ export type Op = {
 	 * Path in the file system. Cannot use blob url
 	 * because of security policies.
 	 */
-	filePath: string
+	filePath: string;
+
 }
 
+export type WebSliceOp = {
+	file: File,
+	slices: MediaSlice[],
+	audio?: boolean,
+	video?: boolean
+}
 /**
  * Operation to slice media
  */
