@@ -55,6 +55,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	return {
 
+		get duration() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.duration },
 		get file() { return file.value },
 		set file(v: File | undefined) { file.value = v; },
 

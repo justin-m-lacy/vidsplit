@@ -20,12 +20,9 @@ function makeConcat(slices, audio, outTrack = "out") {
     return `${inputs}concat=n=${slices.length}[${outTrack}v]`;
   }
 }
-var trimNum = (n) => {
-  return (Math.round(n * 1e3) / 1e3).toFixed(2);
-};
 function makeTrimPart(s, outnum, audio) {
-  const from = trimNum(s.from);
-  const to = trimNum(s.to);
+  const from = s.from;
+  const to = s.to;
   if (audio) {
     const vid = `[0:v]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outnum}v];`;
     const aud = `[0:a]atrim=start=${from}:end=${to},asetpts=PTS-STARTPTS[${outnum}a];`;
@@ -46,9 +43,6 @@ function buildSliceCmd(slices, inUrl, outUrl, audio = true) {
 }
 
 // electron/handlers.ts
-var fixPath = (p) => {
-  return p.replaceAll("\\", "/");
-};
 var useExt = (outPath, inPath) => {
   if (path.extname(outPath) == "") {
     return outPath + path.extname(inPath);
@@ -73,8 +67,8 @@ function handleSlice(ipcMain3, app2) {
     if (dialogRes.canceled) {
       return null;
     }
-    const inPath = fixPath(op.filePath);
-    const outPath = useExt(fixPath(dialogRes.filePath), inPath);
+    const inPath = op.filePath;
+    const outPath = useExt(dialogRes.filePath, inPath);
     const cmd = buildSliceCmd(op.slices, inPath, outPath);
     const result = await new Promise(
       (res, rej) => exec(cmd, (err) => {

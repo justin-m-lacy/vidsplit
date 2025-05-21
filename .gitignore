@@ -125,7 +125,5 @@ colors.txt
 app/
 app/**/*
 
-test.webm
-test.mp4
-out.webm
-out.mp4
+*.webm
+*.mp4

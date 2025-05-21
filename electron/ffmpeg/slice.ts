@@ -43,8 +43,8 @@ const trimNum = (n: number) => {
  */
 function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
-	const from = trimNum(s.from);
-	const to = trimNum(s.to);
+	const from = (s.from);
+	const to = (s.to);
 
 	///setpts=PTS=STARTPTS resets the frame count?
 	/// optional format change:

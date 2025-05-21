@@ -26,10 +26,15 @@ function makeSliceEdit(media: MediaState) {
 	 */
 	const addSlice = (screenshot?: string) => {
 
+		const duration = media.duration;
+		if (!duration || Number.isNaN(duration)) {
+			throw new Error('Invalid Duration');
+		}
+
 		slices.value.push({
 			id: window.crypto.randomUUID(),
-			from: fromPct.value,
-			to: toPct.value,
+			from: fromPct.value * duration,
+			to: toPct.value * duration,
 			screenshot: screenshot
 		});
 

@@ -41,8 +41,8 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 			return null;
 		}
 
-		const inPath = fixPath(op.filePath);
-		const outPath = useExt(fixPath(dialogRes.filePath), inPath);
+		const inPath = (op.filePath);
+		const outPath = useExt((dialogRes.filePath), inPath);
 
 		const cmd = buildSliceCmd(op.slices, inPath, outPath);
 		const result = await new Promise((res, rej) =>
