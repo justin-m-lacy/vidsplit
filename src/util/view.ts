@@ -6,7 +6,7 @@
  */
 export function getClickPct(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
-	return (e.clientX - rect.left) / rect.width;
+	return minmax((e.clientX - rect.left) / rect.width, 0, 1);
 }
 
 export function mediaReady(media?: HTMLMediaElement): media is HTMLMediaElement {

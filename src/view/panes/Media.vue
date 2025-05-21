@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { createMediaInfo, TMediaInfo } from '@/model/media';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
@@ -10,31 +9,14 @@ import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
 
 const mediaRef = shallowRef<HTMLMediaElement>();
-const mediaInfo = shallowRef<TMediaInfo>();
 
 const mediaStore = useMediaStore();
-
-const sourceUrl = shallowRef<string>();
 
 const fileInput = ref<HTMLInputElement>();
 
 const editMode = useEditTool();
 
-const playState = useMediaState(mediaRef);
-
-function onMetadata(e: Event) {
-
-	const targ = e.target as HTMLMediaElement;
-	if (!targ) return;
-	const cur = mediaInfo.value;
-
-	if (cur && cur.src === targ.src) {
-		cur.duration = targ.duration;
-	} else {
-		mediaInfo.value = createMediaInfo(targ);
-	}
-
-}
+const mediaState = useMediaState(mediaRef);
 
 async function loadFile(files: FileList) {
 	try {
@@ -57,7 +39,7 @@ const fileDrag = (e: DragEvent) => {
 	e.dataTransfer!.dropEffect = 'copy';
 }
 
-async function onFileSelected(event: Event) {
+async function onFilePicked(event: Event) {
 
 	try {
 
@@ -77,12 +59,20 @@ async function onFileSelected(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col items-stretch m-1 gap-y-1">
-		<video ref="mediaRef" class="self-center min-w-48 w-1/2 m-1"
-			   autoplay :controls="false"
-			   :src="sourceUrl"
-			   @loadedmetadata="onMetadata"
-			   @drop.prevent="fileDrop" @dragover="fileDrag"></video>
-		<MediaControls :state="playState"
+		<div class="self-center relative min-w-48 w-1/2 m-1"
+			 @drop.prevent="fileDrop" @dragover="fileDrag">
+			<video ref="mediaRef" class="w-full h-full"
+				   autoplay :controls="false"
+				   :src="mediaStore.sourceUrl">
+			</video>
+			<div v-if="!mediaStore.sourceUrl"
+				 class="absolute top-0 left-0 border border-black
+				 	w-full h-full flex justify-center items-center
+				 ">
+				💾
+			</div>
+		</div>
+		<MediaControls :state="mediaState"
 					   class="justify-center">
 			<ToolsBar :media="mediaRef" />
 			<button type="button" class="btn" id="drop-file"
@@ -102,6 +92,6 @@ async function onFileSelected(event: Event) {
 
 		</div>
 		<input ref="fileInput" type="file" accept="video/*"
-			   class="hidden" @change="onFileSelected">
+			   class="hidden" @change="onFilePicked">
 	</div>
 </template>

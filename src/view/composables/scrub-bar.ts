@@ -22,8 +22,9 @@ export function useScrubBar(
 		if (Number.isNaN(media.duration)) return;
 
 		const pct = getClickPct(e);
-		media.currentTime = (pct * media.duration);
+		percent.value = 100 * pct;
 
+		media.currentTime = (pct * media.duration);
 
 	});
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
-import { getClickPct, mediaReady } from '@/util/view';
 import Scrub from '@/view/components/Scrub.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 import { useScrubBar } from '../composables/scrub-bar';
@@ -20,15 +19,6 @@ const { percent } = useScrubBar(() => props.media, scrubRef, barElm);
 
 const dragging = useSliceDrag(props.edit, leftElm, rightElm, barElm);
 
-function onBarClick(e: MouseEvent) {
-
-	if (mediaReady(props.media)) {
-		const pct = getClickPct(e);
-		props.media.fastSeek(pct * props.media.duration);
-	}
-
-}
-
 /**
  * Get style position for time.
  * @param t 
@@ -40,7 +30,7 @@ function getPos(pct: number) {
 }
 </script>
 <template>
-	<div ref="barElm" class="w-full min-h-2 p-0 relative bg-green-500" @click="onBarClick">
+	<div ref="barElm" class="w-full min-h-2 p-0 relative bg-green-500">
 
 		<Scrub ref="scrubRef" class="absolute h-3 min-h-3 bg-slate-500 rounded-xs"
 			   :style="{ left: `${percent}%` }" />

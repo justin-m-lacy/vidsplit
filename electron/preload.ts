@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	saveSlice: (edit: SliceOp) => {
 
-		return ipcRenderer.invoke('saveSlice', edit);
+		return ipcRenderer.invoke('save-slice', edit);
 
 	}
 

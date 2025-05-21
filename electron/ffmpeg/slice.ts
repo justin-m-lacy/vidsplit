@@ -62,7 +62,7 @@ export function makeFilterInput(inUrl) {
 	return `ffmpeg -y -i ${inUrl} -filter_complex `
 }
 
-export async function buildSliceCmd(
+export function buildSliceCmd(
 	slices: MediaSlice[],
 	inUrl: string,
 	outUrl: string,

@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { handleSlice } from './video-edit';
+import { handleSlice } from './handlers';
 
 const createWindow = () => {
 

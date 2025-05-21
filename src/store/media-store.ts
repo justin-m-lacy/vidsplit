@@ -6,16 +6,22 @@ export const useMediaStore = defineStore('media', () => {
 
 	function setSource(data: Blob | MediaSource) {
 
-		if (sourceUrl.value) {
-			URL.revokeObjectURL(sourceUrl.value);
-		}
+		clearSource();
 		sourceUrl.value = URL.createObjectURL(data);
 
 	}
 
+	function clearSource() {
+		if (sourceUrl.value) {
+			URL.revokeObjectURL(sourceUrl.value);
+		}
+		sourceUrl.value = undefined;
+	}
+
 	return {
-		get sourceUrl() { return sourceUrl.value },
+		sourceUrl,
 		setSource,
+		clearSource,
 
 	}
 
