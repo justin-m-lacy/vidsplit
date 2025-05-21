@@ -63,13 +63,14 @@ var createWindow = () => {
     width: 1280,
     height: 800,
     webPreferences: {
-      preload: path.join(import.meta.dirname, "preload.js")
+      preload: path.join(import.meta.dirname, "preload.js"),
+      contextIsolation: true
     }
   });
   handleSlice(ipcMain);
   win.loadFile(path.join(import.meta.dirname, "./render/index.html"));
 };
 app.whenReady().then(createWindow);
-app.on("window-all-closed", function() {
+app.on("window-all-closed", function () {
   if (process.platform !== "darwin") app.quit();
 });
