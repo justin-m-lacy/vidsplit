@@ -51,7 +51,7 @@ function makeSliceEdit(media: MediaState) {
 
 		return window.electron.saveSlice({
 
-			mediaUrl: media.src!,
+			filePath: media.filePath!,
 			slices: slices.value.concat(),
 
 		});

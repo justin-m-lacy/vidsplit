@@ -23,7 +23,11 @@ function addSlice() {
 }
 
 function saveSlice() {
-	props.edit.apply();
+	try {
+		props.edit.apply();
+	} catch (err) {
+		console.warn(err);
+	}
 }
 
 </script>

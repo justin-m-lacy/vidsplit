@@ -5,9 +5,10 @@ import type { SliceOp } from '../shared/edits';
 contextBridge.exposeInMainWorld('electron', {
 
 	saveSlice: (edit: SliceOp) => {
-
 		return ipcRenderer.invoke('save-slice', edit);
-
+	},
+	loadMedia: (): Promise<string | null> => {
+		return ipcRenderer.invoke('open-media');
 	}
 
 });

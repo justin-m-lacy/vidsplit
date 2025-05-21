@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { handleSlice } from './handlers';
+import { handleOpenMedia, handleSlice } from './handlers';
 
 const createWindow = () => {
 
@@ -13,7 +13,8 @@ const createWindow = () => {
 		}
 	});
 
-	handleSlice(ipcMain);
+	handleOpenMedia();
+	handleSlice(ipcMain, app);
 
 	win.loadFile(path.join(import.meta.dirname, './render/index.html'));
 

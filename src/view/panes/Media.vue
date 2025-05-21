@@ -3,6 +3,7 @@ import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
 import { useMediaState } from '@/view/composables/media-state';
+import { webUtils } from 'electron';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
@@ -20,7 +21,14 @@ const mediaState = useMediaState(videoElm);
 
 async function loadFile(files: FileList) {
 	try {
-		mediaStore.setSource(files.item(0)!);
+
+		const file = files.item(0)!;
+
+		mediaState.filePath = webUtils.getPathForFile(file);
+		console.log(`file: ${mediaState.filePath}`);
+
+		mediaStore.setSource(file);
+
 	} catch (err) {
 		console.error(err);
 	}

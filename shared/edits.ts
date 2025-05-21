@@ -7,11 +7,15 @@ export type MediaSlice = {
 }
 
 export type OpResult = {
-	mediaUrl: string
 }
 
 export type Op = {
-	mediaUrl: string
+
+	/**
+	 * Path in the file system. Cannot use blob url
+	 * because of security policies.
+	 */
+	filePath: string
 }
 
 /**
