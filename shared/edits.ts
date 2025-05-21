@@ -7,14 +7,10 @@ export type MediaSlice = {
 }
 
 export type OpResult = {
-	// id of original operation.
-	id: string,
 	mediaUrl: string
 }
 
 export type Op = {
-	// unique id to identify operation.
-	id: string,
 	mediaUrl: string
 }
 
@@ -24,6 +20,12 @@ export type Op = {
 export type SliceOp = Op & {
 
 	slices: MediaSlice[],
+
+	/// whether media has audio
+	audio?: boolean
+
+	/// whether media has video
+	video?: boolean
 
 }
 

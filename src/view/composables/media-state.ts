@@ -31,9 +31,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	});
 
 	useEventListener(mediaElm, 'loadedmetadata', function (this: HTMLMediaElement) {
-
 		hasMedia.value = !Number.isNaN(this.duration);
-
 	});
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
@@ -56,9 +54,10 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
 
+		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 		get loop() { return loop.value },
 		set loop(v) {
-			const media = toValue(mediaElm);
+			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
 			if (media) {
 				media.loop = v;
 			}
@@ -67,7 +66,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		get hasMedia() { return hasMedia.value },
 		get time() { return time.value },
 		set time(v: number) {
-			const media = toValue(mediaElm);
+			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
 			if (media) {
 				time.value = v;
 				media.currentTime = v;
@@ -75,7 +74,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		},
 		get playing() { return playing.value },
 		set playing(v: boolean) {
-			const media = toValue(mediaElm);
+			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
 			if (media) {
 				if (v) {
 					media.play();
@@ -86,7 +85,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		},
 		get paused() { return paused.value },
 		set paused(v: boolean) {
-			const media = toValue(mediaElm);
+			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
 			if (media) {
 				if (v) {
 					media.pause();

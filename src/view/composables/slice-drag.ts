@@ -45,12 +45,11 @@ export function useSliceDrag(
 	function startDrag(e: MouseEvent) {
 
 		const targ = e.target as HTMLElement;
-		if (targ === fromElm.value || targ === toElm.value) {
-			curDragElm.value = e.target as HTMLElement;
-		} else {
+		if (targ !== fromElm.value && targ !== toElm.value) {
 			return;
 		}
 
+		curDragElm.value = e.target as HTMLElement;
 		e.stopPropagation();
 
 		window.addEventListener('mousemove', onDrag);

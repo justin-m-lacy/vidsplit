@@ -47,6 +47,14 @@ function makeSliceEdit(media: MediaState) {
 	/// apply operation.
 	const apply = async () => {
 
+		if (slices.value.length === 0) return;
+
+		return window.electron.saveSlice({
+
+			mediaUrl: media.src!,
+			slices: slices.value.concat(),
+
+		});
 	}
 
 	return {

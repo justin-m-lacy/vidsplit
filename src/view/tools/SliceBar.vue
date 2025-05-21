@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
-import Scrub from '@/view/components/Scrub.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 import { useScrubBar } from '../composables/scrub-bar';
 
@@ -17,6 +16,13 @@ const toElm = shallowRef<HTMLElement>();
 const { percent } = useScrubBar(() => props.media, scrubElm, barElm);
 useSliceDrag(props.edit, fromElm, toElm, barElm);
 
+const fillStyle = (from: number, to: number) => {
+	return {
+		left: `${100 * from}%`,
+		right: `${100 * (1 - to)}%`
+	}
+}
+
 /**
  * Get style position for time.
  * @param t 
@@ -29,18 +35,23 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div ref="barElm" class="relative flex items-center w-full min-h-2 bg-green-500">
+	<div ref="barElm" class="relative flex items-center w-full min-h-2 bg-red-500">
 
-		<Scrub ref="scrubElm" class="absolute h-4 min-h-4 bg-slate-500 rounded-xs"
-			   :style="{ left: `${percent}%` }" />
+		<div class=" absolute min-h-2 h-2 bg-green-500 select-none pointer-events-none "
+			 :style="fillStyle(edit.fromPct.value, edit.toPct.value)">
+		</div>
 
 		<div ref="fromElm"
-			 class="absolute w-2 h-4 min-h-4 rounded-xs bg-amber-700"
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs border border-slate-800 bg-amber-500"
 			 :style="getPos(edit.fromPct.value)"></div>
 
 		<div ref="toElm"
-			 class="absolute w-2 h-4 min-h-4 rounded-xs bg-amber-700"
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs border border-slate-800 bg-amber-500"
 			 :style="getPos(edit.toPct.value)"></div>
+
+		<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 border border-slate-800 bg-slate-400 rounded-xs"
+			 :style="{ left: `${percent}%` }">&nbsp;</div>
+
 
 	</div>
 
