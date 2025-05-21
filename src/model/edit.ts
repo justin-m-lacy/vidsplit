@@ -1,10 +1,10 @@
-import type { TMediaInfo } from "@/model/media";
+import type { MediaState } from "@/view/composables/media-state";
 
 export type TMediaEdit = {
 
 	id: string;
 	toolId: string | Symbol;
-	media: TMediaInfo;
+	media: MediaState;
 	apply: () => Promise<any>;
 
 }
@@ -13,8 +13,8 @@ export type TEditTool<D extends TMediaEdit = TMediaEdit> = {
 
 	id: string | Symbol,
 
-	canUse: boolean | ((media: TMediaInfo) => boolean),
+	canUse: boolean | ((media: MediaState) => boolean),
 
-	init: (media: TMediaInfo) => D;
+	beginEdit: (media: MediaState) => D;
 
 }

@@ -3,20 +3,20 @@ import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
 import { useMediaState } from '@/view/composables/media-state';
-import SliceScrubBar from '@/view/tools/SliceScrubBar.vue';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
+import SliceTools from '../tools/SliceTools.vue';
 
-const mediaRef = shallowRef<HTMLMediaElement>();
+const videoElm = shallowRef<HTMLVideoElement>();
 
 const mediaStore = useMediaStore();
 
 const fileInput = ref<HTMLInputElement>();
 
-const editMode = useEditTool();
+const tools = useEditTool();
 
-const mediaState = useMediaState(mediaRef);
+const mediaState = useMediaState(videoElm);
 
 async function loadFile(files: FileList) {
 	try {
@@ -61,7 +61,7 @@ async function onFilePicked(event: Event) {
 	<div class="flex flex-col items-stretch m-1 gap-y-1">
 		<div class="self-center relative min-w-48 w-1/2 m-1"
 			 @drop.prevent="fileDrop" @dragover="fileDrag">
-			<video ref="mediaRef" class="w-full h-full"
+			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
 				   :src="mediaStore.sourceUrl">
 			</video>
@@ -74,7 +74,7 @@ async function onFilePicked(event: Event) {
 		</div>
 		<MediaControls :state="mediaState"
 					   class="justify-center">
-			<ToolsBar :media="mediaRef" />
+			<ToolsBar :media="mediaState" />
 			<button type="button" class="btn" id="drop-file"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
@@ -82,13 +82,13 @@ async function onFilePicked(event: Event) {
 		</MediaControls>
 		<div class="flex gap-x-0.5 items-center justify-center">
 
-			<SliceScrubBar v-if="IsSliceEdit(editMode.curEdit)"
-						   class="flex items-center grow rounded-md w-4/6 max-w-4/6"
-						   :edit="editMode.curEdit"
-						   :media="mediaRef!" />
-			<ScrubBar v-else-if="mediaRef"
+			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
+						class="flex items-center grow rounded-md w-4/6 max-w-4/6"
+						:edit="tools.curEdit"
+						:media="videoElm!" />
+			<ScrubBar v-else-if="videoElm"
 					  class="flex items-center grow  max-w-4/6 w-4/6 rounded-md"
-					  :media="mediaRef" />
+					  :media="videoElm" />
 
 		</div>
 		<input ref="fileInput" type="file" accept="video/*"

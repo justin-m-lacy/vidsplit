@@ -2,6 +2,5 @@
 
 </script>
 <template>
-	<div class="h-full w-2">
-	</div>
+	<div class="h-full w-2"></div>
 </template>

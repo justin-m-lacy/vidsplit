@@ -1,32 +1,36 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
+import type { MediaState } from "@/view/composables/media-state";
 import { MediaSlice } from '../../shared/edits';
-import { TMediaInfo } from '../model/media';
 
-export type SliceEdit = TMediaEdit & ReturnType<typeof createSliceEdit>;
+export type SliceEdit = TMediaEdit & ReturnType<typeof makeSliceEdit>;
 
 export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
 	return edit != null && edit.toolId === SliceTool.id;
 }
 
-function createSliceEdit(media: TMediaInfo) {
+// removed from tool to avoid circular typescript ref.
+const SliceId = Symbol('slice');
+
+function makeSliceEdit(media: MediaState) {
 
 	const slices = shallowRef<MediaSlice[]>([]);
 
 	// current left slice position.
-	const leftPct = shallowRef<number>(0);
+	const fromPct = shallowRef<number>(0);
 
 	// current right slice position.
-	const rightPct = shallowRef<number>(1);
+	const toPct = shallowRef<number>(1);
 
 	/**
 	 * Add media slice from current left/right percents.
 	 */
-	const addSlice = () => {
+	const addSlice = (screenshot?: string) => {
 
 		slices.value.push({
 			id: window.crypto.randomUUID(),
-			from: leftPct.value,
-			to: rightPct.value,
+			from: fromPct.value,
+			to: toPct.value,
+			screenshot: screenshot
 		});
 
 		triggerRef(slices);
@@ -47,12 +51,12 @@ function createSliceEdit(media: TMediaInfo) {
 
 	return {
 		id: window.crypto.randomUUID(),
-		toolId: Symbol('slice'),
+		toolId: SliceId,
 		apply,
 		media,
-		leftPct,
-		rightPct,
-		slices,
+		fromPct,
+		toPct,
+		get slices() { return slices.value },
 		addSlice,
 		removeSlice
 	};
@@ -61,10 +65,10 @@ function createSliceEdit(media: TMediaInfo) {
 
 export const SliceTool: TEditTool<SliceEdit> = {
 
-	id: 'slice',
+	id: SliceId,
 
 	canUse: true,
 
-	init: createSliceEdit
+	beginEdit: makeSliceEdit
 
 }

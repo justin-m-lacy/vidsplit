@@ -8,7 +8,6 @@ export function useScrubBar(
 ) {
 
 	const dragging = shallowRef<boolean>(false);
-	const dragDone = shallowRef<boolean>(false);
 
 	/**
 	 * 100-based percent of play progress.
@@ -17,10 +16,11 @@ export function useScrubBar(
 
 	useEventListener(barRef, 'click', (e: MouseEvent) => {
 
+		if (e.target != e.currentTarget) return;
+
 		const media = toValue(mediaRef);
 		if (!media) return;
 		if (Number.isNaN(media.duration)) return;
-
 		const pct = getClickPct(e);
 		percent.value = 100 * pct;
 
@@ -31,26 +31,17 @@ export function useScrubBar(
 	useEventListener(mediaRef, 'timeupdate', function (this: HTMLMediaElement) {
 
 		if (dragging.value) return;
-		if (Number.isNaN(this.duration)) return;
+		else if (Number.isNaN(this.duration)) return;
 
-		if (dragDone.value) {
-
-			/**
-			 * current time is always invalid for first update after forced drag.
-			 * even if currentTime was updated multiple time during drag.
-			 */
-			this.currentTime = this.duration * (percent.value / 100);
-			dragDone.value = false;
-
-		} else {
-			percent.value = 100 * (this.currentTime / this.duration);
-		}
+		percent.value = 100 * (this.currentTime / this.duration);
 
 	});
 
 	/// SCRUB DRAGGING
 
 	function startDrag(e: MouseEvent) {
+
+		if (e.target != e.currentTarget) return;
 
 		dragging.value = true;
 
@@ -78,7 +69,6 @@ export function useScrubBar(
 	function endDrag() {
 
 		dragging.value = false;
-		dragDone.value = true;
 
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)

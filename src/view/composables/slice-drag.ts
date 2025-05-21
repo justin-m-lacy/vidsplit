@@ -4,22 +4,54 @@ import { useEventListener } from "@vueuse/core";
 
 export function useSliceDrag(
 	edit: SliceEdit,
-	left: Ref<HTMLElement | undefined>,
-	right: Ref<HTMLElement | undefined>,
-	parent: Ref<HTMLElement | undefined>
+	fromElm: Ref<HTMLElement | undefined>,
+	toElm: Ref<HTMLElement | undefined>,
+	barElm: Ref<HTMLElement | undefined>
 ) {
 
-	const curDrag = shallowRef<HTMLElement | null>(null);
+	const curDragElm = shallowRef<HTMLElement | null>(null);
+
+	/**
+	 * prevent bug where time flips back after a single-frame change.
+	 * @param media 
+	 * @param time 
+	 */
+	const forceTime = (media: HTMLMediaElement, time: number) => {
+		media.currentTime = time;
+		nextTick(() => {
+			if (media.src == null || isNaN(media.duration)) return;
+			media.currentTime = time;
+		})
+	}
+
+	useEventListener(edit.media.media!, 'timeupdate', function (this: HTMLMediaElement) {
+
+		// nextTick() - sometimes video time tracks back to previous value.
+		if (this.currentTime < edit.fromPct.value * this.duration) {
+			forceTime(this, edit.fromPct.value * this.duration);
+		} else if (this.currentTime > edit.toPct.value * this.duration) {
+
+			if (this.loop) {
+				forceTime(this, edit.fromPct.value * this.duration);
+			} else {
+				this.pause();
+				forceTime(this, edit.toPct.value * this.duration);
+			}
+		}
+
+	});
+
 
 	function startDrag(e: MouseEvent) {
 
 		const targ = e.target as HTMLElement;
-		if (targ === left.value || targ === right.value) {
-			curDrag.value = e.target as HTMLElement;
+		if (targ === fromElm.value || targ === toElm.value) {
+			curDragElm.value = e.target as HTMLElement;
 		} else {
-			console.log(`unknown drag targ: ${targ.id}`);
 			return;
 		}
+
+		e.stopPropagation();
 
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
@@ -28,32 +60,32 @@ export function useSliceDrag(
 
 	function onDrag(e: MouseEvent) {
 
-		const cur = curDrag.value;
+		const cur = curDragElm.value;
 		if (cur == null) {
 			endDrag();
 			return;
 		}
 
-		const bnds = parent.value!.getBoundingClientRect();
+		const bnds = barElm.value!.getBoundingClientRect();
 		const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
 
-		if (cur == left.value) {
-			edit.leftPct.value = Math.min(pct, edit.rightPct.value);
-		} else if (cur == right.value) {
-			edit.rightPct.value = Math.max(pct, edit.leftPct.value);
+		if (cur == fromElm.value) {
+			edit.fromPct.value = Math.min(pct, edit.toPct.value);
+		} else if (cur == toElm.value) {
+			edit.toPct.value = Math.max(pct, edit.fromPct.value);
 		}
 
 
 	}
 
 	function endDrag() {
-		curDrag.value = null;
+		curDragElm.value = null;
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)
 	}
 
-	useEventListener(left, 'mousedown', startDrag, {});
-	useEventListener(right, 'mousedown', startDrag, {});
+	useEventListener(fromElm, 'mousedown', startDrag, { capture: true });
+	useEventListener(toElm, 'mousedown', startDrag, { capture: true });
 
 
 	onUnmounted(() => {
