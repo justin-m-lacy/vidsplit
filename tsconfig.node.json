@@ -2,16 +2,15 @@
   "compilerOptions": {
     "rootDir": "./",
     "baseUrl": "./",
-    "outDir": "dev",
+    "outDir": "app",
     "target": "esnext",
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
     "allowJs": true,
     "checkJs": false,
     "sourceMap": true,
@@ -36,6 +35,8 @@
     "node_modules"
   ],
   "include": [
-    "electron"
+    "electron",
+    "shared",
+    "./electron/**/*.ts"
   ]
 }

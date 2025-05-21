@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "./",
     "baseUrl": "./",
-    "outDir": "dev",
+    "outDir": "app",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",

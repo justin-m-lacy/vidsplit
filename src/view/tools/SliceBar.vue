@@ -35,7 +35,7 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div ref="barElm" class="relative flex items-center w-full min-h-2 bg-red-500">
+	<div ref="barElm" class="relative flex items-center w-full min-h-1 bg-red-500">
 
 		<div class=" absolute min-h-2 h-2 bg-green-500 select-none pointer-events-none "
 			 :style="fillStyle(edit.fromPct.value, edit.toPct.value)">

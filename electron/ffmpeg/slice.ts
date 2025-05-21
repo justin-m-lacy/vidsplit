@@ -58,7 +58,7 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 }
 
 
-export function makeFilterInput(inUrl) {
+export function makeFilterInput(inUrl: string) {
 	return `ffmpeg -y -i ${inUrl} -filter_complex `
 }
 

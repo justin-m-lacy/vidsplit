@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useScreenshots } from '@/store/screenshot';
 import { SliceEdit } from '@/tools/slice';
-import { Download } from 'lucide-vue-next';
+import { CircleX, Download } from 'lucide-vue-next';
+import { MediaSlice } from 'shared/edits';
 import SliceScrubBar from './SliceBar.vue';
 
 const props = defineProps<{
@@ -10,6 +11,10 @@ const props = defineProps<{
 }>();
 
 const screenshots = useScreenshots();
+
+function removeSlice(s: MediaSlice) {
+	props.edit.removeSlice(s);
+}
 
 function addSlice() {
 
@@ -39,6 +44,9 @@ function saveSlice() {
 		<div class="flex">
 			<div v-for="s in edit.slices" :key="s.id"
 				 class="relative w-12 h-12 border border-black">
+
+				<CircleX class="absolute right-0 top-0 bg-red-600 h-4"
+						 @click="removeSlice(s)" />
 
 				<img v-if="s.screenshot" :src="s.screenshot"
 					 class="w-full h-full">

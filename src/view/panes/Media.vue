@@ -87,7 +87,7 @@ async function onFilePicked(event: Event) {
 						:edit="tools.curEdit"
 						:media="videoElm!" />
 			<ScrubBar v-else-if="videoElm"
-					  class="flex items-center grow  max-w-4/6 w-4/6 rounded-md"
+					  class="flex items-center grow max-w-4/6 w-4/6"
 					  :media="videoElm" />
 
 		</div>

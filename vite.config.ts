@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
+import path, { resolve } from 'path';
 import autoImport from 'unplugin-auto-import/vite';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from "vite-plugin-html";
@@ -36,6 +36,7 @@ export default async function ({ mode, command }) {
   return defineConfig({
 
     build: {
+      outDir: path.resolve(__dirname, 'app/render'),
       minify: 'terser',
       rollupOptions: {
         plugins: [

@@ -121,6 +121,9 @@ dist
 *.pem
 colors.txt
 
+# app build
+app/
+
 test.webm
 test.mp4
 out.webm

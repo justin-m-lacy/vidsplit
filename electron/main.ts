@@ -8,13 +8,13 @@ const createWindow = () => {
 		width: 1280,
 		height: 800,
 		webPreferences: {
-			preload: path.join(__dirname, 'preload.js')
+			preload: path.join(import.meta.dirname, 'preload.js')
 		}
 	});
 
 	handleSlice(ipcMain);
 
-	win.loadFile(path.join(__dirname, '../dist/renderer/index.html'));
+	win.loadFile(path.join(import.meta.dirname, './render/index.html'));
 
 }
 
