@@ -3,7 +3,7 @@ export type MediaSlice = {
 	id: string,
 	from: number,
 	to: number,
-	screenshot?: string
+	snapshot?: string
 }
 
 export type OpResult = {

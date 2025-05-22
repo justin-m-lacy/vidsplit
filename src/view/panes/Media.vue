@@ -79,8 +79,8 @@ async function onFilePicked(event: Event) {
 			</div>
 		</div>
 		<MediaControls :state="mediaState"
-					   class="w-full mx-4">
-			<ToolsBar :media="mediaState" />
+					   class="flex items-center w-full mx-4">
+			<ToolsBar :media="mediaState" class="ml-3" />
 			<button type="button" class="btn" id="drop-file" title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"

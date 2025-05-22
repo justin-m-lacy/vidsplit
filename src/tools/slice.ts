@@ -24,7 +24,7 @@ function makeSliceEdit(media: MediaState) {
 	/**
 	 * Add media slice from current left/right percents.
 	 */
-	const addSlice = (screenshot?: string) => {
+	const addSlice = (snapshot?: string) => {
 
 		const duration = media.duration;
 		if (!duration || Number.isNaN(duration)) {
@@ -35,7 +35,7 @@ function makeSliceEdit(media: MediaState) {
 			id: window.crypto.randomUUID(),
 			from: fromPct.value * duration,
 			to: toPct.value * duration,
-			screenshot: screenshot
+			snapshot: snapshot
 		});
 
 		triggerRef(slices);

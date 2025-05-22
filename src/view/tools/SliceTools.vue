@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useScreenshots } from '@/store/screenshot';
+import { useSnapshot } from '@/store/snapshot';
 import { SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
@@ -11,14 +11,14 @@ const props = defineProps<{
 	media: HTMLVideoElement
 }>();
 
-const screenshots = useScreenshots();
+const snapshots = useSnapshot();
 
 /**
  * Parent of screenshot slices.
  */
-const screensElm = shallowRef<HTMLElement>();
+const snapsElm = shallowRef<HTMLElement>();
 
-const onDragScreenshot = (e: DragEvent, slice: MediaSlice) => {
+const onDragSnapshot = (e: DragEvent, slice: MediaSlice) => {
 	e.dataTransfer!.setData('text/plain', slice.id);
 	e.dataTransfer!.dropEffect = 'move';
 }
@@ -28,7 +28,7 @@ const onDropScreen = (e: DragEvent) => {
 	e.preventDefault();
 
 	const sliceId = e.dataTransfer?.getData('text/plain');
-	const children = screensElm.value?.children;
+	const children = snapsElm.value?.children;
 	if (!sliceId || !children) return;
 
 	const dropX = e.clientX;
@@ -83,7 +83,7 @@ function removeSlice(s: MediaSlice) {
 
 function addSlice() {
 
-	const ss = screenshots.create(props.media);
+	const ss = snapshots.thumbnail(props.media);
 	props.edit.addSlice(ss);
 }
 
@@ -116,17 +116,17 @@ function saveSlice() {
 			</button>
 		</div>
 		<SliceScrubBar :edit="edit" :media="media" />
-		<div ref="screensElm" class="flex items-center mt-1 gap-x-1"
+		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"
 			 @dragover.prevent @drop="onDropScreen">
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
 				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"
-				 @dragstart="onDragScreenshot($event, s)">
+				 @dragstart="onDragSnapshot($event, s)">
 
 				<X class="absolute rounded-full -right-1 -top-0.5
 					drop-shadow-2xl border border-red-700 bg-red-600 max-h-6 h-1/3 w-auto p-0.5"
 				   @click="removeSlice(s)" stroke-width="2.5" />
 
-				<img v-if="s.screenshot" :src="s.screenshot"
+				<img v-if="s.snapshot" :src="s.snapshot"
 					 class="w-full h-full">
 				<div v-else
 					 class="bg-amber-600 w-full h-full">&nbsp;</div>
