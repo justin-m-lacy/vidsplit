@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useScrubBar } from '@/view/composables/scrub-bar';
-
+import Timestamp from '../components/Timestamp.vue';
 const props = defineProps<{
 	media: HTMLMediaElement | undefined
 }>();
@@ -11,10 +11,14 @@ const { percent } = useScrubBar(() => props.media, scrubRef, barRef);
 
 </script>
 <template>
-	<div ref="barRef" id="scrubBar" class="w-full min-h-[6px] relative bg-green-500 border-green-800 select-none">
+	<div class="flex items-center gap-x-1">
+		<Timestamp :time="media?.currentTime ?? 0" />
+		<div ref="barRef" id="scrubBar"
+			 class="flex items-center w-full min-h-[6px] relative bg-green-500 border-green-800 select-none">
 
-		<div ref="scrubRef" class="absolute h-4 min-h-4 bg-slate-500 rounded-xs select-none"
-			 :style="{ left: `${percent}%` }">&nbsp;</div>
+			<div ref="scrubRef" class="absolute h-4 min-h-4 bg-slate-500 rounded-xs select-none"
+				 :style="{ left: `${percent}%` }">&nbsp;</div>
 
+		</div>
 	</div>
 </template>

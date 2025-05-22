@@ -11,12 +11,15 @@ const padNum = (n:number)=>{
 	return n.toString().padStart(2, '0');
 }
 
+const ms = shallowRef<number>(0);
 const mins = shallowRef<number>(0);
 const secs = shallowRef<number>(0);
 const hrs = shallowRef<number>(0);
 watch(()=>prop.time, (time)=>{
 
-	secs.value = time % 60;
+	ms.value = Math.round( 1000*(time - Math.floor(time) ) );
+
+	secs.value = Math.floor( time % 60 );
 
 	hrs.value = Math.floor( time / 3600 );
 	if ( hrs.value <=2 ) hrs.value = 0;
@@ -27,5 +30,7 @@ watch(()=>prop.time, (time)=>{
 
 </script>
 <template>
-	<div><span v-if="hrs>0">{{padNum(hrs)}}:</span>{{padNum(mins)}}:{{padNum(secs)}}</div>
+	<div class="flex items-start text-xs">
+		<span v-if="hrs>0">{{padNum(hrs)}}:</span>
+		{{padNum(mins)}}:{{padNum(secs)}}:{{ms.toString().padEnd(3,'0')}}</div>
 </template>

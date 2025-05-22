@@ -2,7 +2,6 @@
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
-import Timestamp from '@/view/components/Timestamp.vue';
 import { useMediaState } from '@/view/composables/media-state';
 import { Upload } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
@@ -91,11 +90,11 @@ async function onFilePicked(event: Event) {
 		</MediaControls>
 		<div class="flex gap-x-0.5 items-center justify-center">
 
-			<Timestamp :time="mediaState.time" />
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md w-4/6 max-w-4/6"
 						:edit="tools.curEdit"
 						:media="videoElm!" />
+
 			<ScrubBar v-else-if="videoElm"
 					  class="flex items-center grow max-w-4/6 w-4/6"
 					  :media="videoElm" />
