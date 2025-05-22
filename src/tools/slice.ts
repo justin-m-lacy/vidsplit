@@ -35,7 +35,7 @@ function makeSliceEdit(media: MediaState) {
 			id: window.crypto.randomUUID(),
 			from: fromPct.value * duration,
 			to: toPct.value * duration,
-			snapshot: snapshot
+			snapshot
 		});
 
 		triggerRef(slices);

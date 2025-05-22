@@ -11,9 +11,12 @@ const props = defineProps<{
 
 const tools = useEditTool();
 
-function doScreenshot() {
+async function doSnapshot() {
 
-	const screenshots = useSnapshot();
+	const media = props.media?.media as HTMLVideoElement | undefined;
+	if (!media) return;
+
+	await useSnapshot().saveSnap(media, media.currentTime);
 
 }
 
@@ -34,7 +37,7 @@ function sliceClass() {
 		<button type="button" title="Screenshot"
 				class="disabled:opacity-50 text-sm"
 				:disabled="!media?.hasMedia"
-				@click="doScreenshot">
+				@click="doSnapshot">
 			<Camera />
 		</button>
 		<button type="button"

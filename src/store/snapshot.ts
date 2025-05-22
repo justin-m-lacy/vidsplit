@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { secToHMS } from '../../shared/time';
 
 export const useSnapshot = defineStore('snapshots', () => {
 
@@ -25,6 +26,26 @@ export const useSnapshot = defineStore('snapshots', () => {
 		);
 
 		return canvas.toDataURL('image/png');
+
+	}
+
+	let saveLink: string | null = null;
+
+	const saveSnap = async (media: HTMLVideoElement, time: number) => {
+
+		const file = await snap(media);
+		if (!file) return;
+
+		if (saveLink) URL.revokeObjectURL(saveLink);
+
+		const a = document.createElement('a');
+		//targ.type = 'text/json';
+		a.download = a.title = secToHMS(time) + '.png';
+
+		saveLink = URL.createObjectURL(file);
+		a.href = saveLink;
+		a.click();
+		a.remove();
 
 	}
 
@@ -63,6 +84,7 @@ export const useSnapshot = defineStore('snapshots', () => {
 
 	return {
 		thumbnail,
+		saveSnap,
 		snap
 	}
 

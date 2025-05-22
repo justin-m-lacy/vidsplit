@@ -19,7 +19,7 @@ watch(()=>prop.time, (time)=>{
 
 	ms.value = Math.round( 1000*(time - Math.floor(time) ) );
 
-	secs.value = Math.floor( time % 60 );
+	secs.value = Math.floor( time )%60;
 
 	hrs.value = Math.floor( time / 3600 );
 	if ( hrs.value <=2 ) hrs.value = 0;
