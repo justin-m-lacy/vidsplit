@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
 import path from "path";
 import { SliceOp } from '../shared/edits';
+import { probeTypes } from "./ffmpeg/probe";
 import { buildSliceCmd } from "./ffmpeg/slice";
 
 const fixPath = (p: string) => {
@@ -42,9 +43,12 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		}
 
 		const inPath = (op.filePath);
+		const fileInfo = probeTypes(inPath);
+		const hasAudio = fileInfo.some(v => v.kind === 'audio');
+
 		const outPath = useExt((dialogRes.filePath), inPath);
 
-		const cmd = buildSliceCmd(op.slices, inPath, outPath);
+		const cmd = buildSliceCmd(op.slices, inPath, outPath, hasAudio);
 		const result = await new Promise((res, rej) =>
 
 			exec(cmd, (err) => {

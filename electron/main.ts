@@ -5,8 +5,8 @@ import { handleOpenMedia, handleSlice } from './handlers';
 const createWindow = () => {
 
 	const win = new BrowserWindow({
-		width: 1280,
-		height: 800,
+		width: 800,
+		height: 640,
 		webPreferences: {
 			preload: path.join(import.meta.dirname, 'preload.js'),
 			contextIsolation: true

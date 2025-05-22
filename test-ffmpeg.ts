@@ -1,8 +1,16 @@
 import { execSync } from 'child_process';
 import path from "path";
+import { probeTypes } from './electron/ffmpeg/probe';
 import { buildSliceCmd } from "./electron/ffmpeg/slice";
 
-testSlice();
+//testSlice();
+testProbe();
+
+function testProbe() {
+
+	const res = probeTypes('test.mp4');
+	console.log(res);
+}
 
 /**
  * Test raw command.
