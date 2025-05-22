@@ -2,7 +2,9 @@
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
+import Timestamp from '@/view/components/Timestamp.vue';
 import { useMediaState } from '@/view/composables/media-state';
+import { Upload } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
@@ -63,8 +65,8 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch m-1 gap-y-1">
-		<div class="self-center relative min-w-48 w-1/2 m-1 border border-black"
+	<div class="flex flex-col items-stretch m-1 gap-y-2 w-3/5">
+		<div class="self-center relative m-1 border border-black w-full"
 			 @drop.prevent="fileDrop" @dragover="fileDrag">
 			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
@@ -78,15 +80,18 @@ async function onFilePicked(event: Event) {
 			</div>
 		</div>
 		<MediaControls :state="mediaState"
-					   class="justify-center">
+					   class="w-full mx-4">
 			<ToolsBar :media="mediaState" />
-			<button type="button" class="btn" id="drop-file"
+			<button type="button" class="btn" id="drop-file" title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
-					name="[Load]">💾</button>
+					name="[Load]">
+				<Upload />
+			</button>
 		</MediaControls>
 		<div class="flex gap-x-0.5 items-center justify-center">
 
+			<Timestamp :time="mediaState.time" />
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md w-4/6 max-w-4/6"
 						:edit="tools.curEdit"

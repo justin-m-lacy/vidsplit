@@ -70,6 +70,7 @@ function makeSliceEdit(media: MediaState) {
 		fromPct,
 		toPct,
 		get slices() { return slices.value },
+		set slices(v: MediaSlice[]) { slices.value = v; },
 		addSlice,
 		removeSlice
 	};

@@ -22,22 +22,23 @@ const toggleLoop = () => {
 }
 </script>
 <template>
-	<div class="flex flex-wrap justify-stretch items-center gap-x-1 select-none">
-		<button type="button" @click="doPlay" class="disabled:opacity-50"
+	<div class="flex flex-wrap justify-center items-center gap-x-1 select-none">
+		<div class="flex-2"></div>
+		<button type="button" @click="doPlay" title="Play" class="disabled:opacity-50"
 				:disabled="state.playing || !state.hasMedia">
 			<Play class="fill-gray-600 stroke-1 w-5" />
 		</button>
-		<button type="button"
+		<button type="button" title="Stop"
 				class="bg-gray-600 w-4 h-4 border-1 border-black disabled:opacity-50"
 				@click="doStop"
 				:disabled="!state.playing">
 			&nbsp;
 		</button>
-		<button type="button" @click="doPause" class="disabled:opacity-50"
+		<button type="button" @click="doPause" title="Pause" class="disabled:opacity-50"
 				:disabled="!state.playing">
 			<Pause class="fill-gray-600 stroke-1"></Pause>
 		</button>
-		<button type="button" @click="toggleLoop"
+		<button type="button" @click="toggleLoop" title="Loop"
 				:class="[
 					state.loop ? 'outline-solid outline-2 outline-blue-700' : 'outline-none',
 					'p-0',
@@ -46,6 +47,7 @@ const toggleLoop = () => {
 			<Repeat class=" stroke-2 w-5" />
 		</button>
 		<slot></slot>
+		<div class="flex-1"></div>
 		<Volume v-model="state.volume" class="ml-12 justify-self-end min-w-24" />
 	</div>
 </template>

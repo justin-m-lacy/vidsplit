@@ -6,7 +6,7 @@ import Media from './panes/Media.vue';
 
 <template>
 
-  <div ref="baseRef" class="w-full h-full cursor-auto select-none duration-200">
+  <div class="flex justify-center w-full cursor-auto select-none duration-200">
     <Media />
   </div>
 </template>
