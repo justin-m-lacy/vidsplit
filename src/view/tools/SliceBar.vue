@@ -42,16 +42,16 @@ function getPos(pct: number) {
 		</div>
 
 		<div ref="fromElm"
-			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs 
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs -translate-x-1/2
 			 	border border-slate-800 bg-amber-500 shadow-sm"
 			 :style="getPos(edit.fromPct.value)"></div>
 
 		<div ref="toElm"
-			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs -translate-x-1/2
 			 	border border-slate-800 bg-amber-500 shadow-sm"
 			 :style="getPos(edit.toPct.value)"></div>
 
-		<div ref="scrubElm" class="absolute w-2 h-4 min-h-4
+		<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
 			 :style="{ left: `${percent}%` }">&nbsp;</div>
 

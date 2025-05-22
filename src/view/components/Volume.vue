@@ -10,10 +10,10 @@ useSlider(thumbElm, barElm, volume);
 
 </script>
 <template>
-	<div ref="barElm" class="relative h-[5px] bg-gray-600 select-none">
+	<div ref="barElm" class="flex items-center relative h-[5px] bg-gray-600 select-none">
 
-		<div ref="thumbElm" class="absolute h-[14px] w-[6px]
-			border border-gray-800 bg-gray-400 -top-1/2"
+		<div ref="thumbElm" class="absolute h-[14px] w-[6px] -translate-x-1/2
+			border border-gray-800 bg-gray-400"
 			 :style="{ left: `${100 * volume}%` }">&nbsp;</div>
 	</div>
 </template>

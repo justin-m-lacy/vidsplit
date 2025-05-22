@@ -30,7 +30,7 @@ watch(()=>prop.time, (time)=>{
 
 </script>
 <template>
-	<div class="flex items-start text-xs">
+	<div class="flex items-start">
 		<span v-if="hrs>0">{{padNum(hrs)}}:</span>
 		{{padNum(mins)}}:{{padNum(secs)}}:{{ms.toString().padEnd(3,'0')}}</div>
 </template>

@@ -17,14 +17,14 @@ function setSliceMode() {
 
 function sliceClass() {
 	return [
-		tools.usingSlice ? 'outline-2 outline-solid outline-blue-600' : ''
+		tools.usingSlice ? 'bg-amber-500/40 border border-amber-700' : ''
 	]
 }
 </script>
 <template>
-	<div class="flex justify-stretch items-center gap-x-2">
+	<div class="flex justify-center items-center gap-x-2">
 		<button type="button"
-				class="disabled:opacity-50"
+				class="flex justify-center disabled:opacity-50 p-0.5 text-sm"
 				:class="sliceClass()"
 				:disabled="!media?.hasMedia"
 				@click="setSliceMode">✂</button>
