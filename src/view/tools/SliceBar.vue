@@ -35,21 +35,24 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div ref="barElm" class="relative flex items-center w-full min-h-1 bg-red-500">
+	<div ref="barElm" class="relative flex items-center w-full min-h-1 border border-red-700 bg-red-500">
 
 		<div class=" absolute min-h-2 h-2 bg-green-500 select-none pointer-events-none "
 			 :style="fillStyle(edit.fromPct.value, edit.toPct.value)">
 		</div>
 
 		<div ref="fromElm"
-			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs border border-slate-800 bg-amber-500"
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs 
+			 	border border-slate-800 bg-amber-500 shadow-sm"
 			 :style="getPos(edit.fromPct.value)"></div>
 
 		<div ref="toElm"
-			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs border border-slate-800 bg-amber-500"
+			 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs
+			 	border border-slate-800 bg-amber-500 shadow-sm"
 			 :style="getPos(edit.toPct.value)"></div>
 
-		<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 border border-slate-800 bg-slate-400 rounded-xs"
+		<div ref="scrubElm" class="absolute w-2 h-4 min-h-4
+			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
 			 :style="{ left: `${percent}%` }">&nbsp;</div>
 
 

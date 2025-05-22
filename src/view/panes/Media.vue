@@ -12,7 +12,7 @@ const videoElm = shallowRef<HTMLVideoElement>();
 
 const mediaStore = useMediaStore();
 
-const fileInput = ref<HTMLInputElement>();
+const fileInput = shallowRef<HTMLInputElement>();
 
 const tools = useEditTool();
 
@@ -64,14 +64,14 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col items-stretch m-1 gap-y-1">
-		<div class="self-center relative min-w-48 w-1/2 m-1"
+		<div class="self-center relative min-w-48 w-1/2 m-1 border border-black"
 			 @drop.prevent="fileDrop" @dragover="fileDrag">
 			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
 				   :src="mediaStore.sourceUrl">
 			</video>
 			<div v-if="!mediaStore.sourceUrl"
-				 class="absolute top-0 left-0 border border-black
+				 class="absolute top-0 left-0
 				 	w-full h-full flex justify-center items-center
 				 ">
 				💾

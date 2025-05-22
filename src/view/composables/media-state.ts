@@ -13,6 +13,8 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	/// path to file being viewed.
 	const file = shallowRef<File>();
 
+	const volume = shallowRef<number>(1);
+
 	const time = shallowRef<number>(0);
 	const playing = shallowRef<boolean>(false);
 	const paused = shallowRef<boolean>(false);
@@ -20,13 +22,14 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	const loop = shallowRef<boolean>(false);
 
-	watch(mediaElm, (val) => {
+	watch(mediaElm, (media) => {
 
-		if (!val || Number.isNaN(val.duration)) {
+		if (!media || Number.isNaN(media.duration)) {
 			hasMedia.value = false;
 		} else {
 			hasMedia.value = true;
-			loop.value = val.loop;
+			volume.value = media.volume;
+			loop.value = media.loop;
 		}
 
 	}, {
@@ -55,6 +58,14 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	return {
 
+		get volume() { return volume.value },
+		set volume(v: number) {
+			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
+			if (media) {
+				media.volume = v;
+			}
+			volume.value = v
+		},
 		get duration() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.duration },
 		get file() { return file.value },
 		set file(v: File | undefined) { file.value = v; },
