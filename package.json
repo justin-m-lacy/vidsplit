@@ -9,7 +9,8 @@
     "test": "electron .",
     "preview": "vite preview",
     "build": "pnpm buildweb && pnpm buildapp",
-    "buildapp": "esbuild electron/main.ts --format=esm --tsconfig=tsconfig.node.json --platform=node --bundle --outdir=app --packages=external",
+    "buildapp": "pnpm buildnode && pnpm buildpreload",
+    "buildnode": "esbuild electron/main.ts --format=esm --tsconfig=tsconfig.node.json --platform=node --bundle --outdir=app --packages=external",
     "buildpreload": "esbuild electron/preload.ts --format=cjs --platform=node --outdir=app --packages=external",
     "buildweb": "vite build",
     "test-ffmpeg": "tsx test-ffmpeg.ts"

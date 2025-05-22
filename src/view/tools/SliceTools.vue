@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useScreenshots } from '@/store/screenshot';
 import { SliceEdit } from '@/tools/slice';
-import { CircleX, Download } from 'lucide-vue-next';
+import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
 import SliceScrubBar from './SliceBar.vue';
 
@@ -32,7 +32,7 @@ function saveSlice() {
 
 </script>
 <template>
-	<div class="flex flex-col w-full items-center gap-y-1">
+	<div class="flex flex-col w-full items-center gap-y-2">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="disabled:opacity-50 border border-slate-800 rounded-xs"
@@ -45,12 +45,12 @@ function saveSlice() {
 			</button>
 		</div>
 		<SliceScrubBar :edit="edit" :media="media" />
-		<div class="flex">
+		<div class="flex items-center mt-1 gap-x-1">
 			<div v-for="s in edit.slices" :key="s.id"
-				 class="relative w-12 h-12 border border-black">
+				 class="relative h-12 hover:h-24 hover:w-auto transition-transform border border-black">
 
-				<CircleX class="absolute right-0 top-0 bg-red-600 h-4"
-						 @click="removeSlice(s)" />
+				<X class="absolute rounded-full right-0 top-0 shadow-sm bg-red-600 h-4"
+				   @click="removeSlice(s)" />
 
 				<img v-if="s.screenshot" :src="s.screenshot"
 					 class="w-full h-full">
