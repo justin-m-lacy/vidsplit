@@ -3,6 +3,7 @@ import { useScreenshots } from '@/store/screenshot';
 import { SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
+import Timestamp from '../components/Timestamp.vue';
 import SliceScrubBar from './SliceBar.vue';
 
 const props = defineProps<{
@@ -101,6 +102,11 @@ function saveSlice() {
 			<button type="button"
 					class="disabled:opacity-50 border border-slate-800 rounded-xs"
 					@click="addSlice">+✂</button>
+			<span class="flex items-center text-xs">
+				<Timestamp :time="media.duration * edit.fromPct.value" />&nbsp;to&nbsp;
+				<Timestamp :time="media.duration * edit.toPct.value" />
+			</span>
+
 			<button type="button"
 					class="disabled:opacity-50"
 					:disabled="edit.slices.length == 0"
