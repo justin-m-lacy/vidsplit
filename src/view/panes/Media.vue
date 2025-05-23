@@ -73,8 +73,8 @@ async function onFilePicked(event: Event) {
 			</video>
 			<div v-if="!mediaStore.sourceUrl"
 				 class="absolute top-0 left-0
-				 	w-full h-full flex justify-center items-center
-				 ">
+				 	w-full h-full flex justify-center items-center"
+				 @click.prevent="fileInput?.click()">
 				💾
 			</div>
 		</div>

@@ -4,7 +4,8 @@ const prop = defineProps<{
 	/**
 	 * time in seconds.
 	 */
-	time:number
+	time:number,
+	hideMs?:boolean
 }>();
 
 const padNum = (n:number)=>{
@@ -15,6 +16,7 @@ const ms = shallowRef<number>(0);
 const mins = shallowRef<number>(0);
 const secs = shallowRef<number>(0);
 const hrs = shallowRef<number>(0);
+
 watch(()=>prop.time, (time)=>{
 
 	ms.value = Math.round( 1000*(time - Math.floor(time) ) );
@@ -32,5 +34,6 @@ watch(()=>prop.time, (time)=>{
 <template>
 	<div class="flex items-start">
 		<span v-if="hrs>0">{{padNum(hrs)}}:</span>
-		{{padNum(mins)}}:{{padNum(secs)}}:{{ms.toString().padEnd(3,'0')}}</div>
+		{{padNum(mins)}}:{{padNum(secs)}}
+		<span v-if="!hideMs">:{{ms.toString().padEnd(3,'0')}}</span></div>
 </template>
