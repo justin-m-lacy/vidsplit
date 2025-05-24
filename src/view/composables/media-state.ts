@@ -18,18 +18,41 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	const time = shallowRef<number>(0);
 	const playing = shallowRef<boolean>(false);
 	const paused = shallowRef<boolean>(false);
-	const hasMedia = shallowRef<boolean>(false);
+	const mediaRef = shallowRef<HTMLMediaElement | undefined>(undefined);
+
+	const duration = shallowRef<number>(0);
 
 	const loop = shallowRef<boolean>(false);
 
+	/**
+	 * prevent bug where time flips back after a single-frame change.
+	 * @param media 
+	 * @param t 
+	 */
+	const forceTime = (t: number) => {
+		if (mediaRef.value) {
+			time.value = t;
+			mediaRef.value.currentTime = t;
+		}
+		nextTick(() => {
+			if (mediaRef.value) {
+				time.value = t;
+				mediaRef.value.currentTime = t;
+			}
+		})
+	}
+
 	watch(mediaElm, (media) => {
 
-		if (!media || Number.isNaN(media.duration)) {
-			hasMedia.value = false;
+		mediaRef.value = media;
+		if (media) {
+
+			media.volume = volume.value;
+			media.loop = loop.value;
+			duration.value = Number.isNaN(media.duration) ? media.duration : 0;
+
 		} else {
-			hasMedia.value = true;
-			volume.value = media.volume;
-			loop.value = media.loop;
+			duration.value = 0;
 		}
 
 	}, {
@@ -37,7 +60,6 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	});
 
 	useEventListener(mediaElm, 'loadedmetadata', function (this: HTMLMediaElement) {
-		hasMedia.value = !Number.isNaN(this.duration);
 	});
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
@@ -60,13 +82,16 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		get volume() { return volume.value },
 		set volume(v: number) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				media.volume = v;
+			if (mediaRef.value) {
+				mediaRef.value.volume = v;
 			}
 			volume.value = v
 		},
-		get duration() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.duration },
+		get() { return duration.value },
+
+		/**
+		 * File media was loaded from. Used to apply video effects on original file.
+		 */
 		get file() { return file.value },
 		set file(v: File | undefined) { file.value = v; },
 
@@ -75,42 +100,22 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 		get loop() { return loop.value },
 		set loop(v) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				media.loop = v;
+			if (mediaRef.value) {
+				mediaRef.value.loop = v;
 			}
 			loop.value = v;
 		},
-		get hasMedia() { return hasMedia.value },
+		get hasMedia() { return mediaRef.value != null },
 		get time() { return time.value },
-		set time(v: number) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				time.value = v;
-				media.currentTime = v;
-			}
-		},
+		setTime: forceTime,
+
 		get playing() { return playing.value },
 		set playing(v: boolean) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				if (v) {
-					media.play();
-				} else {
-					media.pause();
-				}
-			}
+			v ? mediaRef.value?.play() : mediaRef.value?.pause();
 		},
 		get paused() { return paused.value },
 		set paused(v: boolean) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				if (v) {
-					media.pause();
-				} else {
-					media.play();
-				}
-			}
+			v ? mediaRef.value?.pause() : mediaRef.value?.play();
 		},
 	}
 

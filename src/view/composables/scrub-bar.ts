@@ -14,20 +14,6 @@ export function useScrubBar(
 	 */
 	const percent = shallowRef<number>(0);
 
-	useEventListener(barRef, 'click', (e: MouseEvent) => {
-
-		if (e.target != e.currentTarget) return;
-
-		const media = toValue(mediaRef);
-		if (!media) return;
-		if (Number.isNaN(media.duration)) return;
-		const pct = getClickPct(e);
-		percent.value = 100 * pct;
-
-		media.currentTime = (pct * media.duration);
-
-	});
-
 	useEventListener(mediaRef, 'timeupdate', function (this: HTMLMediaElement) {
 
 		if (dragging.value) return;
@@ -42,6 +28,14 @@ export function useScrubBar(
 	function startDrag(e: MouseEvent) {
 
 		if (e.target != e.currentTarget) return;
+
+		const media = toValue(mediaRef);
+		if (!media) return;
+		if (Number.isNaN(media.duration)) return;
+
+		const pct = getClickPct(e);
+		percent.value = 100 * pct;
+		media.currentTime = (pct * media.duration);
 
 		dragging.value = true;
 

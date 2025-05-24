@@ -1,6 +1,7 @@
-import { defineStore } from "pinia";
+import type { MediaState } from "@/view/composables/media-state";
+import { useEventListener } from "@vueuse/core";
 
-export const useMediaView = defineStore('mediaView', () => {
+export function useMediaView(state: MediaState) {
 
 	/**
 	 * scale of view timeline.
@@ -11,7 +12,7 @@ export const useMediaView = defineStore('mediaView', () => {
 	 * start percent (of total duration) of the viewable timeline.
 	 * always a positive number.
 	 */
-	const pctOffset = shallowRef<number>(0);
+	const viewOffset = shallowRef<number>(0);
 
 	/**
 	 * current play percent.
@@ -30,6 +31,23 @@ export const useMediaView = defineStore('mediaView', () => {
 	 */
 	const endPct = shallowRef<number>(0);
 
+	useEventListener(() => state.media, 'timeupdate', function (this: HTMLMediaElement) {
+
+		if (Number.isNaN(this.duration) || this.duration === 0) {
+			playPct.value = startPct.value;
+			return;
+		}
+
+		const time = this.currentTime;
+		const pct = this.currentTime / this.duration;
+
+		if (dragging.value) return;
+		else if (Number.isNaN(this.duration)) return;
+
+		percent.value = 100 * (this.currentTime / this.duration);
+
+	});
+
 	/**
 	 * Set the view scale while keeping the playhead at current position.
 	 * @param amt 
@@ -44,7 +62,7 @@ export const useMediaView = defineStore('mediaView', () => {
 
 		// relative position of playhead in within the view.
 		// (playPct-pctOffset)/(1/viewScale)
-		const delPct = (playPct.value - pctOffset.value) * viewScale.value;
+		const delPct = (playPct.value - viewOffset.value) * viewScale.value;
 
 		let newOffset = playPct.value - (delPct) / scale;
 		if (newOffset < 0) newOffset = 0;
@@ -53,16 +71,16 @@ export const useMediaView = defineStore('mediaView', () => {
 		}
 
 		viewScale.value = scale;
-		pctOffset.value = newOffset;
+		viewOffset.value = newOffset;
 
 	}
 
 	return {
 		viewScale,
-		viewOffset: pctOffset,
+		viewOffset,
 		setScale,
 		startPct,
 		endPct
 	}
 
-});
+}
