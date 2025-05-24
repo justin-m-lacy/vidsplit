@@ -115,9 +115,10 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			}
 		},
 
-		get toPct() {
-			return playRange.to / duration.value;
-		},
+		get to() { return playRange.to },
+		get from() { return playRange.from },
+
+		get toPct() { return playRange.to / duration.value; },
 		set toPct(v: number) {
 			playRange.to = minmax(v * duration.value, playRange.from, 1);
 			if (time.value > playRange.to) {

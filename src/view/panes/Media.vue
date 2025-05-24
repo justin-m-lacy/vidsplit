@@ -93,11 +93,11 @@ async function onFilePicked(event: Event) {
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md w-4/6 max-w-4/6"
 						:edit="tools.curEdit"
-						:media="videoElm!" />
+						:media="mediaState" />
 
 			<ScrubBar v-else-if="videoElm"
 					  class="flex items-center grow max-w-4/6 w-4/6"
-					  :media="videoElm" />
+					  :media="mediaState" />
 
 		</div>
 		<input ref="fileInput" type="file" accept="video/*"
