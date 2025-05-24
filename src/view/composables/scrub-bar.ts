@@ -15,13 +15,12 @@ export function useScrubBar(
 	 */
 	const percent = shallowRef<number>(0);
 
-	useEventListener(mediaRef, 'timeupdate', function (this: HTMLMediaElement) {
-
-		if (dragging.value) return;
-		else if (Number.isNaN(this.duration)) return;
-
-		percent.value = 100 * (this.currentTime / this.duration);
-
+	watch(() => state.time, (t) => {
+		if (state.duration != 0) {
+			percent.value = 100 * (t / state.duration);
+		} else {
+			percent.value = 0;
+		}
 	});
 
 	/// SCRUB DRAGGING
@@ -34,7 +33,7 @@ export function useScrubBar(
 		percent.value = 100 * pct;
 		state.time = (pct * state.duration);
 
-		dragging.value = true;
+		//dragging.value = true;
 
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
@@ -55,7 +54,7 @@ export function useScrubBar(
 
 	function endDrag() {
 
-		dragging.value = false;
+		//dragging.value = false;
 
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)

@@ -1,32 +1,14 @@
-import type { SliceEdit } from "@/tools/slice";
-import { minmax } from "@/util/view";
+import type { MediaState } from "@/view/composables/media-state";
 import { useEventListener } from "@vueuse/core";
 
 export function useSliceDrag(
-	edit: SliceEdit,
+	media: MediaState,
 	fromElm: Ref<HTMLElement | undefined>,
 	toElm: Ref<HTMLElement | undefined>,
 	barElm: Ref<HTMLElement | undefined>
 ) {
 
 	const curDragElm = shallowRef<HTMLElement | null>(null);
-
-	useEventListener(edit.media.media!, 'timeupdate', function (this: HTMLMediaElement) {
-
-		// nextTick() - sometimes video time tracks back to previous value.
-		if (this.currentTime < edit.fromPct.value * this.duration) {
-			forceTime(this, edit.fromPct.value * this.duration);
-		} else if (this.currentTime > edit.toPct.value * this.duration) {
-
-			if (this.loop) {
-				forceTime(this, edit.fromPct.value * this.duration);
-			} else {
-				this.pause();
-				forceTime(this, edit.toPct.value * this.duration);
-			}
-		}
-
-	});
 
 
 	function startDrag(e: MouseEvent) {
@@ -53,14 +35,13 @@ export function useSliceDrag(
 		}
 
 		const bnds = barElm.value!.getBoundingClientRect();
-		const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
+		const pct = (e.clientX - bnds.left) / bnds.width;
 
 		if (cur == fromElm.value) {
-			edit.fromPct.value = Math.min(pct, edit.toPct.value);
+			media.fromPct = pct;
 		} else if (cur == toElm.value) {
-			edit.toPct.value = Math.max(pct, edit.fromPct.value);
+			media.toPct = pct;
 		}
-
 
 	}
 

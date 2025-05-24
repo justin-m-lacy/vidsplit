@@ -1,3 +1,4 @@
+import { minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 import type { WatchSource } from "vue";
 
@@ -25,11 +26,24 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	const loop = shallowRef<boolean>(false);
 
 	/**
+	 * range of media to actually play.
+	 */
+	const playRange = shallowReactive({
+		from: 0,
+		to: 0
+	})
+
+
+	/**
 	 * prevent bug where time flips back after a single-frame change.
 	 * @param media 
 	 * @param t 
 	 */
 	const forceTime = (t: number) => {
+
+		if (t < playRange.from) t = 0;
+		else if (t > playRange.to) { t = playRange.to }
+
 		if (mediaRef.value) {
 			time.value = t;
 			mediaRef.value.currentTime = t;
@@ -63,7 +77,15 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	});
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
-		time.value = this.currentTime;
+
+		if (this.currentTime < playRange.from) {
+			time.value = this.currentTime = playRange.from;
+		} else if (this.currentTime > playRange.to) {
+			time.value = this.currentTime = playRange.to;
+		} else {
+			time.value = this.currentTime;
+		}
+
 	});
 
 	useEventListener(mediaElm, ['playing', 'pause'], function (this: HTMLMediaElement) {
@@ -79,6 +101,29 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	});
 
 	return {
+
+		playRange,
+
+		get fromPct() {
+			return playRange.from / duration.value;
+		},
+		set fromPct(v: number) {
+
+			playRange.from = minmax(v * duration.value, 0, playRange.to);
+			if (time.value < playRange.from) {
+				forceTime(playRange.from);
+			}
+		},
+
+		get toPct() {
+			return playRange.to / duration.value;
+		},
+		set toPct(v: number) {
+			playRange.to = minmax(v * duration.value, playRange.from, 1);
+			if (time.value > playRange.to) {
+				time.value = playRange.to;
+			}
+		},
 
 		get volume() { return volume.value },
 		set volume(v: number) {

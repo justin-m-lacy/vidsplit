@@ -1,5 +1,4 @@
 import type { MediaState } from "@/view/composables/media-state";
-import { useEventListener } from "@vueuse/core";
 
 export function useMediaView(state: MediaState) {
 
@@ -18,35 +17,6 @@ export function useMediaView(state: MediaState) {
 	 * current play percent.
 	 */
 	const playPct = shallowRef<number>(0);
-
-	/**
-	 * Starting percent of total clip duration to actually play.
-	 * ( Distinct from the portion being viewed.)
-	 */
-	const startPct = shallowRef<number>(0);
-
-	/**
-	 * End percent of total clip duration.
-	 * that should be played.
-	 */
-	const endPct = shallowRef<number>(0);
-
-	useEventListener(() => state.media, 'timeupdate', function (this: HTMLMediaElement) {
-
-		if (Number.isNaN(this.duration) || this.duration === 0) {
-			playPct.value = startPct.value;
-			return;
-		}
-
-		const time = this.currentTime;
-		const pct = this.currentTime / this.duration;
-
-		if (dragging.value) return;
-		else if (Number.isNaN(this.duration)) return;
-
-		percent.value = 100 * (this.currentTime / this.duration);
-
-	});
 
 	/**
 	 * Set the view scale while keeping the playhead at current position.
@@ -78,9 +48,7 @@ export function useMediaView(state: MediaState) {
 	return {
 		viewScale,
 		viewOffset,
-		setScale,
-		startPct,
-		endPct
+		setScale
 	}
 
 }
