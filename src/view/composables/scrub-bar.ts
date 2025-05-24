@@ -1,8 +1,9 @@
 import { getClickPct, minmax } from "@/util/view";
+import type { MediaState } from "@/view/composables/media-state";
 import { useEventListener } from "@vueuse/core";
 
 export function useScrubBar(
-	mediaRef: MaybeRefOrGetter<HTMLMediaElement | undefined>,
+	state: MediaState,
 	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,
 	barRef: MaybeRefOrGetter<HTMLElement | undefined>
 ) {
@@ -29,13 +30,9 @@ export function useScrubBar(
 
 		if (e.target != e.currentTarget) return;
 
-		const media = toValue(mediaRef);
-		if (!media) return;
-		if (Number.isNaN(media.duration)) return;
-
 		const pct = getClickPct(e);
 		percent.value = 100 * pct;
-		media.currentTime = (pct * media.duration);
+		state.time = (pct * state.duration);
 
 		dragging.value = true;
 
@@ -52,11 +49,7 @@ export function useScrubBar(
 		const pct = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
 		percent.value = 100 * pct;
 
-		const media = toValue(mediaRef);
-		if (!media) return;
-		if (Number.isNaN(media.duration)) return;
-
-		media.currentTime = (pct * media.duration);
+		state.time = (pct * state.duration);
 
 	}
 

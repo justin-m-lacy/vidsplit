@@ -11,19 +11,6 @@ export function useSliceDrag(
 
 	const curDragElm = shallowRef<HTMLElement | null>(null);
 
-	/**
-	 * prevent bug where time flips back after a single-frame change.
-	 * @param media 
-	 * @param time 
-	 */
-	const forceTime = (media: HTMLMediaElement, time: number) => {
-		media.currentTime = time;
-		nextTick(() => {
-			if (media.src == null || isNaN(media.duration)) return;
-			media.currentTime = time;
-		})
-	}
-
 	useEventListener(edit.media.media!, 'timeupdate', function (this: HTMLMediaElement) {
 
 		// nextTick() - sometimes video time tracks back to previous value.

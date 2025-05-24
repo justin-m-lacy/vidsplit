@@ -87,7 +87,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			}
 			volume.value = v
 		},
-		get() { return duration.value },
+		get duration() { return duration.value },
 
 		/**
 		 * File media was loaded from. Used to apply video effects on original file.
@@ -107,7 +107,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		},
 		get hasMedia() { return mediaRef.value != null },
 		get time() { return time.value },
-		setTime: forceTime,
+		set time(v: number) { forceTime(v) },
 
 		get playing() { return playing.value },
 		set playing(v: boolean) {
