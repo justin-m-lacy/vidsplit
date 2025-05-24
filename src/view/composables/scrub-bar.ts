@@ -16,9 +16,10 @@ export function useScrubBar(
 	const scrubPct = shallowRef<number>(0);
 
 	/**
-	 * scale of view timeline.
+	 * scale of view timeline, e.g.
+	 * percent of total clip represented by the play bar.
 	 */
-	const viewScale = shallowRef<number>(1);
+	const viewPct = shallowRef<number>(1);
 
 	/**
 	 * start percent (of total duration) of the viewable timeline.
@@ -28,27 +29,24 @@ export function useScrubBar(
 
 	/**
 	 * Set the view scale while keeping the playhead at current position.
-	 * @param amt 
+	 * @param pct - percent of total clip visible.
 	 */
-	const setScale = (scale: number) => {
+	const setViewSize = (pct: number) => {
 
-		if (scale < 1) scale = 1;
+		if (pct < 0.05) pct = 0.05;
+		else if (pct > 1) pct = 1;
 
-		// percent of clip currently visible = 1/scale
-		// 2x scale = 1/2 visible.
-		//const viewPct = (1 / viewScale.value);
+		viewPct.value = pct;
 
-		// relative position of playhead in within the view.
-		// (playPct-pctOffset)/(1/viewScale)
-		const delPct = (scrubPct.value - viewOffset.value) * viewScale.value;
+		const playPct = state.time / state.duration;
+		let newOffset = playPct - scrubPct.value * pct;
 
-		let newOffset = scrubPct.value - (delPct) / scale;
 		if (newOffset < 0) newOffset = 0;
-		else if (newOffset + (1 / scale) > 1) {
-			newOffset = 1 - (1 / scale);
+		else if (newOffset + pct > 1) {
+			newOffset = 1 - (pct);
 		}
 
-		viewScale.value = scale;
+
 		viewOffset.value = newOffset;
 
 	}
@@ -61,22 +59,30 @@ export function useScrubBar(
 		}
 	});
 
+	useEventListener(barRef, 'wheel', (e: WheelEvent) => {
+
+		console.log(`del: ${e.deltaY}`);
+
+		e.deltaY;
+
+	});
+
 	/**
 	 * Convert play position percent (out of total duration)
 	 * into percent positon on scrub bar.
 	 * @param totPct 
 	 */
 	function toBarPct(totPct: number) {
-		return minmax((totPct - viewOffset.value) * viewScale.value, 0, 1);
+		return minmax((totPct - viewOffset.value) / viewPct.value, 0, 1);
 	}
 
 	/**
 	 * Convert percent position on play bar to global play percent.
-	 * @param viewPct 
+	 * @param barPct 
 	 * @returns 
 	 */
-	function toPlayPct(viewPct: number) {
-		return minmax(viewOffset.value + viewPct / viewScale.value, 0, 1);
+	function toPlayPct(barPct: number) {
+		return (viewOffset.value + barPct * viewPct.value, 0, 1);
 	}
 
 	/**
@@ -125,11 +131,11 @@ export function useScrubBar(
 
 	return {
 		scrubPct,
-		viewScale,
+		viewPct,
 		viewOffset,
 		toBarPct,
 		toPlayPct,
-		setScale
+		setScale: setViewSize
 	}
 
 }

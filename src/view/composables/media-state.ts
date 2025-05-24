@@ -163,6 +163,14 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		set paused(v: boolean) {
 			v ? mediaRef.value?.pause() : mediaRef.value?.play();
 		},
+		play() { mediaRef.value?.play() },
+		pause() { mediaRef.value?.pause() },
+		stop() {
+			if (mediaRef.value) {
+				mediaRef.value.pause();
+				mediaRef.value.currentTime = 0;
+			}
+		}
 	}
 
 }
