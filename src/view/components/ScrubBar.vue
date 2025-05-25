@@ -19,7 +19,7 @@ const { scrubPct } = useScrubBar(props.media, scrubRef, barRef);
 
 			<div ref="scrubRef" class="absolute h-4 min-h-4 -translate-x-1/2
 			bg-slate-500 rounded-xs select-none"
-				 :style="{ left: `${scrubPct}%` }">&nbsp;</div>
+				 :style="{ left: `${100 * scrubPct}%` }">&nbsp;</div>
 
 		</div>
 	</div>

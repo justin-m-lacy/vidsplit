@@ -52,6 +52,7 @@ export function useScrubBar(
 	}
 
 	watch(() => state.time, (t) => {
+		if (dragging.value) return;
 		if (state.duration != 0) {
 			scrubPct.value = (t / state.duration);
 		} else {
@@ -60,11 +61,7 @@ export function useScrubBar(
 	});
 
 	useEventListener(barRef, 'wheel', (e: WheelEvent) => {
-
-		console.log(`del: ${e.deltaY}`);
-
-		e.deltaY;
-
+		setViewSize(viewPct.value - e.deltaY / 1000);
 	});
 
 	/**
@@ -82,7 +79,7 @@ export function useScrubBar(
 	 * @returns 
 	 */
 	function toPlayPct(barPct: number) {
-		return (viewOffset.value + barPct * viewPct.value, 0, 1);
+		return viewOffset.value + barPct * viewPct.value;
 	}
 
 	/**
@@ -102,9 +99,9 @@ export function useScrubBar(
 		if (e.target != e.currentTarget) return;
 
 		scrubPct.value = getBarPct(e.clientX);
-		state.time = toPlayPct(scrubPct.value);
+		state.time = state.duration * toPlayPct(scrubPct.value);
 
-		//dragging.value = true;
+		dragging.value = true;
 
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
@@ -114,13 +111,13 @@ export function useScrubBar(
 	function onDrag(e: MouseEvent) {
 
 		scrubPct.value = getBarPct(e.clientX);
-		state.time = toPlayPct(scrubPct.value);
+		state.time = state.duration * toPlayPct(scrubPct.value);
 
 	}
 
 	function endDrag() {
 
-		//dragging.value = false;
+		dragging.value = false;
 
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)

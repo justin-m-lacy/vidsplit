@@ -73,7 +73,17 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		immediate: true
 	});
 
+	useEventListener(mediaElm, 'durationchange', function (this: HTMLMediaElement) {
+		if (!Number.isNaN(this.duration)) {
+			duration.value = this.duration;
+			if (playRange.to == 0) playRange.to = this.duration;
+		}
+	});
 	useEventListener(mediaElm, 'loadedmetadata', function (this: HTMLMediaElement) {
+		if (!Number.isNaN(this.duration)) {
+			duration.value = this.duration;
+			playRange.to = this.duration;
+		}
 	});
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
