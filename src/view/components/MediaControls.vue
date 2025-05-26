@@ -38,7 +38,8 @@ const toggleLoop = () => {
 		</button>
 
 		<slot></slot>
-		<VolumeCtrl v-model="state.volume" class="ml-4" />
+		<VolumeCtrl class="ml-4" v-model="state.volume"
+					v-model:muted="state.muted" />
 
 	</div>
 </template>

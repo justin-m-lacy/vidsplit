@@ -20,6 +20,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	const playing = shallowRef<boolean>(false);
 	const paused = shallowRef<boolean>(false);
 	const mediaRef = shallowRef<HTMLMediaElement | undefined>(undefined);
+	const muted = shallowRef<boolean>(false);
 
 	const duration = shallowRef<number>(0);
 
@@ -147,13 +148,6 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		get to() { return playRange.to },
 		get from() { return playRange.from },
 
-		get volume() { return volume.value },
-		set volume(v: number) {
-			if (mediaRef.value) {
-				mediaRef.value.volume = v;
-			}
-			volume.value = v
-		},
 		get duration() { return duration.value },
 
 		/**
@@ -162,9 +156,6 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		get file() { return file.value },
 		set file(v: File | undefined) { file.value = v; },
 
-		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
-
-		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 		get loop() { return loop.value },
 		set loop(v) {
 			if (mediaRef.value) {
@@ -172,6 +163,18 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			}
 			loop.value = v;
 		},
+
+		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
+		get muted() { return muted.value },
+		set muted(v: boolean) {
+			if (mediaRef.value) {
+				mediaRef.value.muted = v;
+			}
+			muted.value = v;
+		},
+
+		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
+
 		get hasMedia() { return mediaRef.value != null },
 		get time() { return time.value },
 		set time(v: number) { forceTime(v) },
@@ -191,7 +194,14 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 				mediaRef.value.pause();
 				mediaRef.value.currentTime = 0;
 			}
-		}
+		},
+		get volume() { return volume.value },
+		set volume(v: number) {
+			if (mediaRef.value) {
+				mediaRef.value.volume = v;
+			}
+			volume.value = v
+		},
 	}
 
 }
