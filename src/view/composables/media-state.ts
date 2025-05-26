@@ -1,3 +1,4 @@
+import { minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 import type { WatchSource } from "vue";
 
@@ -18,30 +19,86 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	const time = shallowRef<number>(0);
 	const playing = shallowRef<boolean>(false);
 	const paused = shallowRef<boolean>(false);
-	const hasMedia = shallowRef<boolean>(false);
+	const mediaRef = shallowRef<HTMLMediaElement | undefined>(undefined);
+	const muted = shallowRef<boolean>(false);
+
+	const duration = shallowRef<number>(0);
 
 	const loop = shallowRef<boolean>(false);
 
+	/**
+	 * range of media to actually play.
+	 */
+	const playRange = shallowReactive({
+		from: 0,
+		to: 0
+	})
+
+
+	/**
+	 * prevent bug where time flips back after a single-frame change.
+	 * @param media 
+	 * @param t 
+	 */
+	const forceTime = (t: number) => {
+
+		if (t < playRange.from || Number.isNaN(t)) t = 0;
+		else if (t > playRange.to) { t = playRange.to }
+
+		if (mediaRef.value) {
+			time.value = t;
+			mediaRef.value.currentTime = t;
+		}
+		nextTick(() => {
+			if (mediaRef.value && !Number.isNaN(t)) {
+				time.value = t;
+				mediaRef.value.currentTime = t;
+			}
+		})
+	}
+
 	watch(mediaElm, (media) => {
 
-		if (!media || Number.isNaN(media.duration)) {
-			hasMedia.value = false;
+		mediaRef.value = media;
+		if (media) {
+
+			media.volume = volume.value;
+			media.loop = loop.value;
+			duration.value = Number.isNaN(media.duration) ? media.duration : 0;
+
 		} else {
-			hasMedia.value = true;
-			volume.value = media.volume;
-			loop.value = media.loop;
+			duration.value = 0;
 		}
 
 	}, {
 		immediate: true
 	});
 
+	useEventListener(mediaElm, 'durationchange', function (this: HTMLMediaElement) {
+		if (!Number.isNaN(this.duration)) {
+			duration.value = this.duration;
+			if (playRange.to == 0) playRange.to = this.duration;
+		}
+	});
 	useEventListener(mediaElm, 'loadedmetadata', function (this: HTMLMediaElement) {
-		hasMedia.value = !Number.isNaN(this.duration);
+		if (!Number.isNaN(this.duration)) {
+			duration.value = this.duration;
+			playRange.to = this.duration;
+		}
 	});
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
-		time.value = this.currentTime;
+
+		if (this.currentTime < playRange.from) {
+			time.value = this.currentTime = playRange.from;
+		} else if (this.currentTime > playRange.to) {
+
+			time.value = this.currentTime = loop.value ? playRange.from : playRange.to;
+
+		} else {
+			time.value = this.currentTime;
+		}
+
 	});
 
 	useEventListener(mediaElm, ['playing', 'pause'], function (this: HTMLMediaElement) {
@@ -58,59 +115,92 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	return {
 
-		get volume() { return volume.value },
-		set volume(v: number) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				media.volume = v;
+		playRange,
+
+		get fromPct() { return playRange.from / duration.value; },
+		set fromPct(v: number) {
+
+			if (Number.isNaN(duration.value)) return;
+			playRange.from = minmax(v * duration.value, 0, playRange.to);
+			if (time.value < playRange.from) {
+				forceTime(playRange.from);
 			}
-			volume.value = v
 		},
-		get duration() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.duration },
+
+		get toPct() { return playRange.to / duration.value; },
+		set toPct(v: number) {
+			if (Number.isNaN(duration.value)) return;
+
+			v = minmax(v, 0, 1);
+			playRange.to = Math.max(v * duration.value, playRange.from);
+
+			if (time.value > playRange.to) {
+				if (loop.value) {
+					time.value = playRange.from;
+				} else {
+					time.value = playRange.to;
+					mediaRef.value?.pause();
+				}
+			}
+
+		},
+
+		get to() { return playRange.to },
+		get from() { return playRange.from },
+
+		get duration() { return duration.value },
+
+		/**
+		 * File media was loaded from. Used to apply video effects on original file.
+		 */
 		get file() { return file.value },
 		set file(v: File | undefined) { file.value = v; },
 
-		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
-
-		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 		get loop() { return loop.value },
 		set loop(v) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				media.loop = v;
+			if (mediaRef.value) {
+				mediaRef.value.loop = v;
 			}
 			loop.value = v;
 		},
-		get hasMedia() { return hasMedia.value },
-		get time() { return time.value },
-		set time(v: number) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				time.value = v;
-				media.currentTime = v;
+
+		get media() { return toValue<HTMLMediaElement | undefined>(mediaElm); },
+		get muted() { return muted.value },
+		set muted(v: boolean) {
+			if (mediaRef.value) {
+				mediaRef.value.muted = v;
 			}
+			muted.value = v;
 		},
+
+		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
+
+		get hasMedia() { return mediaRef.value != null },
+		get time() { return time.value },
+		set time(v: number) { forceTime(v) },
+
 		get playing() { return playing.value },
 		set playing(v: boolean) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				if (v) {
-					media.play();
-				} else {
-					media.pause();
-				}
-			}
+			v ? mediaRef.value?.play() : mediaRef.value?.pause();
 		},
 		get paused() { return paused.value },
 		set paused(v: boolean) {
-			const media = toValue<HTMLMediaElement | undefined>(mediaElm);
-			if (media) {
-				if (v) {
-					media.pause();
-				} else {
-					media.play();
-				}
+			v ? mediaRef.value?.pause() : mediaRef.value?.play();
+		},
+		play() { mediaRef.value?.play() },
+		pause() { mediaRef.value?.pause() },
+		stop() {
+			if (mediaRef.value) {
+				mediaRef.value.pause();
+				mediaRef.value.currentTime = 0;
 			}
+		},
+		get volume() { return volume.value },
+		set volume(v: number) {
+			if (mediaRef.value) {
+				mediaRef.value.volume = v;
+			}
+			volume.value = v
 		},
 	}
 

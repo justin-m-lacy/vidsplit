@@ -1,4 +1,5 @@
 import type { MediaSlice } from "../../shared/edits";
+import { quoteStr } from "../files";
 
 /**
  * select filter graph subtracks to final output tracks.
@@ -7,7 +8,7 @@ import type { MediaSlice } from "../../shared/edits";
  * @returns 
  */
 function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
-	return ` -map [${outTrack}v]` + (audio ? ` -map [${outTrack}a]` : '') + ` ${outFile}`;
+	return ` -map [${outTrack}v] ` + (audio ? `-map [${outTrack}a] ` : '') + quoteStr(outFile);
 }
 
 /**
@@ -65,7 +66,7 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
 
 export function makeFilterInput(inUrl: string) {
-	return `ffmpeg -y -i ${inUrl} -filter_complex `
+	return `ffmpeg -y -i ${quoteStr(inUrl)} -filter_complex `
 }
 
 export function buildSliceCmd(

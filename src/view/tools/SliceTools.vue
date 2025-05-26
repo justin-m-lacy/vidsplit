@@ -4,11 +4,12 @@ import { SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
 import Timestamp from '../components/Timestamp.vue';
-import SliceScrubBar from './SliceBar.vue';
+import { MediaState } from '../composables/media-state';
+import SliceBar from './SliceBar.vue';
 
 const props = defineProps<{
 	edit: SliceEdit,
-	media: HTMLVideoElement
+	media: MediaState
 }>();
 
 const snapshots = useSnapshot();
@@ -83,8 +84,10 @@ function removeSlice(s: MediaSlice) {
 
 function addSlice() {
 
-	const ss = snapshots.thumbnail(props.media);
-	props.edit.addSlice(ss);
+	if (props.media.media) {
+		const ss = snapshots.thumbnail(props.media.media as HTMLVideoElement);
+		props.edit.addSlice(props.media.from, props.media.to, ss);
+	}
 }
 
 function saveSlice() {
@@ -104,8 +107,8 @@ function saveSlice() {
 					border border-green-800/40 rounded-sm bg-green-700/30 "
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">
-				<Timestamp :time="media.duration * edit.fromPct.value" />&nbsp;to&nbsp;
-				<Timestamp :time="media.duration * edit.toPct.value" />
+				<Timestamp :time="media.from" />&nbsp;to&nbsp;
+				<Timestamp :time="media.to" />
 			</span>
 
 			<button type="button"
@@ -115,7 +118,7 @@ function saveSlice() {
 				<Download />
 			</button>
 		</div>
-		<SliceScrubBar :edit="edit" :media="media" />
+		<SliceBar :edit="edit" :media="media" />
 		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"
 			 @dragover.prevent @drop="onDropScreen">
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"

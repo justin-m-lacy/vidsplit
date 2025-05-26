@@ -15,16 +15,13 @@ function makeSliceEdit(media: MediaState) {
 
 	const slices = shallowRef<MediaSlice[]>([]);
 
-	// current left slice position.
-	const fromPct = shallowRef<number>(0);
-
-	// current right slice position.
-	const toPct = shallowRef<number>(1);
-
 	/**
 	 * Add media slice from current left/right percents.
+	 * @param from - clip position in seconds
+	 * @param to - clip position in seconds
+	 * @param snapshot - snapshot string data.
 	 */
-	const addSlice = (snapshot?: string) => {
+	const addSlice = (from: number, to: number, snapshot?: string) => {
 
 		const duration = media.duration;
 		if (!duration || Number.isNaN(duration)) {
@@ -33,8 +30,8 @@ function makeSliceEdit(media: MediaState) {
 
 		slices.value.push({
 			id: window.crypto.randomUUID(),
-			from: fromPct.value * duration,
-			to: toPct.value * duration,
+			from,
+			to,
 			snapshot
 		});
 
@@ -67,8 +64,6 @@ function makeSliceEdit(media: MediaState) {
 		toolId: SliceId,
 		apply,
 		media,
-		fromPct,
-		toPct,
 		get slices() { return slices.value },
 		set slices(v: MediaSlice[]) { slices.value = v; },
 		addSlice,

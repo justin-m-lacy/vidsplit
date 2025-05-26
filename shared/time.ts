@@ -6,8 +6,7 @@ export function secToHMS(totSec: number) {
 	const hrs = Math.floor(mins / 60);
 	mins = mins % 60;
 
-	console.log(`t: ${hrs}:${mins}:${sec}`);
 
-	return `${hrs}:${mins}:${sec}`;
+	return `${hrs.toString().padStart(2, '0')}-${mins.toString().padStart(2, '0')}-${sec.toString().padStart(2, '0')}`;
 
 }
