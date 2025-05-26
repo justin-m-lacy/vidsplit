@@ -8,25 +8,25 @@ const barElm = shallowRef<HTMLElement>();
 const thumbElm = shallowRef<HTMLElement>();
 
 const showBar = shallowRef<boolean>(false);
-useSlider(thumbElm, barElm, volume, true);
-
-function onClick() {
-	muted.value = !muted.value;
-	console.log(`after mute: ${muted.value}`);
-}
+const { dragging } = useSlider(thumbElm, barElm, volume, true);
 
 </script>
 <template>
-	<div class="flex flex-col items-center relative p-1"
+	<div class="flex justify-center items-center relative p-1"
 		 @mouseover="showBar = true" @mouseleave="showBar = false">
 
 
-		<Transition mode="in-out" @click="onClick">
+		<Transition mode="in-out" @click="muted = !muted">
 			<VolumeX class="absolute -top-full" v-if="muted" />
 			<Volume2 class="absolute -top-full" v-else-if="volume > 0.5" />
 			<Volume1 class="absolute -top-full" v-else-if="volume > 0" />
 			<Volume class="absolute -top-full" v-else />
 		</Transition>
+
+		<div class="absolute w-8 bg-transparent"
+			 :class="showBar ? '-top-32 min-h-32 h-36' : 'h-8'">
+
+		</div>
 
 
 		<Transition mode="in-out"
@@ -34,7 +34,7 @@ function onClick() {
 					enter-to-class="opacity-100"
 					leave-from-class="opacity-100"
 					leave-to-class="opacity-0">
-			<div v-if="showBar" ref="barElm" class="absolute -top-25 h-24 min-h-24
+			<div v-if="dragging || showBar" ref="barElm" class="absolute -top-28 h-24 min-h-24
 				duration-500 transition-opacity flex items-center justify-center
 			 	 w-[5px] bg-gray-600 select-none
 			">
