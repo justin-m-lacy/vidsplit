@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useScrubBar } from '@/view/composables/scrub-bar';
+import { useTimeline } from '@/view/composables/timeline';
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 const props = defineProps<{
@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const scrubRef = shallowRef<HTMLElement>();
 const barRef = shallowRef<HTMLElement>();
-const { scrubPct } = useScrubBar(props.media, scrubRef, barRef);
+const { scrubPct } = useTimeline(props.media, scrubRef, barRef);
 
 </script>
 <template>

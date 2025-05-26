@@ -91,7 +91,9 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		if (this.currentTime < playRange.from) {
 			time.value = this.currentTime = playRange.from;
 		} else if (this.currentTime > playRange.to) {
-			time.value = this.currentTime = playRange.to;
+
+			time.value = this.currentTime = loop.value ? playRange.from : playRange.to;
+
 		} else {
 			time.value = this.currentTime;
 		}
@@ -114,27 +116,36 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		playRange,
 
-		get fromPct() {
-			return playRange.from / duration.value;
-		},
+		get fromPct() { return playRange.from / duration.value; },
 		set fromPct(v: number) {
 
+			if (Number.isNaN(duration.value)) return;
 			playRange.from = minmax(v * duration.value, 0, playRange.to);
 			if (time.value < playRange.from) {
 				forceTime(playRange.from);
 			}
 		},
 
-		get to() { return playRange.to },
-		get from() { return playRange.from },
-
 		get toPct() { return playRange.to / duration.value; },
 		set toPct(v: number) {
-			playRange.to = minmax(v * duration.value, playRange.from, 1);
+			if (Number.isNaN(duration.value)) return;
+
+			v = minmax(v, 0, 1);
+			playRange.to = Math.max(v * duration.value, playRange.from);
+
 			if (time.value > playRange.to) {
-				time.value = playRange.to;
+				if (loop.value) {
+					time.value = playRange.from;
+				} else {
+					time.value = playRange.to;
+					mediaRef.value?.pause();
+				}
 			}
+
 		},
+
+		get to() { return playRange.to },
+		get from() { return playRange.from },
 
 		get volume() { return volume.value },
 		set volume(v: number) {

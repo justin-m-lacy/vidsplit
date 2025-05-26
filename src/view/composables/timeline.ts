@@ -1,13 +1,16 @@
 import { minmax } from "@/util/view";
 import type { MediaState } from "@/view/composables/media-state";
-import { useEventListener } from "@vueuse/core";
+import { useDebounceFn, useEventListener } from "@vueuse/core";
 
-export function useScrubBar(
+export type Timeline = ReturnType<typeof useTimeline>;
+
+export function useTimeline(
 	state: MediaState,
 	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,
 	barRef: MaybeRefOrGetter<HTMLElement | undefined>
 ) {
 
+	const zooming = shallowRef<boolean>(false);
 	const dragging = shallowRef<boolean>(false);
 
 	/**
@@ -60,8 +63,16 @@ export function useScrubBar(
 		}
 	});
 
+	const endZooming = useDebounceFn(() => {
+		zooming.value = false;
+	}, 500);
+
 	useEventListener(barRef, 'wheel', (e: WheelEvent) => {
+
 		setViewSize(viewPct.value - e.deltaY / 1000);
+		zooming.value = true;
+		endZooming();
+
 	});
 
 	/**
@@ -132,7 +143,9 @@ export function useScrubBar(
 		viewOffset,
 		toBarPct,
 		toPlayPct,
-		setScale: setViewSize
+		zooming,
+		dragging,
+		setViewSize
 	}
 
 }

@@ -5,7 +5,7 @@ import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
-import SliceScrubBar from './SliceBar.vue';
+import SliceBar from './SliceBar.vue';
 
 const props = defineProps<{
 	edit: SliceEdit,
@@ -118,7 +118,7 @@ function saveSlice() {
 				<Download />
 			</button>
 		</div>
-		<SliceScrubBar :edit="edit" :media="media" />
+		<SliceBar :edit="edit" :media="media" />
 		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"
 			 @dragover.prevent @drop="onDropScreen">
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
