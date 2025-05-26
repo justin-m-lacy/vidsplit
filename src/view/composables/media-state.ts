@@ -42,7 +42,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	 */
 	const forceTime = (t: number) => {
 
-		if (t < playRange.from) t = 0;
+		if (t < playRange.from || Number.isNaN(t)) t = 0;
 		else if (t > playRange.to) { t = playRange.to }
 
 		if (mediaRef.value) {
@@ -50,7 +50,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			mediaRef.value.currentTime = t;
 		}
 		nextTick(() => {
-			if (mediaRef.value) {
+			if (mediaRef.value && !Number.isNaN(t)) {
 				time.value = t;
 				mediaRef.value.currentTime = t;
 			}
