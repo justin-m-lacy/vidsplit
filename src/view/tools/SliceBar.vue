@@ -43,8 +43,7 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div class="flex justify-stretch w-full items-center">
-		<ViewSize :timeline="tl" />
+	<div class="flex justify-stretch w-full items-center text-xxs gap-x-2">
 		<div ref="barElm" class="relative flex items-center w-full grow min-h-1 border border-red-700 bg-red-500">
 
 			<div class=" absolute min-h-2 h-2 bg-green-500 select-none pointer-events-none "
@@ -67,6 +66,7 @@ function getPos(pct: number) {
 
 
 		</div>
+		<ViewSize :timeline="tl" />
 	</div>
 
 </template>

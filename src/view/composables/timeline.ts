@@ -67,7 +67,7 @@ export function useTimeline(
 		zooming.value = false;
 	}, 500);
 
-	useEventListener(barRef, 'wheel', (e: WheelEvent) => {
+	useEventListener('wheel', (e: WheelEvent) => {
 
 		setViewSize(viewPct.value - e.deltaY / 1000);
 		zooming.value = true;
