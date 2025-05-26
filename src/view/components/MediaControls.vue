@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MediaState } from '@/view/composables/media-state';
 import { Pause, Play, Repeat } from 'lucide-vue-next';
-import Volume from './Volume.vue';
+import VolumeCtrl from './VolumeCtrl.vue';
 
 const props = defineProps<{
 	state: MediaState,
@@ -13,7 +13,7 @@ const toggleLoop = () => {
 </script>
 <template>
 	<div class="flex flex-wrap justify-center items-center gap-x-1 select-none">
-		<div class="flex-2"></div>
+
 		<button type="button" @click="state.play()" title="Play" class="disabled:opacity-50"
 				:disabled="state.playing || !state.hasMedia">
 			<Play class="fill-gray-600 stroke-1 w-5" />
@@ -36,8 +36,9 @@ const toggleLoop = () => {
 				]">
 			<Repeat class=" stroke-2 w-5" />
 		</button>
+
 		<slot></slot>
-		<div class="flex-1"></div>
-		<Volume v-model="state.volume" class="ml-12 justify-self-end min-w-24" />
+		<VolumeCtrl v-model="state.volume" class="ml-4" />
+
 	</div>
 </template>

@@ -4,7 +4,8 @@ import { useEventListener } from "@vueuse/core";
 export function useSlider(
 	thumbElm: MaybeRefOrGetter<HTMLElement | undefined>,
 	barElm: MaybeRefOrGetter<HTMLElement | undefined>,
-	percent: Ref<number>
+	percent: Ref<number>,
+	vertical: boolean = false
 ) {
 
 	const dragging = shallowRef<boolean>(false);
@@ -33,7 +34,9 @@ export function useSlider(
 
 		const bnds = toValue(barElm)?.getBoundingClientRect();
 		if (!bnds) return;
-		percent.value = minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
+		percent.value = vertical ?
+			minmax(1 - (e.clientY - bnds.top) / bnds.height, 0, 1)
+			: minmax((e.clientX - bnds.left) / bnds.width, 0, 1);
 	}
 
 	function endDrag() {
