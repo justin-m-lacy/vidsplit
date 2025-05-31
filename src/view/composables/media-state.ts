@@ -91,9 +91,14 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		if (this.currentTime < playRange.from) {
 			time.value = this.currentTime = playRange.from;
-		} else if (this.currentTime > playRange.to) {
+		} else if (this.currentTime >= playRange.to) {
 
-			time.value = this.currentTime = loop.value ? playRange.from : playRange.to;
+			if (loop.value) {
+				time.value = this.currentTime = playRange.from;
+			} else {
+				this.pause();
+				time.value = this.currentTime = playRange.to;
+			}
 
 		} else {
 			time.value = this.currentTime;
