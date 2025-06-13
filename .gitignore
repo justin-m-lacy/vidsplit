@@ -127,3 +127,6 @@ app/**/*
 
 *.webm
 *.mp4
+
+# single click link.
+electron.exe.lnk

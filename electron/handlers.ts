@@ -1,20 +1,20 @@
 import { exec } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
-import path from "path";
-import { SliceOp } from '../shared/edits';
+import { SliceData, type SetResolutionData } from '../shared/edits';
 import { probeTypes } from "./ffmpeg/probe";
+import { buildResolutionCmd } from "./ffmpeg/resolution";
 import { buildSliceCmd } from "./ffmpeg/slice";
+import { useExt } from "./files";
 
-const fixPath = (p: string) => {
-	return p.replaceAll('\\', '/');
+async function waitCommand(cmd: string, outpath: string) {
+	return new Promise((res, rej) =>
+		exec(cmd, (err) => {
+			if (err) rej(err);
+			else res(outpath);
+		})
+	);
 }
 
-const useExt = (outPath: string, inPath: string) => {
-	if (path.extname(outPath) == '') {
-		return outPath + path.extname(inPath);
-	}
-	return outPath;
-}
 export function handleOpenMedia() {
 
 	return ipcMain.handle('open-media', async (_,) => {
@@ -35,7 +35,7 @@ export function handleOpenMedia() {
 
 export function handleSlice(ipcMain: IpcMain, app: App) {
 
-	ipcMain.handle('save-slice', async (_, op: SliceOp) => {
+	ipcMain.handle('save-slice', async (_, op: SliceData) => {
 
 		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
 		if (dialogRes.canceled) {
@@ -46,20 +46,40 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const fileInfo = probeTypes(inPath);
 		const hasAudio = fileInfo.some(v => v.kind === 'audio');
 
-		const outPath = useExt((dialogRes.filePath), inPath);
+		const outpath = useExt((dialogRes.filePath), inPath);
 
-		const cmd = buildSliceCmd(op.slices, inPath, outPath, hasAudio);
-		const result = await new Promise((res, rej) =>
-
-			exec(cmd, (err) => {
-				if (err) rej(err);
-				else res(outPath);
-			})
-		);
-
-		return result;
+		const cmd = buildSliceCmd(op.slices, inPath, outpath, hasAudio);
+		return waitCommand(cmd, outpath)
 
 	});
 
 }
 
+/**
+ * Change resolution operation.
+ * @param ipcMain 
+ * @param app 
+ */
+export function handleResolution(ipcMain: IpcMain, app: App) {
+
+
+	ipcMain.handle('set-resolution', async (_, op: SetResolutionData) => {
+
+		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
+		if (dialogRes.canceled) {
+			return null;
+		}
+
+		const inPath = (op.filePath);
+		const fileInfo = probeTypes(inPath);
+		//const hasAudio = fileInfo.some(v => v.kind === 'audio');
+
+		const outPath = useExt((dialogRes.filePath), inPath);
+
+		const cmd = buildResolutionCmd(inPath, outPath, op.resolution);
+
+		return waitCommand(cmd, outPath);
+
+	});
+
+}
