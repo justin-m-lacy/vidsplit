@@ -1,8 +1,8 @@
 import { exec } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
-import { SliceData, type SetResolutionData } from '../shared/edits';
+import { SliceData, type SetScaleData } from '../shared/edits';
 import { probeTypes } from "./ffmpeg/probe";
-import { buildResolutionCmd } from "./ffmpeg/resolution";
+import { buildResolutionCmd as buildScaleCmd } from "./ffmpeg/scale";
 import { buildSliceCmd } from "./ffmpeg/slice";
 import { useExt } from "./files";
 
@@ -48,7 +48,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 		const outpath = useExt((dialogRes.filePath), inPath);
 
-		const cmd = buildSliceCmd(op.slices, inPath, outpath, hasAudio);
+		const cmd = buildSliceCmd(op.slices, inPath, outpath, hasAudio, op.scale);
 		return waitCommand(cmd, outpath)
 
 	});
@@ -63,7 +63,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 export function handleResolution(ipcMain: IpcMain, app: App) {
 
 
-	ipcMain.handle('set-resolution', async (_, op: SetResolutionData) => {
+	ipcMain.handle('set-scale', async (_, op: SetScaleData) => {
 
 		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
 		if (dialogRes.canceled) {
@@ -76,7 +76,7 @@ export function handleResolution(ipcMain: IpcMain, app: App) {
 
 		const outPath = useExt((dialogRes.filePath), inPath);
 
-		const cmd = buildResolutionCmd(inPath, outPath, op.resolution);
+		const cmd = buildScaleCmd(inPath, outPath, op.scale);
 
 		return waitCommand(cmd, outPath);
 

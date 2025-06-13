@@ -2,6 +2,7 @@
 import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
 import { SliceTool } from '@/tools/slice';
+import RescaleControl from '@/view/components/RescaleControl.vue';
 import { MediaState } from '@/view/composables/media-state';
 import { Camera } from 'lucide-vue-next';
 
@@ -19,6 +20,14 @@ async function doSnapshot() {
 	await useSnapshot().saveSnap(media, media.currentTime);
 
 }
+
+watch(() => props.media?.resolution, (res) => {
+	if (res) {
+		tools.resolution = res;
+	}
+
+});
+
 
 function setSliceMode() {
 
@@ -45,5 +54,6 @@ function sliceClass() {
 				:class="sliceClass()"
 				:disabled="!media?.hasMedia"
 				@click="setSliceMode">✂</button>
+		<RescaleControl v-model="tools.resolution" />
 	</div>
 </template>

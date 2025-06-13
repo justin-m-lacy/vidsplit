@@ -1,14 +1,24 @@
-import type { MediaSlice } from "../../shared/edits";
+import type { MediaSlice, TResolution } from "../../shared/edits";
 import { quoteStr } from "../files";
 
 /**
  * select filter graph subtracks to final output tracks.
  * @param audio - include audio output.
- * @param outTrack -track names
+ * @param outTrackId -track names
  * @returns 
  */
-function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
-	return ` -map [${outTrack}v] ` + (audio ? `-map [${outTrack}a] ` : '') + quoteStr(outFile);
+function mapOutput(outFile: string, audio?: boolean, outTrackId: string = 'out') {
+	return ` -map [${outTrackId}v] ` + (audio ? `-map [${outTrackId}a] ` : '') + quoteStr(outFile);
+}
+
+/**
+ * Add option to set the resolution of a video track.
+ * @param res 
+ * @param inTrackId - named video track in filter graph.
+ * @param outTrackId - name of scaled video track.
+ */
+function setScale(res: TResolution, inTrackId: string, outTrackId: string,) {
+	return `[${inTrackId}]scale=${res.width}:${res.height}[${outTrackId}];`
 }
 
 /**
@@ -65,21 +75,39 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 }
 
 
-export function makeFilterInput(inUrl: string) {
+export function makeFilterCmd(inUrl: string) {
 	return `ffmpeg -y -i ${quoteStr(inUrl)} -filter_complex `
 }
 
+/**
+ * 
+ * @param slices 
+ * @param inUrl 
+ * @param outUrl 
+ * @param audio 
+ * @param scale optional rescale.
+ * @returns 
+ */
 export function buildSliceCmd(
 	slices: MediaSlice[],
 	inUrl: string,
 	outUrl: string,
-	audio: boolean = true) {
+	audio: boolean = true,
+	scale?: TResolution) {
 
-	let filter = makeFilterInput(inUrl);
+	let filter = makeFilterCmd(inUrl);
+	let outtrack = 'out';
 
 	filter += slices.map((s, i) => makeTrimPart(s, i, audio)).join('');
-	filter += makeConcat(slices, audio);
-	filter += mapOutput(outUrl, audio);
+	filter += makeConcat(slices, audio, outtrack);
+
+	if (scale) {
+		filter += ' ' + setScale(scale, outtrack, 'scale') + ' ';
+		// export track changes to 'scale'
+		outtrack = 'scale';
+	}
+
+	filter += mapOutput(outUrl, audio, outtrack);
 
 	return filter;
 

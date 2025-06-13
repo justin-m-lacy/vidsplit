@@ -16,13 +16,14 @@ export type OpResult = {
 export type WebSliceOp = {
 	file: File,
 	slices: MediaSlice[],
+	scale?: TResolution,
 	audio?: boolean,
 	video?: boolean
 }
 
-export type WebResolutionOp = {
+export type WebScaleOp = {
 	file: File,
-	resolution: TResolution,
+	scale: TResolution,
 	audio?: boolean,
 	video?: boolean
 }
@@ -46,8 +47,8 @@ export type ServerOp = {
 
 }
 
-export type SetResolutionData = ServerOp & {
-	resolution: TResolution
+export type SetScaleData = ServerOp & {
+	scale: TResolution
 }
 
 /**
@@ -56,6 +57,7 @@ export type SetResolutionData = ServerOp & {
 export type SliceData = ServerOp & {
 
 	slices: MediaSlice[],
+	scale?: TResolution
 
 }
 

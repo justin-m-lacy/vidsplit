@@ -1,5 +1,6 @@
 import { minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
+import { TResolution } from "shared/edits";
 import type { WatchSource } from "vue";
 
 export type MediaState = ReturnType<typeof useMediaState>;
@@ -22,8 +23,9 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	const mediaRef = shallowRef<HTMLMediaElement | undefined>(undefined);
 	const muted = shallowRef<boolean>(false);
 
-	const duration = shallowRef<number>(0);
+	const resolution = shallowRef<TResolution>({ width: 0, height: 0 });
 
+	const duration = shallowRef<number>(0);
 	const loop = shallowRef<boolean>(false);
 
 	/**
@@ -84,6 +86,9 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		if (!Number.isNaN(this.duration)) {
 			duration.value = this.duration;
 			playRange.to = this.duration;
+		}
+		if (this instanceof HTMLVideoElement) {
+			resolution.value = { width: this.videoWidth, height: this.videoHeight };
 		}
 	});
 
@@ -178,6 +183,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			muted.value = v;
 		},
 
+		get resolution() { return resolution.value },
 		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 
 		get hasMedia() { return mediaRef.value != null },

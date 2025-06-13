@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import type { WebResolutionOp, WebSliceOp } from '../shared/edits';
+import type { WebScaleOp, WebSliceOp } from '../shared/edits';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
@@ -11,16 +11,17 @@ contextBridge.exposeInMainWorld('electron', {
 			filePath: path,
 			slices: edit.slices,
 			audio: edit.audio,
-			video: edit.video
+			video: edit.video,
+			scale: edit.scale
 		});
 
 	},
-	changeResolution: (op: WebResolutionOp) => {
+	changeResolution: (op: WebScaleOp) => {
 
 		const path = webUtils.getPathForFile(op.file);
-		return ipcRenderer.invoke('set-resolution', {
+		return ipcRenderer.invoke('set-scale', {
 			filePath: path,
-			resolution: op.resolution,
+			scale: op.scale,
 			audio: op.audio,
 			video: op.video
 		});

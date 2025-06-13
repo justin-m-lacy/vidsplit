@@ -2,11 +2,14 @@ import { TEditTool, TMediaEdit } from "@/model/edit";
 import { SliceTool } from "@/tools/slice";
 import type { MediaState } from "@/view/composables/media-state";
 import { defineStore } from "pinia";
+import type { TResolution } from "shared/edits";
 
 export const useEditTool = defineStore('editTool', () => {
 
 	const curTool = shallowRef<TEditTool>();
 	const curEdit = shallowRef<TMediaEdit>();
+
+	const resolution = ref<TResolution>({ width: 0, height: 0 });
 
 	function clearTool() {
 		curTool.value = undefined;
@@ -41,6 +44,7 @@ export const useEditTool = defineStore('editTool', () => {
 		toggleTool,
 		beginEdit,
 		clearTool,
+		resolution
 	}
 
 });
