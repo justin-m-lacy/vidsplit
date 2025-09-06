@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { useSlider } from '@/view/composables/use-slider';
+import { useBarSlider } from '@/view/composables/bar-slider';
 import { Volume, Volume1, Volume2, VolumeX } from 'lucide-vue-next';
 
 const volume = defineModel<number>({ default: 1, required: true });
 const muted = defineModel<boolean>('muted', { default: false, required: false },);
 const barElm = shallowRef<HTMLElement>();
-const thumbElm = shallowRef<HTMLElement>();
 
 const showBar = shallowRef<boolean>(false);
-const { dragging } = useSlider(thumbElm, barElm, volume, true);
-
+const { dragging } = useBarSlider(barElm, volume, true);
 </script>
 <template>
 	<div class="flex justify-center items-center relative p-1"
@@ -36,13 +34,17 @@ const { dragging } = useSlider(thumbElm, barElm, volume, true);
 					leave-to-class="opacity-0">
 			<div v-if="dragging || showBar" ref="barElm" class="absolute -top-28 h-24 min-h-24
 				duration-500 transition-opacity flex items-center justify-center
-			 	 w-[5px] bg-gray-600 select-none
+			 	 w-[5px] bg-gray-500/60 select-none
 			">
 
-				<div ref="thumbElm" class="absolute w-[14px] h-[6px]
+				<div class="absolute bg-orange-400/80 w-full pointer-events-none bottom-0"
+					 :style="{
+						height: `${100 * volume}%`
+					}">&nbsp;</div>
+				<!--<div ref="thumbElm" class="absolute w-[14px] h-[6px]
 				translate-y-1/2
 			border border-gray-800 bg-gray-400"
-					 :style="{ bottom: `${100 * (volume)}%` }">&nbsp;</div>
+					 :style="{ bottom: `${100 * (volume)}%` }">&nbsp;</div>-->
 
 			</div>
 		</Transition>

@@ -4,10 +4,21 @@
  * @param e 
  * @returns 
  */
-export function getClickPct(e: MouseEvent) {
+export function getClickPctX(e: MouseEvent) {
 	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
 	return minmax((e.clientX - rect.left) / rect.width, 0, 1);
 }
+
+/**
+ * Get the 1-based y-percent where mouse was clicked on track control.
+ * @param e 
+ * @returns 
+ */
+export function getClickPctY(e: MouseEvent) {
+	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
+	return minmax((rect.bottom - e.clientY) / rect.height, 0, 1);
+}
+
 
 export function mediaReady(media?: HTMLMediaElement): media is HTMLMediaElement {
 	return media != null && media.duration > 0 && media.readyState > 1;

@@ -1,8 +1,14 @@
-import { getClickPctX, minmax } from "@/util/view";
+import { getClickPctY, minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 
-export function useSlider(
-	thumbElm: MaybeRefOrGetter<HTMLElement | undefined>,
+/**
+ * Select percent by dragging along a bar control.
+ * @param barElm 
+ * @param percent 
+ * @param vertical 
+ * @returns 
+ */
+export function useBarSlider(
 	barElm: MaybeRefOrGetter<HTMLElement | undefined>,
 	percent: Ref<number>,
 	vertical: boolean = false
@@ -13,11 +19,8 @@ export function useSlider(
 	useEventListener(barElm, 'click', (e: MouseEvent) => {
 
 		if (e.target != e.currentTarget) return;
-		percent.value = getClickPctX(e);
-
+		percent.value = getClickPctY(e);
 	});
-
-	/// SCRUB DRAGGING
 
 	function startDrag(e: MouseEvent) {
 
@@ -48,7 +51,6 @@ export function useSlider(
 	}
 
 	useEventListener(barElm, 'mousedown', startDrag,);
-	useEventListener(thumbElm, 'mousedown', startDrag,);
 
 	return {
 		dragging,

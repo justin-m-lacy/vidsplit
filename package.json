@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "electron .",
+    "run": "electron .",
     "preview": "vite preview",
     "build": "pnpm buildweb && pnpm buildapp",
     "buildapp": "pnpm buildnode && pnpm buildpreload",
