@@ -37,14 +37,11 @@ const { dragging } = useBarSlider(barElm, volume, true);
 			 	 w-[5px] bg-gray-500/60 select-none
 			">
 
-				<div class="absolute bg-orange-400/80 w-full pointer-events-none bottom-0"
+				<div class="absolute bg-orange-400/80 w-full bottom-0
+				pointer-events-none select-none"
 					 :style="{
 						height: `${100 * volume}%`
 					}">&nbsp;</div>
-				<!--<div ref="thumbElm" class="absolute w-[14px] h-[6px]
-				translate-y-1/2
-			border border-gray-800 bg-gray-400"
-					 :style="{ bottom: `${100 * (volume)}%` }">&nbsp;</div>-->
 
 			</div>
 		</Transition>

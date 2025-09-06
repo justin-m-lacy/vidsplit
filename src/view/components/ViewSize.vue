@@ -16,7 +16,7 @@ const props = defineProps<{
 				leave-to-class="opacity-0">
 		<div v-if="timeline.zooming"
 			 class="transition-opacity duration-200">{{
-				Math.floor(100 * (1 / props.timeline.viewPct.value))
+				Math.floor(100 * (1 / props.timeline.viewScale.value))
 			}}%</div>
 	</Transition>
 </template>

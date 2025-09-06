@@ -14,7 +14,7 @@ export function useTimeline(
 	const dragging = shallowRef<boolean>(false);
 
 	/**
-	 * percent position of scrub on view bar.
+	 * percent position of scrub across full view bar. (no scaling)
 	 */
 	const scrubPct = shallowRef<number>(0);
 
@@ -22,10 +22,10 @@ export function useTimeline(
 	 * scale of view timeline, e.g.
 	 * percent of total clip represented by the play bar.
 	 */
-	const viewPct = shallowRef<number>(1);
+	const viewScale = shallowRef<number>(1);
 
 	/**
-	 * start percent (of total duration) of the viewable timeline.
+	 * start percent (out of total duration) of the viewable timeline.
 	 * always a positive number.
 	 */
 	const viewOffset = shallowRef<number>(0);
@@ -39,7 +39,7 @@ export function useTimeline(
 		if (pct < 0.05) pct = 0.05;
 		else if (pct > 1) pct = 1;
 
-		viewPct.value = pct;
+		viewScale.value = pct;
 
 		const playPct = state.time / state.duration;
 		let newOffset = playPct - scrubPct.value * pct;
@@ -69,19 +69,19 @@ export function useTimeline(
 
 	useEventListener('wheel', (e: WheelEvent) => {
 
-		setViewSize(viewPct.value - e.deltaY / 1000);
+		setViewSize(viewScale.value - e.deltaY / 1000);
 		zooming.value = true;
 		endZooming();
 
 	});
 
 	/**
-	 * Convert play position percent (out of total duration)
+	 * Convert play position percent out of total duration
 	 * into percent positon on scrub bar.
 	 * @param totPct 
 	 */
-	function toBarPct(totPct: number) {
-		return minmax((totPct - viewOffset.value) / viewPct.value, 0, 1);
+	const toBarPct = (totPct: number) => {
+		return minmax((totPct - viewOffset.value) / viewScale.value, 0, 1);
 	}
 
 	/**
@@ -89,8 +89,8 @@ export function useTimeline(
 	 * @param barPct 
 	 * @returns 
 	 */
-	function toPlayPct(barPct: number) {
-		return viewOffset.value + barPct * viewPct.value;
+	const toPlayPct = (barPct: number) => {
+		return viewOffset.value + barPct * viewScale.value;
 	}
 
 	/**
@@ -139,7 +139,7 @@ export function useTimeline(
 
 	return {
 		scrubPct,
-		viewPct,
+		viewScale,
 		viewOffset,
 		toBarPct,
 		toPlayPct,
