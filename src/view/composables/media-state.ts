@@ -42,8 +42,11 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	 */
 	const forceTime = (t: number) => {
 
-		if (t < playRange.from || Number.isNaN(t)) t = 0;
-		else if (t > playRange.to) { t = playRange.to }
+		if (t < playRange.from || Number.isNaN(t)) {
+			t = playRange.from;
+		} else if (t > playRange.to) {
+			t = loop.value ? playRange.from : playRange.to;
+		}
 
 		if (mediaRef.value) {
 			time.value = t;
@@ -111,7 +114,12 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		paused.value = this.paused;
 
 		if (!this.paused && !this.ended && this.readyState > 1) {
+
 			playing.value = true;
+			if (this.currentTime >= (playRange.to - 0.01)) {
+				forceTime(playRange.from);
+			}
+
 		} else {
 			playing.value = false
 		}
@@ -193,6 +201,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			v ? mediaRef.value?.pause() : mediaRef.value?.play();
 		},
 		play() { mediaRef.value?.play() },
+
 		pause() { mediaRef.value?.pause() },
 		stop() {
 			if (mediaRef.value) {
