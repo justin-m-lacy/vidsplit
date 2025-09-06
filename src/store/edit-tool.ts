@@ -9,7 +9,7 @@ export const useEditTool = defineStore('editTool', () => {
 	const curTool = shallowRef<TEditTool>();
 	const curEdit = shallowRef<TMediaEdit>();
 
-	const resolution = ref<TResolution>({ width: 0, height: 0 });
+	const resolution = ref<TResolution | undefined>(undefined);
 
 	function clearTool() {
 		curTool.value = undefined;
@@ -37,12 +37,29 @@ export const useEditTool = defineStore('editTool', () => {
 		return curTool.value?.id == SliceTool.id;
 	});
 
+	const applyEdit = (media: MediaState) => {
+
+		let scale = resolution.value;
+
+		if (scale && (
+			media.resolution.width == scale.width
+			|| media.resolution.height == scale.height
+		)
+		) {
+			scale = undefined;
+		}
+
+		curEdit.value?.apply(scale);
+
+	}
+
 	return {
 		curEdit,
 		usingSlice,
 		tool: curTool,
 		toggleTool,
 		beginEdit,
+		applyEdit,
 		clearTool,
 		resolution
 	}

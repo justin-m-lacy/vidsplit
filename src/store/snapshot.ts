@@ -31,7 +31,7 @@ export const useSnapshot = defineStore('snapshots', () => {
 
 	let saveLink: string | null = null;
 
-	const saveSnap = async (media: HTMLVideoElement, time: number) => {
+	const saveSnap = async (media: HTMLMediaElement, time: number) => {
 
 		const file = await snap(media);
 		if (!file) return;
@@ -53,7 +53,9 @@ export const useSnapshot = defineStore('snapshots', () => {
 	 * Snap image of full media.
 	 * @param media 
 	 */
-	async function snap(media: HTMLVideoElement) {
+	async function snap(media: HTMLMediaElement) {
+
+		if (!(media instanceof HTMLVideoElement)) return;
 
 		const canvas = getCanvas();
 		const ctx = canvas.getContext('2d');

@@ -22,7 +22,7 @@ export function useTimeline(
 	 * scale of view timeline, e.g.
 	 * percent of total clip represented by the play bar.
 	 */
-	const viewPct = shallowRef<number>(1);
+	const viewWidth = shallowRef<number>(1);
 
 	/**
 	 * start percent (of total duration) of the viewable timeline.
@@ -39,7 +39,7 @@ export function useTimeline(
 		if (pct < 0.05) pct = 0.05;
 		else if (pct > 1) pct = 1;
 
-		viewPct.value = pct;
+		viewWidth.value = pct;
 
 		const playPct = state.time / state.duration;
 		let newOffset = playPct - scrubPct.value * pct;
@@ -69,7 +69,7 @@ export function useTimeline(
 
 	useEventListener('wheel', (e: WheelEvent) => {
 
-		setViewSize(viewPct.value - e.deltaY / 1000);
+		setViewSize(viewWidth.value - e.deltaY / 1000);
 		zooming.value = true;
 		endZooming();
 
@@ -81,7 +81,7 @@ export function useTimeline(
 	 * @param totPct 
 	 */
 	function toBarPct(totPct: number) {
-		return minmax((totPct - viewOffset.value) / viewPct.value, 0, 1);
+		return minmax((totPct - viewOffset.value) / viewWidth.value, 0, 1);
 	}
 
 	/**
@@ -90,7 +90,7 @@ export function useTimeline(
 	 * @returns 
 	 */
 	function toPlayPct(barPct: number) {
-		return viewOffset.value + barPct * viewPct.value;
+		return viewOffset.value + barPct * viewWidth.value;
 	}
 
 	/**
@@ -139,7 +139,7 @@ export function useTimeline(
 
 	return {
 		scrubPct,
-		viewPct,
+		viewWidth,
 		viewOffset,
 		toBarPct,
 		toPlayPct,

@@ -1,6 +1,6 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
 import type { MediaState } from "@/view/composables/media-state";
-import { MediaSlice } from '../../shared/edits';
+import { MediaSlice, type TResolution } from '../../shared/edits';
 
 export type SliceEdit = TMediaEdit & ReturnType<typeof makeSliceEdit>;
 
@@ -47,7 +47,7 @@ function makeSliceEdit(media: MediaState) {
 	}
 
 	/// apply operation.
-	const apply = async () => {
+	const apply = async (rescale?: TResolution) => {
 
 		if (slices.value.length === 0) return;
 
@@ -55,6 +55,7 @@ function makeSliceEdit(media: MediaState) {
 
 			file: media.file!,
 			slices: slices.value.concat(),
+			scale: rescale
 
 		});
 	}

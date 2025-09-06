@@ -1,11 +1,12 @@
 import type { MediaState } from "@/view/composables/media-state";
+import type { TResolution } from "shared/edits";
 
 export type TMediaEdit = {
 
 	id: string;
 	toolId: string | Symbol;
 	media: MediaState;
-	apply: () => Promise<any>;
+	apply: (scale?: TResolution) => Promise<any>;
 
 }
 

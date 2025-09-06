@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
 import { SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
 import { MediaSlice } from 'shared/edits';
+
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 import SliceBar from './SliceBar.vue';
@@ -90,12 +92,8 @@ function addSlice() {
 	}
 }
 
-function saveSlice() {
-	try {
-		props.edit.apply();
-	} catch (err) {
-		console.warn(err);
-	}
+const saveSlice = () => {
+	useEditTool().applyEdit(props.media);
 }
 
 </script>

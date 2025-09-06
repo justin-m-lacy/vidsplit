@@ -54,6 +54,6 @@ function sliceClass() {
 				:class="sliceClass()"
 				:disabled="!media?.hasMedia"
 				@click="setSliceMode">✂</button>
-		<RescaleControl v-model="tools.resolution" />
+		<RescaleControl v-if="media?.resolution" v-model="tools.resolution" :size="media.resolution" />
 	</div>
 </template>

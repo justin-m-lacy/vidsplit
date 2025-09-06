@@ -10,7 +10,7 @@ export function useSliceDrag(
 
 	const curDragElm = shallowRef<HTMLElement | null>(null);
 
-	function startDrag(e: MouseEvent) {
+	const startDrag = (e: MouseEvent) => {
 
 		const targ = e.target as HTMLElement;
 		if (targ !== fromElm.value && targ !== toElm.value) {
@@ -25,7 +25,7 @@ export function useSliceDrag(
 
 	}
 
-	function onDrag(e: MouseEvent) {
+	const onDrag = (e: MouseEvent) => {
 
 		const cur = curDragElm.value;
 		if (cur == null) {
