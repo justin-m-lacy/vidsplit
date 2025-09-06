@@ -127,3 +127,5 @@ app/**/*
 
 *.webm
 *.mp4
+
+electron.exe.lnk
