@@ -55,12 +55,14 @@ function getPos(pct: number) {
 				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)">&nbsp;</div>
 
 			<div ref="fromElm"
-				 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs -translate-x-1/2
+				 class="absolute z-10 w-2 h-5 min-h-4
+				 rounded-l-full rounded-r-none -translate-x-full
 			 	border border-slate-800 bg-amber-500 shadow-sm"
-				 :style="getPos(toBarPct(media.fromPct))"></div>
+				 :style="getPos(toBarPct(media.fromPct))">
+			</div>
 
 			<div ref="toElm"
-				 class="absolute z-10 w-2 h-4 min-h-4 rounded-xs -translate-x-1/2
+				 class="absolute z-10 w-2 h-5 min-h-4 rounded-r-full rounded-l-none
 			 	border border-slate-800 bg-amber-500 shadow-sm"
 				 :style="getPos(toBarPct(media.toPct))"></div>
 

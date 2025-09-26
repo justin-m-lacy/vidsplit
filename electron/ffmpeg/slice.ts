@@ -8,7 +8,7 @@ import { quoteStr } from "../files";
  * @returns 
  */
 function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
-	return ` -map [${outTrack}v] ` + (audio ? `-map [${outTrack}a] ` : '') + quoteStr(outFile);
+	return `-map [${outTrack}v] ` + (audio ? `-map [${outTrack}a] ` : '') + quoteStr(outFile);
 }
 
 /**
@@ -65,8 +65,8 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 }
 
 
-export function makeFilterInput(inUrl: string) {
-	return `ffmpeg -y -i ${quoteStr(inUrl)} -filter_complex `
+export function makeFilterInput(inUrl: string, args: string[]) {
+	args.push('-progress pipe:1', '-y', `-i ${quoteStr(inUrl)}`, '-filter_complex');
 }
 
 export function buildSliceCmd(
@@ -75,12 +75,16 @@ export function buildSliceCmd(
 	outUrl: string,
 	audio: boolean = true) {
 
-	let filter = makeFilterInput(inUrl);
+	const args: string[] = [];
 
-	filter += slices.map((s, i) => makeTrimPart(s, i, audio)).join('');
-	filter += makeConcat(slices, audio);
-	filter += mapOutput(outUrl, audio);
+	makeFilterInput(inUrl, args);
 
-	return filter;
+	args.push(slices.map((s, i) => makeTrimPart(s, i, audio)).join('') + makeConcat(slices, audio));
+	args.push(mapOutput(outUrl, audio));
+
+	return {
+		cmd: 'ffmpeg',
+		args
+	};
 
 }

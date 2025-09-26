@@ -13,7 +13,10 @@
     "buildnode": "esbuild electron/main.ts --format=esm --tsconfig=tsconfig.node.json --platform=node --bundle --outdir=app --packages=external",
     "buildpreload": "esbuild electron/preload.ts --format=cjs --platform=node --outdir=app --packages=external",
     "buildweb": "vite build",
-    "test-ffmpeg": "tsx test-ffmpeg.ts"
+    "test-ffmpeg": "tsx test-ffmpeg.ts",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [],
   "author": "justin lacy",
@@ -22,6 +25,7 @@
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@tailwindcss/vite": "^4.1.7",
     "@vueuse/core": "^10.7.1",
+    "electron-squirrel-startup": "^1.0.1",
     "esbuild": "^0.25.4",
     "eventemitter3": "^5.0.1",
     "lucide": "^0.469.0",
@@ -30,6 +34,14 @@
     "vue": "^3.4.30"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@electron-forge/plugin-fuses": "^7.9.0",
+    "@electron/fuses": "^1.0.0",
     "@types/node": "^22.13.5",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/cli-plugin-typescript": "~5.0.8",

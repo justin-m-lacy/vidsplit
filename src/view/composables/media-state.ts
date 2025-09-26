@@ -159,7 +159,10 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		},
 
 		get to() { return playRange.to },
+		set to(v) { playRange.to = v },
+
 		get from() { return playRange.from },
+		set from(v) { playRange.from = v },
 
 		get duration() { return duration.value },
 
@@ -189,6 +192,10 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
 
 		get hasMedia() { return mediaRef.value != null },
+
+		/**
+		 * current play time.
+		 */
 		get time() { return time.value },
 		set time(v: number) { forceTime(v) },
 

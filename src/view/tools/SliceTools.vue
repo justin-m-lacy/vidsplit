@@ -78,6 +78,20 @@ function moveSlice(sliceId: string, toSlice: string) {
 
 }
 
+/**
+ * set slice start to current play position.
+ */
+function setStart() {
+	props.media.from = props.media.time;
+}
+
+/**
+ * set slice start to current play position.
+ */
+function setEnd() {
+	props.media.to = props.media.time;
+}
+
 function removeSlice(s: MediaSlice) {
 	props.edit.removeSlice(s);
 }
@@ -102,6 +116,14 @@ function saveSlice() {
 <template>
 	<div class="flex flex-col w-full items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
+			<button type="button"
+					class="disabled:opacity-50 p-[1px] text-sm
+					border border-green-800/40 rounded-sm bg-green-700/30 "
+					@click="setStart">[Set Start]</button>
+			<button type="button"
+					class="disabled:opacity-50 p-[1px] text-sm
+					border border-green-800/40 rounded-sm bg-green-700/30 "
+					@click="setEnd">[Set End]</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
 					border border-green-800/40 rounded-sm bg-green-700/30 "

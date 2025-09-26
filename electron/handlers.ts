@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { spawn } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
 import path from "path";
 import { SliceOp } from '../shared/edits';
@@ -49,13 +49,25 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const outPath = useExt((dialogRes.filePath), inPath);
 
 		const cmd = buildSliceCmd(op.slices, inPath, outPath, hasAudio);
-		const result = await new Promise((res, rej) =>
+		console.log(`SLICE: ${cmd.cmd} ${cmd.args.join(' ')}`);
 
-			exec(cmd, (err) => {
-				if (err) rej(err);
-				else res(outPath);
+		const result = await new Promise((res, rej) => {
+
+			const child = spawn(cmd.cmd, cmd.args, { windowsVerbatimArguments: true });
+
+			child.stdout.on('data', (data) => {
+				//type is object.
 			})
-		);
+			child.stderr.on('error', (err) => {
+				console.error(err);
+				rej(err);
+			})
+			child.addListener('exit', (code) => {
+				console.log(`pipe closed: ${code}`);
+				res(outPath);
+			})
+
+		});
 
 		return result;
 

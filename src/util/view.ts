@@ -5,7 +5,7 @@
  * @returns 
  */
 export function getClickPctX(e: MouseEvent) {
-	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
+	const rect = (e.target as HTMLElement).getBoundingClientRect();
 	return minmax((e.clientX - rect.left) / rect.width, 0, 1);
 }
 
@@ -15,7 +15,7 @@ export function getClickPctX(e: MouseEvent) {
  * @returns 
  */
 export function getClickPctY(e: MouseEvent) {
-	const rect = (e.target as HTMLDivElement).getBoundingClientRect();
+	const rect = (e.target as HTMLElement).getBoundingClientRect();
 	return minmax((rect.bottom - e.clientY) / rect.height, 0, 1);
 }
 
