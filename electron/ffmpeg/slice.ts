@@ -64,7 +64,6 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
 }
 
-
 export function makeFilterInput(inUrl: string, args: string[]) {
 	args.push('-progress pipe:1', '-y', `-i ${quoteStr(inUrl)}`, '-filter_complex');
 }
@@ -77,9 +76,25 @@ export function buildSliceCmd(
 
 	const args: string[] = [];
 
+	if (slices.length === 1) {
+		//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
+		args.push('-progress pipe:1', '-y', '-ss', `${slices[0].from}`, `-i ${quoteStr(inUrl)}`,
+			'-t', `${slices[0].to - slices[0].from}`, '-c copy', '-avoid_negative_ts 1', quoteStr(outUrl))
+		return {
+			cmd: 'ffmpeg',
+			args
+
+		}
+
+	}
+
 	makeFilterInput(inUrl, args);
 
-	args.push(slices.map((s, i) => makeTrimPart(s, i, audio)).join('') + makeConcat(slices, audio));
+	let trims = slices.map((s, i) => makeTrimPart(s, i, audio)).join('');
+	// add concatenate operation after trim.
+	trims += makeConcat(slices, audio);
+
+	args.push(trims);
 	args.push(mapOutput(outUrl, audio));
 
 	return {
