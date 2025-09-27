@@ -42,11 +42,11 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	 */
 	const forceTime = (t: number) => {
 
-		if (t < playRange.from || Number.isNaN(t)) {
+		/*if (t < playRange.from || Number.isNaN(t)) {
 			t = playRange.from;
 		} else if (t > playRange.to) {
 			t = loop.value ? playRange.from : playRange.to;
-		}
+		}*/
 
 		if (mediaRef.value) {
 			time.value = t;
@@ -92,7 +92,9 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 	useEventListener(mediaElm, 'timeupdate', function (this: HTMLMediaElement) {
 
-		if (this.currentTime < playRange.from) {
+		if (!playing.value) {
+			time.value = this.currentTime;
+		} else if (this.currentTime < playRange.from) {
 			time.value = this.currentTime = playRange.from;
 		} else if (this.currentTime >= playRange.to) {
 
