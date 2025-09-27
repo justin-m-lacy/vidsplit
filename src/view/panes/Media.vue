@@ -19,6 +19,12 @@ const tools = useEditTool();
 
 const mediaState = useMediaState(videoElm);
 
+onMounted(() => {
+	if (tools.tool == null) {
+		tools.setSliceMode(mediaState);
+	}
+})
+
 async function loadFile(files: FileList) {
 	try {
 

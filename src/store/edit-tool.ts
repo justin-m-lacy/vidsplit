@@ -30,6 +30,10 @@ export const useEditTool = defineStore('editTool', () => {
 
 	}
 
+	const setSliceMode = (media: MediaState) => {
+		toggleTool(SliceTool, media)
+	}
+
 	const usingSlice = computed(() => {
 		return curTool.value?.id == SliceTool.id;
 	});
@@ -37,6 +41,7 @@ export const useEditTool = defineStore('editTool', () => {
 	return {
 		curEdit,
 		usingSlice,
+		setSliceMode,
 		tool: curTool,
 		toggleTool,
 		beginEdit,

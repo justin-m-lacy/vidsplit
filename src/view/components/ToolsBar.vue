@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
-import { SliceTool } from '@/tools/slice';
 import { MediaState } from '@/view/composables/media-state';
 import { Camera } from 'lucide-vue-next';
 
@@ -23,7 +22,7 @@ async function doSnapshot() {
 function setSliceMode() {
 
 	if (!props.media?.hasMedia) return;
-	tools.toggleTool(SliceTool, props.media);
+	tools.setSliceMode(props.media);
 }
 
 function sliceClass() {
