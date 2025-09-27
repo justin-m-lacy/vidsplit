@@ -64,22 +64,56 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
 
 }
 
-export function makeFilterInput(inUrl: string, args: string[]) {
-	args.push('-progress pipe:1', '-y', `-i ${quoteStr(inUrl)}`, '-filter_complex');
+/**
+ * Make all input slices relative to the smallest time slice
+ * to optimize encoding.
+ * @param slices 
+ */
+function optimizeCuts(slices: MediaSlice[]) {
+
+	let minTime: number = Number.MAX_SAFE_INTEGER;
+	let maxTime: number = Number.MIN_SAFE_INTEGER;
+
+	for (let i = 0; i < slices.length; i++) {
+
+		if (slices[i].from < minTime) {
+			minTime = slices[i].from;
+		}
+		if (slices[i].to > maxTime) {
+			maxTime = slices[i].to;
+		}
+	}
+
+	for (let i = 0; i < slices.length; i++) {
+		slices[i].from -= minTime;
+		slices[i].to -= minTime;
+	}
+
+	return {
+		from: minTime,
+		to: maxTime
+	}
 }
 
+// -ss seek start
+// -t duration
+// -to to duration
 export function buildSliceCmd(
 	slices: MediaSlice[],
 	inUrl: string,
 	outUrl: string,
 	audio: boolean = true) {
 
-	const args: string[] = [];
+	const args: string[] = ['-progress pipe:1', '-y'];
+
+	const times = optimizeCuts(slices);
+
+	args.push('-ss', `${times.from}`, '-to', `${times.to}`);
+	args.push(`-i ${quoteStr(inUrl)}`);
 
 	if (slices.length === 1) {
 		//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
-		args.push('-progress pipe:1', '-y', '-ss', `${slices[0].from}`, `-i ${quoteStr(inUrl)}`,
-			'-t', `${slices[0].to - slices[0].from}`, '-c copy', '-avoid_negative_ts 1', quoteStr(outUrl))
+		args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl))
 		return {
 			cmd: 'ffmpeg',
 			args
@@ -88,7 +122,7 @@ export function buildSliceCmd(
 
 	}
 
-	makeFilterInput(inUrl, args);
+	args.push('-filter_complex');
 
 	let trims = slices.map((s, i) => makeTrimPart(s, i, audio)).join('');
 	// add concatenate operation after trim.
