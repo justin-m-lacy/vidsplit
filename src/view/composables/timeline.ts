@@ -4,6 +4,13 @@ import { useDebounceFn, useEventListener } from "@vueuse/core";
 
 export type Timeline = ReturnType<typeof useTimeline>;
 
+/**
+ * Enable select current play state on timeline.
+ * @param state 
+ * @param scrubRef 
+ * @param barRef 
+ * @returns 
+ */
 export function useTimeline(
 	state: MediaState,
 	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,

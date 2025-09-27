@@ -78,6 +78,11 @@ function moveSlice(sliceId: string, toSlice: string) {
 
 }
 
+function setViewRange(from: number, to: number) {
+	props.media.from = from;
+	props.media.to = to;
+}
+
 /**
  * set slice start to current play position.
  */
@@ -118,15 +123,18 @@ function saveSlice() {
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30 "
+					border border-green-800/40 rounded-sm bg-green-700/30"
+					title="Set Slice start to Current time"
 					@click="setStart">[Set Start]</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30 "
+					border border-green-800/40 rounded-sm bg-green-700/30"
+					title="Set Slice end to Current time"
 					@click="setEnd">[Set End]</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30 "
+					border border-green-800/40 rounded-sm bg-green-700/30"
+					title="Add Slice"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">
 				<Timestamp :time="media.from" />&nbsp;to&nbsp;
@@ -136,6 +144,7 @@ function saveSlice() {
 			<button type="button"
 					class="disabled:opacity-50"
 					:disabled="edit.slices.length == 0"
+					title="Save sliced clips"
 					@click="saveSlice">
 				<Download />
 			</button>
@@ -145,7 +154,8 @@ function saveSlice() {
 			 @dragover.prevent @drop="onDropScreen">
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
 				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"
-				 @dragstart="onDragSnapshot($event, s)">
+				 @dragstart="onDragSnapshot($event, s)"
+				 @click="setViewRange(s.from, s.to)">
 
 				<X class="absolute rounded-full -right-1 -top-0.5
 					drop-shadow-2xl border border-red-700 bg-red-600 max-h-6 h-1/3 w-auto p-0.5"

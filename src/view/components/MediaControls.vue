@@ -28,7 +28,7 @@ const toggleLoop = () => {
 				:disabled="!state.playing">
 			<Pause class="fill-gray-600 stroke-1"></Pause>
 		</button>
-		<button type="button" @click="toggleLoop" title="Loop"
+		<button type="button" @click="toggleLoop" title="Loop Playback"
 				:class="[
 					state.loop ? 'outline-solid outline-2 outline-blue-700' : 'outline-none',
 					'p-0',

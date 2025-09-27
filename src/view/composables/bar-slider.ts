@@ -2,7 +2,7 @@ import { getClickPctY, minmax } from "@/util/view";
 import { useEventListener } from "@vueuse/core";
 
 /**
- * Select percent by dragging along a bar control.
+ * Select a percent by dragging along a bar control.
  * @param barElm 
  * @param percent 
  * @param vertical 

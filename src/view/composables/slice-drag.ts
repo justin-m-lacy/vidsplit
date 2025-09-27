@@ -1,6 +1,13 @@
 import type { MediaState } from "@/view/composables/media-state";
 import { useEventListener } from "@vueuse/core";
 
+/**
+ * Enables dragging of end points of a slice operation.
+ * @param media 
+ * @param fromElm 
+ * @param toElm 
+ * @param barElm 
+ */
 export function useSliceDrag(
 	media: MediaState,
 	fromElm: Ref<HTMLElement | undefined>,
