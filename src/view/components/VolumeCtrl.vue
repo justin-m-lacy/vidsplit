@@ -11,6 +11,7 @@ const { dragging } = useBarSlider(barElm, volume, true);
 </script>
 <template>
 	<div class="flex justify-center items-center relative p-1"
+		 title="Volume"
 		 @mouseover="showBar = true" @mouseleave="showBar = false">
 
 
@@ -23,7 +24,7 @@ const { dragging } = useBarSlider(barElm, volume, true);
 
 		<div class="absolute w-8 bg-transparent"
 			 :class="showBar ? '-top-32 min-h-32 h-36' : 'h-8'">
-
+			<!-- ??? what for?-->
 		</div>
 
 
@@ -34,7 +35,7 @@ const { dragging } = useBarSlider(barElm, volume, true);
 					leave-to-class="opacity-0">
 			<div v-if="dragging || showBar" ref="barElm" class="absolute -top-28 h-24 min-h-24
 				duration-500 transition-opacity flex items-center justify-center
-			 	 w-[5px] bg-gray-500/60 select-none
+			 	 w-2 bg-gray-500/60 select-none
 			">
 
 				<div class="absolute bg-orange-400/80 w-full bottom-0
