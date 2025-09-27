@@ -1,15 +1,16 @@
-import { spawn } from "child_process";
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
+import { unlink } from 'fs/promises';
 import path from "path";
 import { SliceOp } from '../shared/edits';
+import { concatMedia } from "./ffmpeg/concat";
 import { probeTypes } from "./ffmpeg/probe";
-import { buildSliceCmd } from "./ffmpeg/slice";
+import { trimMedia } from "./ffmpeg/slice";
 
 const fixPath = (p: string) => {
 	return p.replaceAll('\\', '/');
 }
 
-const useExt = (outPath: string, inPath: string) => {
+const withExt = (outPath: string, inPath: string) => {
 	if (path.extname(outPath) == '') {
 		return outPath + path.extname(inPath);
 	}
@@ -43,33 +44,36 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		}
 
 		const inPath = (op.filePath);
+		const outPath = withExt((dialogRes.filePath), inPath);
+
+		const ext = path.extname(inPath);
+		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
+
 		const fileInfo = probeTypes(inPath);
-		const hasAudio = fileInfo.some(v => v.kind === 'audio');
 
-		const outPath = useExt((dialogRes.filePath), inPath);
+		if (op.slices.length === 1) {
+			return await trimMedia(op.slices[0], inPath, outPath);
+		}
 
-		const cmd = buildSliceCmd(op.slices, inPath, outPath, hasAudio);
-		console.log(`SLICE: ${cmd.cmd} ${cmd.args.join(' ')}`);
-
-		const result = await new Promise((res, rej) => {
-
-			const child = spawn(cmd.cmd, cmd.args, { windowsVerbatimArguments: true });
-
-			child.stdout.on('data', (data) => {
-				//type is object.
-			})
-			child.stderr.on('error', (err) => {
-				console.error(err);
-				rej(err);
-			})
-			child.addListener('exit', (code) => {
-				console.log(`pipe closed: ${code}`);
-				res(outPath);
-			})
-
+		const tempDir = path.dirname(inPath);
+		const tmpFiles = op.slices.map((s, i) => {
+			return path.join(tempDir, baseName + '_' + i + `${ext}`);
 		});
 
-		return result;
+		// copy parts to temp files.
+		await Promise.all(tmpFiles.map((tmpFile, i) => {
+			return trimMedia(op.slices[i], inPath, tmpFile);
+		}));
+
+		await concatMedia(tmpFiles, outPath, tempDir);
+
+		try {
+			Promise.allSettled(tmpFiles.map(f => unlink(f)))
+		} catch (err) {
+			console.warn(`error removing files: ${err}`);
+		}
+
+		return outPath;
 
 	});
 

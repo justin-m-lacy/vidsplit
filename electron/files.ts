@@ -1,1 +1,0 @@
-export const quoteStr = (s: string) => { return `"${s}"` }

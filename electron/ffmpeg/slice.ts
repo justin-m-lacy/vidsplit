@@ -1,5 +1,5 @@
 import type { MediaSlice } from "../../shared/edits";
-import { quoteStr } from "../files";
+import { quoteStr, waitSpawn } from "../util/files";
 
 /**
  * select filter graph subtracks to final output tracks.
@@ -93,6 +93,22 @@ function optimizeCuts(slices: MediaSlice[]) {
 		from: minTime,
 		to: maxTime
 	}
+}
+
+export async function trimMedia(slice: MediaSlice, inUrl: string, outUrl: string) {
+
+	const args: string[] = ['-progress pipe:1', '-y'];
+
+	args.push('-ss', `${slice.from}`, '-to', `${slice.to}`);
+	args.push(`-i ${quoteStr(inUrl)}`);
+
+	//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
+	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
+
+	await waitSpawn('ffmpeg', args);
+
+	return outUrl;
+
 }
 
 // -ss seek start

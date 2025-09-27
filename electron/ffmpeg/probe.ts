@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { quoteStr } from "../files";
+import { quoteStr } from "../util/files";
 
 export function probeTypes(file: string) {
 
