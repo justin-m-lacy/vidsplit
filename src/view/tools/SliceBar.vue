@@ -16,7 +16,7 @@ const fromElm = shallowRef<HTMLElement>();
 const toElm = shallowRef<HTMLElement>();
 
 const tl = useTimeline(props.media, scrubElm, barElm);
-const { scrubPct, toBarPct } = tl;
+const { scrubPct, toLocalPct: toBarPct } = tl;
 useSliceDrag(props.media, fromElm, toElm, barElm);
 
 /**
@@ -43,7 +43,8 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div class="flex justify-stretch w-full items-center text-xxs gap-x-2">
+	<div class="flex justify-stretch w-full items-center
+	text-xxs gap-x-2 min-h-5">
 		<div ref="barElm" class="relative flex items-center w-full grow min-h-1 border border-red-700 bg-red-500">
 
 			<div class=" absolute min-h-2 h-2 bg-sky-200 select-none pointer-events-none "

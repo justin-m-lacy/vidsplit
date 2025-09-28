@@ -87,22 +87,23 @@ async function onFilePicked(event: Event) {
 		<MediaControls :state="mediaState"
 					   class="flex items-center w-full mx-4">
 			<ToolsBar :media="mediaState" class="ml-3" />
-			<button type="button" class="btn" id="drop-file" title="Load Media"
+			<button type="button" class="btn" id="drop-file"
+					title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
 					name="[Load]">
 				<Upload />
 			</button>
 		</MediaControls>
-		<div class="flex gap-x-0.5 items-center justify-center">
+		<div class="flex gap-x-0.5 w-full items-center justify-center">
 
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
-						class="flex items-center grow rounded-md w-4/6 max-w-4/6"
+						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
 						:media="mediaState" />
 
 			<ScrubBar v-else-if="videoElm"
-					  class="flex items-center grow max-w-4/6 w-4/6"
+					  class="flex items-center grow max-w-5/6"
 					  :media="mediaState" />
 
 		</div>

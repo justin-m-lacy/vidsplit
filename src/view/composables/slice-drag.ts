@@ -15,6 +15,7 @@ export function useSliceDrag(
 	barElm: Ref<HTMLElement | undefined>
 ) {
 
+	// element currently being dragged.
 	const curDragElm = shallowRef<HTMLElement | null>(null);
 
 	function startDrag(e: MouseEvent) {
