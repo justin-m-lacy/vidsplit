@@ -10,7 +10,7 @@ const showBar = shallowRef<boolean>(false);
 const { dragging } = useBarSlider(barElm, volume, true);
 </script>
 <template>
-	<div class="flex justify-center items-center relative p-1"
+	<div class="flex justify-center items-center relative p-1 select-none"
 		 title="Volume"
 		 @mouseover="showBar = true" @mouseleave="showBar = false">
 

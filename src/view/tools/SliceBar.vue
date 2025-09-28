@@ -43,16 +43,17 @@ function getPos(pct: number) {
 </script>
 <template>
 
-	<div class="flex justify-stretch w-full items-center
+	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-5">
 		<div ref="barElm" class="relative flex items-center w-full grow min-h-1 border border-red-700 bg-red-500">
 
-			<div class=" absolute min-h-2 h-2 bg-sky-200 select-none pointer-events-none "
+			<div class="absolute min-h-2 h-2 bg-sky-200
+				select-none pointer-events-none "
 				 :style="fillStyle(toBarPct(media.fromPct), toBarPct(media.toPct))">
 
 			</div>
 			<div class="absolute bg-green-500 left-0 min-h-2 h-2
-				pointer-events-none select-none"
+				select-none pointer-events-none"
 				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)">&nbsp;</div>
 
 			<div ref="fromElm"

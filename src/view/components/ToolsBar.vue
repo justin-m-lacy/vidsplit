@@ -32,7 +32,7 @@ function sliceClass() {
 }
 </script>
 <template>
-	<div class="flex justify-center items-center gap-x-2">
+	<div class="flex justify-center items-center gap-x-2 select-none">
 		<button type="button" title="Screenshot"
 				class="disabled:opacity-50 text-sm"
 				:disabled="!media?.ready"

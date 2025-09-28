@@ -109,9 +109,9 @@ function addSlice() {
 	}
 }
 
-function saveSlice() {
+async function saveSlice() {
 	try {
-		props.edit.apply();
+		await props.edit.apply();
 	} catch (err) {
 		console.warn(err);
 	}

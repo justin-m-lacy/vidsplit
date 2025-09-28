@@ -131,7 +131,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		 */
 		get ready() {
 			const m = mediaRef.value;
-			return m && m.readyState > 1 && m.duration > 0;
+			return m != null && duration.value > 0 && m.readyState > 0;
 		},
 		get fromPct() { return playRange.from / duration.value; },
 		set fromPct(v: number) {
