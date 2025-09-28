@@ -13,7 +13,7 @@ const tools = useEditTool();
 async function doSnapshot() {
 
 	const media = props.media?.media as HTMLVideoElement | undefined;
-	if (!media) return;
+	if (!media || props.media?.ready) return;
 
 	await useSnapshot().saveSnap(media, media.currentTime);
 
@@ -35,7 +35,7 @@ function sliceClass() {
 	<div class="flex justify-center items-center gap-x-2">
 		<button type="button" title="Screenshot"
 				class="disabled:opacity-50 text-sm"
-				:disabled="!media?.hasMedia"
+				:disabled="!media?.ready"
 				@click="doSnapshot">
 			<Camera />
 		</button>

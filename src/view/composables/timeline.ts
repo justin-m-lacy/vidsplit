@@ -115,6 +115,7 @@ export function useTimeline(
 	function startDrag(e: MouseEvent) {
 
 		if (e.target != e.currentTarget) return;
+		if (!state.ready) return;
 
 		scrubPct.value = getBarPct(e.clientX);
 		state.time = state.duration * toPlayPct(scrubPct.value);

@@ -42,12 +42,6 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 	 */
 	const forceTime = (t: number) => {
 
-		/*if (t < playRange.from || Number.isNaN(t)) {
-			t = playRange.from;
-		} else if (t > playRange.to) {
-			t = loop.value ? playRange.from : playRange.to;
-		}*/
-
 		if (mediaRef.value) {
 			time.value = t;
 			mediaRef.value.currentTime = t;
@@ -132,6 +126,13 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		playRange,
 
+		/**
+		 * True if media can be played.
+		 */
+		get ready() {
+			const m = mediaRef.value;
+			return m && m.readyState > 1 && m.duration > 0;
+		},
 		get fromPct() { return playRange.from / duration.value; },
 		set fromPct(v: number) {
 
@@ -191,7 +192,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 			muted.value = v;
 		},
 
-		get src() { return toValue<HTMLMediaElement | undefined>(mediaElm)?.src ?? undefined },
+		get src() { return mediaRef.value?.src },
 
 		get hasMedia() { return mediaRef.value != null },
 

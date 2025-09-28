@@ -19,11 +19,6 @@ export function getClickPctY(e: MouseEvent) {
 	return minmax((rect.bottom - e.clientY) / rect.height, 0, 1);
 }
 
-
-export function mediaReady(media?: HTMLMediaElement): media is HTMLMediaElement {
-	return media != null && media.duration > 0 && media.readyState > 1;
-}
-
 export function minmax(v: number, min: number, max: number): number {
 	return v < min ? min : (v > max ? max : v);
 }

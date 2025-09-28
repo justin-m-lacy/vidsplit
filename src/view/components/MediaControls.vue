@@ -15,7 +15,7 @@ const toggleLoop = () => {
 	<div class="flex flex-wrap justify-center items-center gap-x-1 select-none">
 
 		<button type="button" @click="state.play()" title="Play" class="disabled:opacity-50"
-				:disabled="state.playing || !state.hasMedia">
+				:disabled="state.playing || !state.ready">
 			<Play class="fill-gray-600 stroke-1 w-5" />
 		</button>
 		<button type="button" title="Stop"
