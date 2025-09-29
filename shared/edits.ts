@@ -1,11 +1,3 @@
-
-export type MediaSlice = {
-	id: string,
-	from: number,
-	to: number,
-	snapshot?: string
-}
-
 export type WebSplitOp = {
 
 	file: File,
@@ -27,7 +19,7 @@ export type NodeSplitOp = Omit<WebSplitOp, 'file'> & {
 
 export type WebSliceOp = {
 	file: File,
-	slices: MediaSlice[],
+	slices: { from: number, to: number }[],
 	audio?: boolean,
 	video?: boolean
 }

@@ -2,7 +2,9 @@
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { IsSliceEdit } from '@/tools/slice';
+import { IsSplitEdit } from '@/tools/split';
 import { useMediaState } from '@/view/composables/media-state';
+import SplitTools from '@/view/tools/SplitTools.vue';
 import { Upload } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
@@ -98,6 +100,10 @@ async function onFilePicked(event: Event) {
 		<div class="flex gap-x-0.5 w-full items-center justify-center">
 
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
+						class="flex items-center grow rounded-md max-w-5/6"
+						:edit="tools.curEdit"
+						:media="mediaState" />
+			<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
 						:media="mediaState" />

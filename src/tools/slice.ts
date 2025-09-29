@@ -1,18 +1,25 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
 import type { MediaState } from "@/view/composables/media-state";
-import { MediaSlice } from '../../shared/edits';
+
+export type MediaSlice = {
+	id: string,
+	from: number,
+	to: number,
+	snapshot?: string
+}
 
 /**
  * Slice sections from the source video into a new video.
  */
 export type SliceEdit = TMediaEdit & ReturnType<typeof makeSliceEdit>;
 
-export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
-	return edit != null && edit.toolId === SliceTool.id;
-}
-
 // removed from tool to avoid circular typescript ref.
 const SliceId = Symbol('slice');
+
+export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
+	return edit?.toolId === SliceId;
+}
+
 
 function makeSliceEdit(media: MediaState) {
 

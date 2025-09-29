@@ -1,5 +1,4 @@
 import { TMediaEdit, type TEditTool } from "@/model/edit";
-import { SliceEdit, SliceTool } from "@/tools/slice";
 import { MediaState } from "@/view/composables/media-state";
 
 /**
@@ -17,8 +16,8 @@ export type MediaCut = {
 	pct: number
 }
 
-export function IsSplitEdit(edit?: TMediaEdit): edit is SliceEdit {
-	return edit != null && edit.toolId === SliceTool.id;
+export function IsSplitEdit(edit?: TMediaEdit): edit is SplitEdit {
+	return edit?.toolId === SplitId;
 }
 
 

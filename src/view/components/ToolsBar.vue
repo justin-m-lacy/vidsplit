@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
+import { IsSliceEdit } from '@/tools/slice';
+import { IsSplitEdit } from '@/tools/split';
 import { MediaState } from '@/view/composables/media-state';
-import { Camera } from 'lucide-vue-next';
+import { Camera, SquareSplitHorizontal } from 'lucide-vue-next';
 
 const props = defineProps<{
 	media?: MediaState
@@ -24,12 +26,12 @@ function setSliceMode() {
 	if (!props.media?.hasMedia) return;
 	tools.setSliceMode(props.media);
 }
+function setSplitMode() {
 
-function sliceClass() {
-	return [
-		tools.usingSlice ? 'bg-amber-500/40 border border-amber-700' : ''
-	]
+	if (!props.media?.hasMedia) return;
+	tools.setSplitMode(props.media);
 }
+
 </script>
 <template>
 	<div class="flex justify-center items-center gap-x-2 select-none">
@@ -39,10 +41,20 @@ function sliceClass() {
 				@click="doSnapshot">
 			<Camera />
 		</button>
-		<button type="button"
+		<button type="button" title="Create Slices"
 				class="flex justify-center disabled:opacity-50 p-0.5 text-sm"
-				:class="sliceClass()"
+				:class="IsSliceEdit(tools.curEdit) ?
+					'bg-amber-500/40 border border-amber-700' :
+					''"
 				:disabled="!media?.hasMedia"
 				@click="setSliceMode">✂</button>
+		<button type="button" title="Split Media"
+				class="flex justify-center disabled:opacity-50 p-0.5 text-sm"
+				:class="IsSplitEdit(tools.curEdit) ?
+					'bg-amber-500/40 border border-amber-700' : ''"
+				:disabled="!media?.hasMedia"
+				@click="setSplitMode">
+			<SquareSplitHorizontal />
+		</button>
 	</div>
 </template>
