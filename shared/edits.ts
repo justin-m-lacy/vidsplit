@@ -6,17 +6,16 @@ export type MediaSlice = {
 	snapshot?: string
 }
 
-export type OpResult = {
-}
-
-export type Op = {
-
+export type SplitOp = {
 	/**
-	 * Path in the file system. Cannot use blob url
-	 * because of security policies.
-	 */
-	filePath: string;
+ * Path in the file system. Cannot use blob url
+ * because of security policies.
+ */
 
+	file: File,
+	cuts: Array<{ id: string, t: number }>,
+	audio?: boolean,
+	video?: boolean
 }
 
 export type WebSliceOp = {
@@ -25,18 +24,3 @@ export type WebSliceOp = {
 	audio?: boolean,
 	video?: boolean
 }
-/**
- * Operation to slice media
- */
-export type SliceOp = Op & {
-
-	slices: MediaSlice[],
-
-	/// whether media has audio
-	audio?: boolean
-
-	/// whether media has video
-	video?: boolean
-
-}
-

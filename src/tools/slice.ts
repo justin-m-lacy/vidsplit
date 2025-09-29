@@ -2,6 +2,9 @@ import type { TEditTool, TMediaEdit } from "@/model/edit";
 import type { MediaState } from "@/view/composables/media-state";
 import { MediaSlice } from '../../shared/edits';
 
+/**
+ * Slice sections from the source video into a new video.
+ */
 export type SliceEdit = TMediaEdit & ReturnType<typeof makeSliceEdit>;
 
 export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {

@@ -83,15 +83,6 @@ export function useTimeline(
 	});
 
 	/**
-	 * Convert media % out of total duration
-	 * into % positon on scrub bar.
-	 * @param totPct 
-	 */
-	const toLocalPct = (totPct: number) => {
-		return minmax((totPct - viewOffset.value) / viewScale.value, 0, 1);
-	}
-
-	/**
 	 * Convert scaled % position on scrub bar to global media percent.
 	 * @param barPct 
 	 * @returns 
@@ -99,6 +90,16 @@ export function useTimeline(
 	const toGlobalPct = (barPct: number) => {
 		return viewOffset.value + barPct * viewScale.value;
 	}
+
+	/**
+	 * Convert media % out of total duration
+	 * into % positon on scrub bar.
+	 * @param totPct 
+	 */
+	const toViewPct = (totPct: number) => {
+		return minmax((totPct - viewOffset.value) / viewScale.value, 0, 1);
+	}
+
 
 	/**
 	 * Get view-percent position on scrub-bar.
@@ -149,7 +150,7 @@ export function useTimeline(
 		scrubPct,
 		viewScale,
 		viewOffset,
-		toLocalPct,
+		toViewPct,
 		zooming,
 		dragging,
 		setViewSize

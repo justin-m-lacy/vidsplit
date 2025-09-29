@@ -16,7 +16,7 @@ const fromElm = shallowRef<HTMLElement>();
 const toElm = shallowRef<HTMLElement>();
 
 const tl = useTimeline(props.media, scrubElm, barElm);
-const { scrubPct, toLocalPct: toBarPct } = tl;
+const { scrubPct, toViewPct } = tl;
 useSliceDrag(props.media, fromElm, toElm, barElm);
 
 /**
@@ -49,24 +49,24 @@ function getPos(pct: number) {
 
 			<div class="absolute min-h-2 h-2 bg-sky-200
 				select-none pointer-events-none "
-				 :style="fillStyle(toBarPct(media.fromPct), toBarPct(media.toPct))">
+				 :style="fillStyle(toViewPct(media.fromPct), toViewPct(media.toPct))">
 
 			</div>
 			<div class="absolute bg-green-500 left-0 min-h-2 h-2
 				select-none pointer-events-none"
-				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)">&nbsp;</div>
+				 :style="fillStyle(toViewPct(media.fromPct), tl.scrubPct.value)">&nbsp;</div>
 
 			<div ref="fromElm"
 				 class="absolute z-10 w-2 h-5 min-h-4
 				 rounded-l-full rounded-r-none -translate-x-full
 			 	border border-slate-800 bg-amber-500 shadow-sm"
-				 :style="getPos(toBarPct(media.fromPct))">
+				 :style="getPos(toViewPct(media.fromPct))">
 			</div>
 
 			<div ref="toElm"
 				 class="absolute z-10 w-2 h-5 min-h-4 rounded-r-full rounded-l-none
 			 	border border-slate-800 bg-amber-500 shadow-sm"
-				 :style="getPos(toBarPct(media.toPct))"></div>
+				 :style="getPos(toViewPct(media.toPct))"></div>
 
 			<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
