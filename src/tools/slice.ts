@@ -54,7 +54,7 @@ function makeSliceEdit(media: MediaState) {
 
 		if (slices.value.length === 0) return;
 
-		return window.electron.saveSlice({
+		return window.electron.sliceMedia({
 
 			file: media.file!,
 			slices: slices.value.concat(),

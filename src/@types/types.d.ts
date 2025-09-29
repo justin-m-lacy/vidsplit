@@ -1,11 +1,11 @@
-import type { SplitOp, WebSliceOp } from "shared/edits"
+import type { WebSliceOp, WebSplitOp } from "shared/edits"
 
 declare global {
 	interface Window {
 
 		electron: {
-			saveSlice(edit: WebSliceOp): Promise<any>,
-			splitMedia(edit: SplitOp): Promise<any>
+			sliceMedia(edit: WebSliceOp): Promise<any>,
+			splitMedia(edit: WebSplitOp): Promise<any>
 		}
 	}
 }

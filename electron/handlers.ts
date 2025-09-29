@@ -1,14 +1,10 @@
 import { dialog, ipcMain, type App, type IpcMain } from "electron";
 import { unlink } from 'fs/promises';
 import path from "path";
-import { SliceOp } from '../shared/edits';
+import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
 import { concatMedia } from "./ffmpeg/concat";
-import { probeTypes } from "./ffmpeg/probe";
-import { trimMedia } from "./ffmpeg/slice";
-
-const fixPath = (p: string) => {
-	return p.replaceAll('\\', '/');
-}
+import { saveSlice } from "./ffmpeg/slice";
+//import { probeTypes } from "./ffmpeg/probe";
 
 const withExt = (outPath: string, inPath: string) => {
 	if (path.extname(outPath) == '') {
@@ -36,23 +32,21 @@ export function handleOpenMedia() {
 
 export function handleSlice(ipcMain: IpcMain, app: App) {
 
-	ipcMain.handle('save-slice', async (_, op: SliceOp) => {
+	ipcMain.handle('sliceMedia', async (_, op: NodeSliceOp) => {
 
 		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
 		if (dialogRes.canceled) {
 			return null;
 		}
 
-		const inPath = (op.filePath);
+		const inPath = op.filePath;
 		const outPath = withExt((dialogRes.filePath), inPath);
 
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
 
-		const fileInfo = probeTypes(inPath);
-
 		if (op.slices.length === 1) {
-			return await trimMedia(op.slices[0], inPath, outPath);
+			return await saveSlice(op.slices[0], inPath, outPath);
 		}
 
 		const tempDir = path.dirname(inPath);
@@ -62,7 +56,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 		// copy parts to temp files.
 		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return trimMedia(op.slices[i], inPath, tmpFile);
+			return saveSlice(op.slices[i], inPath, tmpFile);
 		}));
 
 		await concatMedia(tmpFiles, outPath, tempDir);
@@ -79,3 +73,46 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 }
 
+export function handleSplit(ipcMain: IpcMain, app: App) {
+
+	ipcMain.handle('splitMedia', async (_, op: NodeSplitOp) => {
+
+		const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
+		if (dialogRes.canceled) {
+			return false;
+		}
+
+		const inPath = op.filePath;
+		const baseDir = path.dirname(inPath);
+
+		const ext = path.extname(inPath);
+		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
+
+		const cuts = op.cuts;
+		const saves: Promise<string>[] = [];
+
+		let sliceEnd = op.duration;
+		for (let i = cuts.length; i >= 0; i--) {
+
+			saves.push(saveSlice(
+				i > 0 ? {
+					from: cuts[i - 1].t,
+					to: sliceEnd
+				} : {
+					from: 0, to: sliceEnd
+				},
+				inPath,
+				path.join(baseDir, `${baseName}-${i}.${ext}`)
+			));
+			sliceEnd = cuts[i].t
+
+		}
+
+		// copy parts to files.
+		await Promise.all(saves);
+
+		return true;
+
+	});
+
+}

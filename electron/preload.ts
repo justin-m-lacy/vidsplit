@@ -1,13 +1,13 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import type { SplitOp, WebSliceOp } from '../shared/edits';
+import type { WebSliceOp, WebSplitOp } from '../shared/edits';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
 
-	saveSlice: (edit: WebSliceOp) => {
+	sliceMedia: (edit: WebSliceOp) => {
 
 		const path = webUtils.getPathForFile(edit.file)
-		return ipcRenderer.invoke('save-slice', {
+		return ipcRenderer.invoke('sliceMedia', {
 			filePath: path,
 			slices: edit.slices,
 			audio: edit.audio,
@@ -15,11 +15,12 @@ contextBridge.exposeInMainWorld('electron', {
 		});
 
 	},
-	splitMedia: (edit: SplitOp) => {
+	splitMedia: (edit: WebSplitOp) => {
 
 		const path = webUtils.getPathForFile(edit.file)
 		return ipcRenderer.invoke('splitMedia', {
 			filePath: path,
+			duration: edit.duration,
 			cuts: edit.cuts,
 			audio: edit.audio,
 			video: edit.video

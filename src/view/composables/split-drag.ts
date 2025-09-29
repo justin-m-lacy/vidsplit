@@ -12,7 +12,7 @@ import { useEventListener } from "@vueuse/core";
 export function useSplitDrags(
 	media: MediaState,
 	edit: SplitEdit,
-	cutElms: Ref<HTMLElement[]>,
+	cutElms: Ref<HTMLElement[] | null>,
 	barElm: Ref<HTMLElement | undefined>
 ) {
 
@@ -24,7 +24,7 @@ export function useSplitDrags(
 
 	watch(cutElms, (elms, prev) => {
 
-		console.log(`elements changed: ${prev.length} -> ${elms?.length}`);
+		console.log(`elements changed: ${prev?.length} -> ${elms?.length}`);
 		if (!elms) return;
 
 		for (let i = 0; i < elms.length; i++) {

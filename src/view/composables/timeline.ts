@@ -92,21 +92,28 @@ export function useTimeline(
 	}
 
 	/**
-	 * Convert media % out of total duration
-	 * into % positon on scrub bar.
+	 * Convert % of total media duration
+	 * to local % positon on scrub bar.
 	 * @param totPct 
 	 */
-	const toViewPct = (totPct: number) => {
+	const toBarPct = (totPct: number) => {
 		return minmax((totPct - viewOffset.value) / viewScale.value, 0, 1);
 	}
 
+	/**
+	 * Convert viewport x-position to percent of total media duration.
+	 * @param clientX 
+	 */
+	function posToGlobalPct(clientX: number) {
+		return toGlobalPct(posToBarPct(clientX));
+	}
 
 	/**
-	 * Get view-percent position on scrub-bar.
+	 * Convert viewport x-position to percent of total play bar.
 	 * @param e 
 	 * @returns 
 	 */
-	function getViewPct(clientX: number) {
+	function posToBarPct(clientX: number) {
 		const bnds = toValue(barRef)?.getBoundingClientRect();
 		if (!bnds) return 0;
 		return minmax((clientX - bnds.left) / bnds.width, 0, 1);
@@ -118,7 +125,7 @@ export function useTimeline(
 		if (e.target != e.currentTarget) return;
 		if (!state.ready) return;
 
-		scrubPct.value = getViewPct(e.clientX);
+		scrubPct.value = posToBarPct(e.clientX);
 		state.time = state.duration * toGlobalPct(scrubPct.value);
 
 		dragging.value = true;
@@ -130,7 +137,7 @@ export function useTimeline(
 
 	function onDrag(e: MouseEvent) {
 
-		scrubPct.value = getViewPct(e.clientX);
+		scrubPct.value = posToBarPct(e.clientX);
 		state.time = state.duration * toGlobalPct(scrubPct.value);
 
 	}
@@ -150,7 +157,8 @@ export function useTimeline(
 		scrubPct,
 		viewScale,
 		viewOffset,
-		toViewPct,
+		toBarPct,
+		posToGlobalPct,
 		zooming,
 		dragging,
 		setViewSize
