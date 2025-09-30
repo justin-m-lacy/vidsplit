@@ -77,10 +77,10 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('splitMedia', async (_, op: NodeSplitOp) => {
 
-		const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
+		/*const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
 		if (dialogRes.canceled) {
 			return false;
-		}
+		}*/
 
 		const inPath = op.filePath;
 		const baseDir = path.dirname(inPath);
@@ -102,14 +102,14 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 					from: 0, to: sliceEnd
 				},
 				inPath,
-				path.join(baseDir, `${baseName}-${i}.${ext}`)
+				path.join(baseDir, `${baseName}-${i}${ext}`)
 			));
-			sliceEnd = cuts[i].t
+			if (i > 0) sliceEnd = cuts[i - 1].t
 
 		}
 
 		// copy parts to files.
-		await Promise.all(saves);
+		await Promise.allSettled(saves);
 
 		return true;
 
