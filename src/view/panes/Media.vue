@@ -19,11 +19,11 @@ const fileInput = shallowRef<HTMLInputElement>();
 
 const tools = useEditTool();
 
-const mediaState = useMediaState(videoElm);
+const media = useMediaState(videoElm);
 
 onMounted(() => {
 	if (tools.tool == null) {
-		tools.setSliceMode(mediaState);
+		tools.setSliceMode(media);
 	}
 })
 
@@ -31,12 +31,27 @@ async function loadFile(files: FileList) {
 	try {
 
 		const file = files.item(0)!;
-		mediaState.file = file;
+		media.file = file;
 
 		mediaStore.setSource(file);
 
 	} catch (err) {
 		console.error(err);
+	}
+}
+
+function clickVideo(e: MouseEvent) {
+
+	if (media.hasMedia) {
+
+		if (media.playing) {
+			media.pause();
+		} else {
+			media.play();
+		}
+	} else {
+		e.preventDefault();
+		fileInput.value?.click();
 	}
 }
 
@@ -77,7 +92,8 @@ async function onFilePicked(event: Event) {
 			 @drop.prevent="fileDrop" @dragover="fileDrag">
 			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
-				   :src="mediaStore.sourceUrl">
+				   :src="mediaStore.sourceUrl"
+				   @click="clickVideo">
 			</video>
 			<div v-if="!mediaStore.sourceUrl"
 				 class="absolute top-0 left-0
@@ -86,9 +102,9 @@ async function onFilePicked(event: Event) {
 				<Upload />
 			</div>
 		</div>
-		<MediaControls :state="mediaState"
+		<MediaControls :state="media"
 					   class="flex items-center w-full mx-4">
-			<ToolsBar :media="mediaState" class="ml-3" />
+			<ToolsBar :media="media" class="ml-3" />
 			<button type="button" class="btn" id="drop-file"
 					title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
@@ -102,15 +118,15 @@ async function onFilePicked(event: Event) {
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
-						:media="mediaState" />
+						:media="media" />
 			<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
-						:media="mediaState" />
+						:media="media" />
 
 			<ScrubBar v-else-if="videoElm"
 					  class="flex items-center grow max-w-5/6"
-					  :media="mediaState" />
+					  :media="media" />
 
 		</div>
 		<input ref="fileInput" type="file" accept="video/*"
