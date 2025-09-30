@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useSnapshot } from '@/store/snapshot';
-import { SliceEdit } from '@/tools/slice';
+import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
-import { MediaSlice } from 'shared/edits';
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 import SliceBar from './SliceBar.vue';

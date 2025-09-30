@@ -1,5 +1,6 @@
 import { TEditTool, TMediaEdit } from "@/model/edit";
 import { SliceTool } from "@/tools/slice";
+import { SplitTool } from "@/tools/split";
 import type { MediaState } from "@/view/composables/media-state";
 import { defineStore } from "pinia";
 
@@ -34,14 +35,14 @@ export const useEditTool = defineStore('editTool', () => {
 		toggleTool(SliceTool, media)
 	}
 
-	const usingSlice = computed(() => {
-		return curTool.value?.id == SliceTool.id;
-	});
+	const setSplitMode = (media: MediaState) => {
+		toggleTool(SplitTool, media)
+	}
 
 	return {
 		curEdit,
-		usingSlice,
 		setSliceMode,
+		setSplitMode,
 		tool: curTool,
 		toggleTool,
 		beginEdit,

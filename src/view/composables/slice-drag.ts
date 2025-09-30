@@ -20,12 +20,12 @@ export function useSliceDrag(
 
 	function startDrag(e: MouseEvent) {
 
-		const targ = e.target as HTMLElement;
+		const targ = e.currentTarget as HTMLElement;
 		if (targ !== fromElm.value && targ !== toElm.value) {
 			return;
 		}
 
-		curDragElm.value = e.target as HTMLElement;
+		curDragElm.value = targ;
 		e.stopPropagation();
 
 		window.addEventListener('mousemove', onDrag);

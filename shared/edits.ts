@@ -1,42 +1,29 @@
+export type WebSplitOp = {
 
-export type MediaSlice = {
-	id: string,
-	from: number,
-	to: number,
-	snapshot?: string
-}
-
-export type OpResult = {
-}
-
-export type Op = {
+	file: File,
+	cuts: Array<{ id: string, t: number }>,
 
 	/**
-	 * Path in the file system. Cannot use blob url
-	 * because of security policies.
+	 * Total duration of video.
 	 */
-	filePath: string;
+	duration: number,
+	audio?: boolean,
+	video?: boolean
+}
 
+///Path in the file system. Cannot use blob url
+/// because of security policies.
+export type NodeSplitOp = Omit<WebSplitOp, 'file'> & {
+	filePath: string,
 }
 
 export type WebSliceOp = {
 	file: File,
-	slices: MediaSlice[],
+	slices: { from: number, to: number }[],
 	audio?: boolean,
 	video?: boolean
 }
-/**
- * Operation to slice media
- */
-export type SliceOp = Op & {
 
-	slices: MediaSlice[],
-
-	/// whether media has audio
-	audio?: boolean
-
-	/// whether media has video
-	video?: boolean
-
+export type NodeSliceOp = Omit<WebSliceOp, 'file'> & {
+	filePath: string,
 }
-

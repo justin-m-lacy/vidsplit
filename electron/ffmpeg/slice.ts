@@ -1,5 +1,9 @@
-import type { MediaSlice } from "../../shared/edits";
 import { quoteStr, waitSpawn } from "../util/files";
+
+type SliceRange = {
+	from: number,
+	to: number
+}
 
 /**
  * select filter graph subtracks to final output tracks.
@@ -16,7 +20,7 @@ function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
  * @param slices 
  * @returns 
  */
-function makeConcat(slices: MediaSlice[], audio?: boolean, outTrack = 'out') {
+function makeConcat(slices: SliceRange[], audio?: boolean, outTrack = 'out') {
 
 	if (audio) {
 		// collect input track names.
@@ -42,7 +46,7 @@ const trimNum = (n: number) => {
  * @param outnum 
  * @returns 
  */
-function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
+function makeTrimPart(s: SliceRange, outnum: number, audio?: boolean) {
 
 	const from = (s.from);
 	const to = (s.to);
@@ -69,7 +73,7 @@ function makeTrimPart(s: MediaSlice, outnum: number, audio?: boolean) {
  * to optimize encoding.
  * @param slices 
  */
-function optimizeCuts(slices: MediaSlice[]) {
+function optimizeCuts(slices: SliceRange[]) {
 
 	let minTime: number = Number.MAX_SAFE_INTEGER;
 	let maxTime: number = Number.MIN_SAFE_INTEGER;
@@ -95,7 +99,7 @@ function optimizeCuts(slices: MediaSlice[]) {
 	}
 }
 
-export async function trimMedia(slice: MediaSlice, inUrl: string, outUrl: string) {
+export async function saveSlice(slice: SliceRange, inUrl: string, outUrl: string) {
 
 	const args: string[] = ['-progress pipe:1', '-y'];
 
@@ -115,7 +119,7 @@ export async function trimMedia(slice: MediaSlice, inUrl: string, outUrl: string
 // -t duration
 // -to to duration
 export function buildSliceCmd(
-	slices: MediaSlice[],
+	slices: SliceRange[],
 	inUrl: string,
 	outUrl: string,
 	audio: boolean = true) {

@@ -16,7 +16,7 @@ const fromElm = shallowRef<HTMLElement>();
 const toElm = shallowRef<HTMLElement>();
 
 const tl = useTimeline(props.media, scrubElm, barElm);
-const { scrubPct, toLocalPct: toBarPct } = tl;
+const { scrubPct, toBarPct } = tl;
 useSliceDrag(props.media, fromElm, toElm, barElm);
 
 /**
