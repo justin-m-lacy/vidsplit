@@ -10,9 +10,7 @@ const props = defineProps<{
 	media: MediaState
 }>();
 
-/**
- * selected cutting point.
- */
+/// selected cutting point.
 const curCut = shallowRef<MediaCut | null>(null);
 
 /**
@@ -71,14 +69,14 @@ async function saveSplits() {
 
 			<button type="button"
 					class="disabled:opacity-50"
-					:disabled="edit.cuts.length == 0"
+					:disabled="Object.keys(edit.cuts).length == 0"
 					title="Split video"
 					@click="saveSplits">
 				<Download />
 			</button>
 		</div>
 		<SplitBar :edit="edit" :media="media"
-				  :v-model:cur-cut="curCut"
+				  v-model:cur-cut="curCut"
 				  @new-cut="addCut($event)" />
 
 	</div>

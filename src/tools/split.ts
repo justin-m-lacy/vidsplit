@@ -25,55 +25,69 @@ const SplitId = Symbol('split');
 
 function makeSplitEdit(media: MediaState) {
 
-	const cuts = ref<MediaCut[]>([]);
+	const cuts = ref<Record<string, MediaCut>>(Object.create(null));
 
-	const addCut = (pct: number): MediaCut | null => {
-
-		// don't allow duplicate percents.
-		if (cuts.value.some(v => v.pct == pct)) {
-			return null;
+	const findCut = (pct: number) => {
+		const vals = cuts.value;
+		for (const k in vals) {
+			if (vals[k].pct == pct) return vals[k]
 		}
+		return null;
+	}
+
+	/**
+	 * convert cut percents to array of time based cuts.
+	 */
+	const toTimeArray = (cuts: Record<string, MediaCut>, media: MediaState) => {
+
+		const duration = media.duration;
+		const a: { id: string, t: number }[] = [];
+
+		for (const k in cuts) {
+
+			const t = duration * cuts[k].pct;
+
+			if (!a.some(v => v.t == t)) {
+				a.push({
+					id: cuts[k].id,
+					t
+				});
+			}
+
+		}
+
+		return a.sort((a, b) => a.t - b.t);
+
+	}
+
+	const addCut = (pct: number): MediaCut => {
+
+		const find = findCut(pct);
+		// don't allow duplicate percents.
+		if (find) return find;
 
 		const v = {
 			id: window.crypto.randomUUID(),
 			pct
 		}
-		cuts.value.push(v)
-
-		return v;
+		return cuts.value[v.id] = v;
 	}
 
 	const removeCut = (cut: MediaCut) => {
-		const id = cut.id;
-		cuts.value = cuts.value.filter(s => s.id !== id);
-
+		delete cuts.value[cut.id];
 	}
 
 	/// apply operation.
 	const apply = async () => {
 
-		if (cuts.value.length === 0) return;
-
-		const duration = media.duration;
-
-		const curCuts = cuts.value;
-		curCuts.sort((a, b) => a.pct - b.pct);
-		// remove any potential duplicate positions.
-		for (let i = curCuts.length - 1; i >= 1; i--) {
-			if (curCuts[i].pct == curCuts[i - 1].pct) {
-				curCuts.splice(i, 1);
-			}
-		}
+		const curCuts = toTimeArray(cuts.value, media);
 
 		// convert from percents to time in seconds.
 		return window.electron.splitMedia({
 
 			file: media.file!,
-			duration,
-			cuts: cuts.value.map(v => ({
-				id: v.id,
-				t: duration * v.pct
-			}))
+			duration: media.duration,
+			cuts: curCuts,
 
 		});
 	}
@@ -84,7 +98,6 @@ function makeSplitEdit(media: MediaState) {
 		apply,
 		media,
 		get cuts() { return cuts.value },
-		set cuts(v: MediaCut[]) { cuts.value = v; },
 		addCut,
 		removeCut
 	};

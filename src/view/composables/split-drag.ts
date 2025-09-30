@@ -12,7 +12,7 @@ import { useEventListener } from "@vueuse/core";
 export function useSplitDrags(
 	tl: Timeline,
 	edit: SplitEdit,
-	cutElms: Ref<HTMLElement[] | null>,
+	cutElms: Ref<ComponentPublicInstance[] | null>,
 	curCut: Ref<MediaCut | null>
 ) {
 
@@ -22,22 +22,22 @@ export function useSplitDrags(
 	// element currently being dragged.
 	const curDragElm = shallowRef<HTMLElement | null>(null);
 
-	watch(edit.cuts, (cuts) => {
+	/**
+	 * can't watch elements because watcher isn't deep.
+	 */
+	watch(edit.cuts, (_) => {
 
+		// wait tick for elements to mount.
 		nextTick(() => {
 			const elms = cutElms.value;
 			if (!elms) return;
 
-			for (let i = 0; i < cuts.length; i++) {
+			for (let i = 0; i < elms.length; i++) {
 
-				elms[i].id = cuts[i].id;
-				if (hasEvents[cuts[i].id]) {
-					//console.log(`skip has events: ${i} / ${cuts[i].id}`);
-					continue;
-
-				}
-				hasEvents[cuts[i].id] = true;
-				useEventListener(elms[i], 'mousedown', startDrag, { capture: true });
+				const el = elms[i].$el;
+				if (!el || hasEvents[el.id]) continue;
+				hasEvents[el.id] = true;
+				useEventListener(el, 'mousedown', startDrag, { capture: true });
 
 			}
 		});
@@ -47,7 +47,7 @@ export function useSplitDrags(
 
 		const targ = e.currentTarget as HTMLElement;
 
-		const cut = edit.cuts.find(v => v.id == targ.id);
+		const cut = edit.cuts[targ.id];
 		if (!cut) return;
 
 		curCut.value = cut;
@@ -68,7 +68,7 @@ export function useSplitDrags(
 			return;
 		}
 
-		const cut = edit.cuts.find(v => v.id == elm.id);
+		const cut = edit.cuts[elm.id];
 		if (!cut) {
 			endDrag();
 			return;

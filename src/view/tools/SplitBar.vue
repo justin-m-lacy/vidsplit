@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { MediaCut, SplitEdit } from '@/tools/split';
-import CutPoint from '@/view/components/CutPoint';
+import CutPoint from '@/view/components/CutPoint.vue';
 import { useSplitDrags } from '@/view/composables/split-drag';
+import { ComponentPublicInstance } from 'vue';
 import ViewSize from '../components/ViewSize.vue';
 import { MediaState } from '../composables/media-state';
 import { useTimeline } from '../composables/timeline';
@@ -17,7 +18,7 @@ const emit = defineEmits<{
 
 const barElm = shallowRef<HTMLElement>();
 const scrubElm = shallowRef<HTMLElement>();
-const cutElms = useTemplateRef<HTMLElement[] | null>('cutElms');
+const cutElms = useTemplateRef<ComponentPublicInstance[] | null>('cutElms');
 
 const curCut = defineModel<MediaCut | null>('curCut', { default: null });
 
@@ -28,6 +29,9 @@ const { scrubPct, toBarPct } = tl;
 useSplitDrags(tl, props.edit, cutElms, curCut)
 
 function onDblClickBar(e: MouseEvent) {
+	if (e.target !== barElm.value && e.target !== scrubElm.value) {
+		return;
+	}
 	emit('newCut', tl.posToGlobalPct(e.clientX));
 }
 
@@ -36,9 +40,7 @@ function onDblClickBar(e: MouseEvent) {
  * @param t 
  */
 function getPos(pct: number) {
-	return {
-		left: `${100 * pct}%`
-	}
+	return { left: `${100 * pct}%` }
 }
 </script>
 <template>
@@ -50,8 +52,8 @@ function getPos(pct: number) {
 
 			<CutPoint ref="cutElms" v-for="cut of edit.cuts"
 					  :id="cut.id" :key="cut.id"
-					  :selected="cut.id == curCut?.id"
 					  class="absolute z-10 h-7 min-h-4"
+					  :selected="cut.id == curCut?.id"
 					  :style="getPos(toBarPct(cut.pct))" />
 
 			<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
