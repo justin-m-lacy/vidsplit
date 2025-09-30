@@ -6,9 +6,8 @@ contextBridge.exposeInMainWorld('electron', {
 
 	sliceMedia: (edit: WebSliceOp) => {
 
-		const path = webUtils.getPathForFile(edit.file)
 		return ipcRenderer.invoke('sliceMedia', {
-			filePath: path,
+			filePath: webUtils.getPathForFile(edit.file),
 			slices: edit.slices,
 			audio: edit.audio,
 			video: edit.video
@@ -17,9 +16,8 @@ contextBridge.exposeInMainWorld('electron', {
 	},
 	splitMedia: (edit: WebSplitOp) => {
 
-		const path = webUtils.getPathForFile(edit.file)
 		return ipcRenderer.invoke('splitMedia', {
-			filePath: path,
+			filePath: webUtils.getPathForFile(edit.file),
 			duration: edit.duration,
 			cuts: edit.cuts,
 			audio: edit.audio,

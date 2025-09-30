@@ -39,6 +39,12 @@ export const useEditTool = defineStore('editTool', () => {
 		toggleTool(SplitTool, media)
 	}
 
+	async function applyEdit(edit: TMediaEdit) {
+
+		await edit.apply();
+
+	}
+
 	return {
 		curEdit,
 		setSliceMode,
@@ -47,6 +53,7 @@ export const useEditTool = defineStore('editTool', () => {
 		toggleTool,
 		beginEdit,
 		clearTool,
+		applyEdit
 	}
 
 });
