@@ -8,14 +8,14 @@ const barElm = shallowRef<HTMLElement>();
 
 const showBar = shallowRef<boolean>(false);
 const { dragging } = useBarSlider(barElm, volume, true);
+
 </script>
 <template>
 	<div class="flex justify-center items-center relative p-1 select-none"
 		 title="Volume"
 		 @mouseover="showBar = true" @mouseleave="showBar = false">
 
-
-		<Transition mode="in-out" @click="muted = !muted">
+		<Transition mode="in-out" class="z-10" @click="muted = !muted;">
 			<VolumeX class="absolute -top-full" v-if="muted" />
 			<Volume2 class="absolute -top-full" v-else-if="volume > 0.5" />
 			<Volume1 class="absolute -top-full" v-else-if="volume > 0" />
