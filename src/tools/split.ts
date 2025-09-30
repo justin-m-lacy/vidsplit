@@ -25,19 +25,22 @@ const SplitId = Symbol('split');
 
 function makeSplitEdit(media: MediaState) {
 
-	const cuts = shallowRef<MediaCut[]>([]);
+	const cuts = ref<MediaCut[]>([]);
 
-	const addCut = (pct: number) => {
+	const addCut = (pct: number): MediaCut | null => {
 
 		// don't allow duplicate percents.
 		if (cuts.value.some(v => v.pct == pct)) {
-			return;
+			return null;
 		}
 
-		cuts.value.push({
+		const v = {
 			id: window.crypto.randomUUID(),
 			pct
-		})
+		}
+		cuts.value.push(v)
+
+		return v;
 	}
 
 	const removeCut = (cut: MediaCut) => {
