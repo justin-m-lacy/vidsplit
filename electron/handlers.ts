@@ -1,4 +1,4 @@
-import { dialog, ipcMain, type App, type IpcMain } from "electron";
+import { dialog, ipcMain, type App, type IpcMain, type WebContents } from 'electron';
 import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
@@ -32,7 +32,7 @@ export function handleOpenMedia() {
 
 export function handleSlice(ipcMain: IpcMain, app: App) {
 
-	ipcMain.handle('sliceMedia', async (_, op: NodeSliceOp) => {
+	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
 
 		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
 		if (dialogRes.canceled) {
@@ -45,6 +45,8 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
 
+		const updates = createUpdaters(evt.sender, op.id);
+
 		if (op.slices.length === 1) {
 			return await saveSlice(op.slices[0], inPath, outPath);
 		}
@@ -56,7 +58,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 		// copy parts to temp files.
 		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSlice(op.slices[i], inPath, tmpFile);
+			return saveSlice(op.slices[i], inPath, tmpFile, updates[i]);
 		}));
 
 		await concatMedia(tmpFiles, outPath, tempDir);
@@ -73,15 +75,57 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 }
 
+/**
+ * 
+ * @param to 
+ * @param id 
+ * @param parts - number of separate parts opertation is broken into.
+ * @returns 
+ */
+function createUpdaters(to: WebContents, id: string, parts: number = 1) {
+
+	// single updated.
+	if (parts <= 1) {
+		return [(cur: number, tot: number) => {
+			to.send('progress', id, cur, tot);
+		}]
+	}
+
+	let total = 0;
+	let current = 0;
+
+	// current/total for each sub-part.
+	const subTotals = new Array<number>(parts).fill(0);
+	const subProgs = new Array<number>(parts).fill(0);
+
+	return subProgs.map((_, i) => {
+
+		// update sub current, sub total.
+		return (subCur, subTot) => {
+
+			current += (subCur - subProgs[i]);
+			total += (subTot - subTotals[i]);
+
+			subProgs[i] = subCur;
+			subTotals[i] = subTot;
+
+			to.send('progress', id, current, total);
+
+		}
+
+	});
+
+}
+
 export function handleSplit(ipcMain: IpcMain, app: App) {
 
-	ipcMain.handle('splitMedia', async (_, op: NodeSplitOp) => {
+	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
 
+		// pick save dir?
 		/*const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
 		if (dialogRes.canceled) {
 			return false;
 		}*/
-
 		const inPath = op.filePath;
 		const baseDir = path.dirname(inPath);
 
@@ -90,6 +134,8 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		const cuts = op.cuts;
 		const saves: Promise<string>[] = [];
+
+		const updates = createUpdaters(evt.sender, op.id);
 
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
@@ -102,7 +148,8 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 					from: 0, to: sliceEnd
 				},
 				inPath,
-				path.join(baseDir, `${baseName}-${i}${ext}`)
+				path.join(baseDir, `${baseName}-${i}${ext}`),
+				updates[i]
 			));
 			if (i > 0) sliceEnd = cuts[i - 1].t
 

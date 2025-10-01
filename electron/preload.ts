@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electron', {
 	sliceMedia: (edit: WebSliceOp) => {
 
 		return ipcRenderer.invoke('sliceMedia', {
+			id: edit.id,
 			filePath: webUtils.getPathForFile(edit.file),
 			slices: edit.slices,
 			audio: edit.audio,
@@ -21,6 +22,7 @@ contextBridge.exposeInMainWorld('electron', {
 	splitMedia: (edit: WebSplitOp) => {
 
 		return ipcRenderer.invoke('splitMedia', {
+			id: edit.id,
 			filePath: webUtils.getPathForFile(edit.file),
 			duration: edit.duration,
 			cuts: edit.cuts,

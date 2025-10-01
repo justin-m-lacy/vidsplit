@@ -86,13 +86,12 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch m-1 gap-y-2 w-3/5">
+	<div class="flex flex-col items-center m-1 gap-y-2 w-3/5">
 		<div class="self-center relative m-1 border border-black w-full"
-			 @drop.prevent="fileDrop" @dragover="fileDrag">
+			 @drop.prevent="fileDrop" @dragover="fileDrag" @click="clickVideo">
 			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
-				   :src="mediaStore.sourceUrl"
-				   @click="clickVideo">
+				   :src="mediaStore.sourceUrl">
 			</video>
 			<Upload v-if="!mediaStore.sourceUrl"
 					class="absolute top-1/2 left-1/2 pointer-events-none select-none
@@ -109,24 +108,23 @@ async function onFilePicked(event: Event) {
 				<Upload />
 			</button>
 		</MediaControls>
-		<div class="flex gap-x-0.5 w-full items-center justify-center">
 
-			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
-						@apply="tools.applyEdit($event)"
-						class="flex items-center grow rounded-md max-w-5/6"
-						:edit="tools.curEdit"
-						:media="media" />
-			<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
-						@apply="tools.applyEdit($event)"
-						class="flex items-center grow rounded-md max-w-5/6"
-						:edit="tools.curEdit"
-						:media="media" />
+		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
+					@apply="tools.applyEdit($event)"
+					class="flex justify-center items-center grow w-full max-w-11/12"
+					:edit="tools.curEdit"
+					:media="media" />
+		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
+					@apply="tools.applyEdit($event)"
+					class="flex justify-stretch items-center grow max-w-11/12"
+					:edit="tools.curEdit"
+					:media="media" />
 
-			<ScrubBar v-else-if="videoElm"
-					  class="flex items-center grow max-w-5/6"
-					  :media="media" />
+		<ScrubBar v-else-if="videoElm"
+				  class="flex items-center justify-center grow max-w-11/12"
+				  :media="media" />
 
-		</div>
+
 		<input ref="fileInput" type="file" accept="video/*"
 			   class="hidden" @change="onFilePicked">
 	</div>
