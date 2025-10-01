@@ -13,7 +13,7 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 
 </script>
 <template>
-	<div class="flex items-center gap-x-1 text-xs">
+	<div class="flex items-center gap-x-1 text-xs w-full">
 		<Timestamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barRef" id="scrubBar"
 			 class="flex items-center w-full min-h-[6px] relative bg-sky-200 border-gray-800 select-none">
