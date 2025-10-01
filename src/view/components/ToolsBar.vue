@@ -23,12 +23,12 @@ async function doSnapshot() {
 
 function setSliceMode() {
 
-	if (!props.media?.hasMedia) return;
+	if (!props.media?.hasSource) return;
 	tools.setSliceMode(props.media);
 }
 function setSplitMode() {
 
-	if (!props.media?.hasMedia) return;
+	if (!props.media?.hasSource) return;
 	tools.setSplitMode(props.media);
 }
 
@@ -46,13 +46,13 @@ function setSplitMode() {
 				:class="IsSliceEdit(tools.curEdit) ?
 					'bg-amber-500/40 border border-amber-700' :
 					''"
-				:disabled="!media?.hasMedia"
+				:disabled="!media?.hasSource"
 				@click="setSliceMode">✂</button>
 		<button type="button" title="Split Media"
 				class="flex justify-center disabled:opacity-50 p-0.5 text-sm"
 				:class="IsSplitEdit(tools.curEdit) ?
 					'bg-amber-500/40 border border-amber-700' : ''"
-				:disabled="!media?.hasMedia"
+				:disabled="!media?.hasSource"
 				@click="setSplitMode">
 			<SquareSplitHorizontal />
 		</button>

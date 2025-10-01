@@ -11,6 +11,10 @@ const props = defineProps<{
 	media: MediaState
 }>();
 
+const emit = defineEmits<{
+	(e: 'apply', edit: SliceEdit): void;
+}>();
+
 const snapshots = useSnapshot();
 
 /**
@@ -108,14 +112,6 @@ function addSlice() {
 	}
 }
 
-async function saveSlice() {
-	try {
-		await props.edit.apply();
-	} catch (err) {
-		console.warn(err);
-	}
-}
-
 </script>
 <template>
 	<div class="flex flex-col w-full items-center gap-y-3">
@@ -144,7 +140,7 @@ async function saveSlice() {
 					class="disabled:opacity-50"
 					:disabled="edit.slices.length == 0"
 					title="Save sliced clips"
-					@click="saveSlice">
+					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>

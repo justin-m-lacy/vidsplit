@@ -10,6 +10,11 @@ const props = defineProps<{
 	media: MediaState
 }>();
 
+
+const emit = defineEmits<{
+	(e: 'apply', edit: SplitEdit): void;
+}>();
+
 /// selected cutting point.
 const curCut = shallowRef<MediaCut | null>(null);
 
@@ -32,14 +37,6 @@ function deleteCut() {
 	}
 
 
-}
-
-async function saveSplits() {
-	try {
-		await props.edit.apply();
-	} catch (err) {
-		console.warn(err);
-	}
 }
 
 </script>
@@ -71,7 +68,7 @@ async function saveSplits() {
 					class="disabled:opacity-50"
 					:disabled="Object.keys(edit.cuts).length == 0"
 					title="Split video"
-					@click="saveSplits">
+					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>

@@ -42,8 +42,7 @@ async function loadFile(files: FileList) {
 
 function clickVideo(e: MouseEvent) {
 
-	if (media.hasMedia) {
-
+	if (media.hasSource) {
 		if (media.playing) {
 			media.pause();
 		} else {
@@ -95,12 +94,9 @@ async function onFilePicked(event: Event) {
 				   :src="mediaStore.sourceUrl"
 				   @click="clickVideo">
 			</video>
-			<div v-if="!mediaStore.sourceUrl"
-				 class="absolute top-0 left-0
-				 	w-full h-full flex justify-center items-center"
-				 @click.prevent="fileInput?.click()">
-				<Upload />
-			</div>
+			<Upload v-if="!mediaStore.sourceUrl"
+					class="absolute top-1/2 left-1/2 pointer-events-none select-none
+				 	 flex justify-center items-center" />
 		</div>
 		<MediaControls :state="media"
 					   class="flex items-center w-full mx-4">
@@ -116,10 +112,12 @@ async function onFilePicked(event: Event) {
 		<div class="flex gap-x-0.5 w-full items-center justify-center">
 
 			<SliceTools v-if="IsSliceEdit(tools.curEdit)"
+						@apply="tools.applyEdit($event)"
 						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
 						:media="media" />
 			<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
+						@apply="tools.applyEdit($event)"
 						class="flex items-center grow rounded-md max-w-5/6"
 						:edit="tools.curEdit"
 						:media="media" />
