@@ -103,7 +103,8 @@ async function onFilePicked(event: Event) {
 			 @drop.prevent="fileDrop" @dragover="fileDrag" @click="clickVideo">
 			<video ref="videoElm" class="w-full h-full"
 				   autoplay :controls="false"
-				   :src="mediaStore.sourceUrl">
+				   :src="mediaStore.sourceUrl"
+				   @click="clickVideo">
 			</video>
 			<Upload v-if="!mediaStore.sourceUrl"
 					class="absolute top-1/2 left-1/2 pointer-events-none select-none
@@ -120,7 +121,7 @@ async function onFilePicked(event: Event) {
 				<Upload />
 			</button>
 		</MediaControls>
-
+    
 		<div v-if="curTask" class="flex items-center justify-center
 			w-full gap-x-1 h-3">
 			<div class="h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
@@ -151,7 +152,6 @@ async function onFilePicked(event: Event) {
 		<ScrubBar v-else-if="videoElm"
 				  class="flex items-center justify-center grow max-w-11/12"
 				  :media="media" />
-
 
 		<input ref="fileInput" type="file" accept="video/*"
 			   class="hidden" @change="onFilePicked">
