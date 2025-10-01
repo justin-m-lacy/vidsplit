@@ -9,8 +9,8 @@ import { useMediaState } from '@/view/composables/media-state';
 import SplitTools from '@/view/tools/SplitTools.vue';
 import { Upload, X } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
-import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
+import ScrubBar from '../tools/ScrubBar.vue';
 import SliceTools from '../tools/SliceTools.vue';
 
 const videoElm = shallowRef<HTMLVideoElement>();

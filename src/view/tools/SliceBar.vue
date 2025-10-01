@@ -46,10 +46,11 @@ function getPos(pct: number) {
 	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-5">
 		<div ref="barElm"
-			 class="relative flex items-center w-full grow min-h-1 border-l-0 border-r-0 border-red-700 bg-red-500">
+			 class="relative flex items-center w-full grow min-h-2 border border-l-0 border-r-0 
+			 border-red-500 bg-red-200 bg-repeat-x">
 
-			<div class="absolute min-h-2 h-2 bg-sky-200
-				select-none pointer-events-none "
+			<div class="absolute min-h-2 h-2 bg-sky-200/90
+				select-none pointer-events-none"
 				 :style="fillStyle(toBarPct(media.fromPct), toBarPct(media.toPct))">
 
 			</div>
@@ -69,11 +70,18 @@ function getPos(pct: number) {
 			 	border border-slate-500/80 bg-amber-500 shadow-sm"
 				 :style="getPos(toBarPct(media.toPct))"></div>
 
-			<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
+			<div ref="scrubElm" class="absolute w-[1px] h-4 min-h-4 -translate-x-1/2
 			border border-slate-700/70 bg-slate-400 rounded-xs shadow-sm"
 				 :style="getPos(scrubPct)">&nbsp;</div>
 
-
+			<div class="absolute w-full h-full pointer-events-none
+			border-l border-r border-red-500" :style="{
+				backgroundImage: `repeating-linear-gradient( 90deg,
+				#00000077,
+				transparent 1px,
+				transparent 15px )`
+			}">
+			</div>
 		</div>
 		<ViewSize :timeline="tl" />
 	</div>

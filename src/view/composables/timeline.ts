@@ -62,16 +62,10 @@ export function useTimeline(
 
 	watch(() => media.time, (t) => {
 		if (dragging.value) return;
-		if (media.duration != 0) {
-			scrubPct.value = toBarPct(t / media.duration);
-		} else {
-			scrubPct.value = 0;
-		}
+		scrubPct.value = media.duration > 0 ? toBarPct(t / media.duration) : 0;
 	});
 
-	const endZooming = useDebounceFn(() => {
-		zooming.value = false;
-	}, 500);
+	const endZooming = useDebounceFn(() => zooming.value = false, 500);
 
 	useEventListener('wheel', (e: WheelEvent) => {
 
