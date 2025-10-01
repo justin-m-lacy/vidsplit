@@ -17,7 +17,7 @@ const toElm = shallowRef<HTMLElement>();
 
 const tl = useTimeline(props.media, scrubElm, barElm);
 const { scrubPct, toBarPct } = tl;
-useSliceDrag(props.media, fromElm, toElm, barElm);
+useSliceDrag(tl, fromElm, toElm);
 
 /**
  * fill bar of active range.
@@ -55,7 +55,7 @@ function getPos(pct: number) {
 			</div>
 			<div class="absolute bg-green-500 min-h-2 h-2
 				select-none pointer-events-none"
-				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)"></div>
+				 :style="fillStyle(toBarPct(media.fromPct), scrubPct)"></div>
 
 			<div ref="fromElm"
 				 class="absolute z-10 w-2 h-5 min-h-4

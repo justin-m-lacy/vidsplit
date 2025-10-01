@@ -7,13 +7,13 @@ export type Timeline = ReturnType<typeof useTimeline>;
 /**
  * Enable select current play state on timeline.
  * @param media 
- * @param scrubRef 
+ * @param scrubElm 
  * @param barRef 
  * @returns 
  */
 export function useTimeline(
 	media: MediaState,
-	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,
+	scrubElm: MaybeRefOrGetter<HTMLElement | undefined>,
 	barRef: MaybeRefOrGetter<HTMLElement | undefined>
 ) {
 
@@ -56,7 +56,6 @@ export function useTimeline(
 			newOffset = 1 - (pct);
 		}
 
-
 		viewOffset.value = newOffset;
 
 	}
@@ -64,7 +63,7 @@ export function useTimeline(
 	watch(() => media.time, (t) => {
 		if (dragging.value) return;
 		if (media.duration != 0) {
-			scrubPct.value = (t / media.duration);
+			scrubPct.value = toBarPct(t / media.duration);
 		} else {
 			scrubPct.value = 0;
 		}
@@ -115,8 +114,7 @@ export function useTimeline(
 	 */
 	function posToBarPct(clientX: number) {
 		const bnds = toValue(barRef)?.getBoundingClientRect();
-		if (!bnds) return 0;
-		return minmax((clientX - bnds.left) / bnds.width, 0, 1);
+		return bnds ? minmax((clientX - bnds.left) / bnds.width, 0, 1) : 0;
 	}
 
 	/// SCRUB DRAGGING
@@ -151,7 +149,7 @@ export function useTimeline(
 	}
 
 	useEventListener(barRef, 'mousedown', startDrag,);
-	useEventListener(scrubRef, 'mousedown', startDrag,);
+	useEventListener(scrubElm, 'mousedown', startDrag,);
 
 	return {
 		media,

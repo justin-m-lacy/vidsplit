@@ -1,4 +1,4 @@
-import type { MediaState } from "@/view/composables/media-state";
+import { Timeline } from "@/view/composables/timeline";
 import { useEventListener } from "@vueuse/core";
 
 /**
@@ -9,10 +9,9 @@ import { useEventListener } from "@vueuse/core";
  * @param barElm 
  */
 export function useSliceDrag(
-	media: MediaState,
+	tl: Timeline,
 	fromElm: Ref<HTMLElement | undefined>,
-	toElm: Ref<HTMLElement | undefined>,
-	barElm: Ref<HTMLElement | undefined>
+	toElm: Ref<HTMLElement | undefined>
 ) {
 
 	// element currently being dragged.
@@ -41,13 +40,10 @@ export function useSliceDrag(
 			return;
 		}
 
-		const bnds = barElm.value!.getBoundingClientRect();
-		const pct = (e.clientX - bnds.left) / bnds.width;
-
 		if (cur == fromElm.value) {
-			media.fromPct = pct;
+			tl.media.fromPct = tl.posToGlobalPct(e.clientX);
 		} else if (cur == toElm.value) {
-			media.toPct = pct;
+			tl.media.toPct = tl.posToGlobalPct(e.clientX);
 		}
 
 	}

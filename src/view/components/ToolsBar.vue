@@ -23,13 +23,13 @@ async function doSnapshot() {
 
 function setSliceMode() {
 
-	if (!props.media?.hasSource) return;
+	if (!props.media) return;
 	tools.setSliceMode(props.media);
 }
 
 function setSplitMode() {
 
-	if (!props.media?.hasSource) return;
+	if (!props.media) return;
 	tools.setSplitMode(props.media);
 }
 
