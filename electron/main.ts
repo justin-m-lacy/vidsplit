@@ -14,8 +14,8 @@ const createWindow = () => {
 	});
 
 	handleOpenMedia();
-	handleSlice(ipcMain, app);
-	handleSplit(ipcMain, app);
+	handleSlice(ipcMain, win, app);
+	handleSplit(ipcMain, win, app);
 
 	win.loadFile(path.join(import.meta.dirname, './render/index.html'));
 

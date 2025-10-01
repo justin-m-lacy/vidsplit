@@ -1,4 +1,4 @@
-import { dialog, ipcMain, type App, type IpcMain, type WebContents } from 'electron';
+import { BrowserWindow, dialog, ipcMain, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
@@ -30,7 +30,7 @@ export function handleOpenMedia() {
 
 }
 
-export function handleSlice(ipcMain: IpcMain, app: App) {
+export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
 	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
 
@@ -45,10 +45,10 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
 
-		const updates = createUpdaters(evt.sender, op.id);
+		const updates = createUpdaters(win, op.id);
 
 		if (op.slices.length === 1) {
-			return await saveSlice(op.slices[0], inPath, outPath);
+			return await saveSlice(op.slices[0], inPath, outPath, updates[0]);
 		}
 
 		const tempDir = path.dirname(inPath);
@@ -82,14 +82,9 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
  * @param parts - number of separate parts opertation is broken into.
  * @returns 
  */
-function createUpdaters(to: WebContents, id: string, parts: number = 1) {
-
-	// single updated.
-	if (parts <= 1) {
-		return [(cur: number, tot: number) => {
-			to.send('progress', id, cur, tot);
-		}]
-	}
+function createUpdaters(win: BrowserWindow,
+	id: string,
+	parts: number = 1, trayUpdate: boolean = true) {
 
 	let total = 0;
 	let current = 0;
@@ -98,11 +93,14 @@ function createUpdaters(to: WebContents, id: string, parts: number = 1) {
 	const subTotals = new Array<number>(parts).fill(0);
 	const subProgs = new Array<number>(parts).fill(0);
 
+	const to = win.webContents;
+
 	return subProgs.map((_, i) => {
 
 		// update sub current, sub total.
 		return (subCur, subTot) => {
 
+			// rough estimate only. current sometimes > total
 			current += (subCur - subProgs[i]);
 			total += (subTot - subTotals[i]);
 
@@ -110,6 +108,9 @@ function createUpdaters(to: WebContents, id: string, parts: number = 1) {
 			subTotals[i] = subTot;
 
 			to.send('progress', id, current, total);
+			if (trayUpdate) {
+				win.setProgressBar(Math.min(current / total, 1));
+			}
 
 		}
 
@@ -117,7 +118,7 @@ function createUpdaters(to: WebContents, id: string, parts: number = 1) {
 
 }
 
-export function handleSplit(ipcMain: IpcMain, app: App) {
+export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
 	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
 
@@ -135,7 +136,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		const cuts = op.cuts;
 		const saves: Promise<string>[] = [];
 
-		const updates = createUpdaters(evt.sender, op.id);
+		const updates = createUpdaters(win, op.id);
 
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
