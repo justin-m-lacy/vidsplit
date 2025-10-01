@@ -7,7 +7,7 @@ import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
 import { useMediaState } from '@/view/composables/media-state';
 import SplitTools from '@/view/tools/SplitTools.vue';
-import { Upload } from 'lucide-vue-next';
+import { Upload, X } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
 import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
@@ -120,6 +120,20 @@ async function onFilePicked(event: Event) {
 				<Upload />
 			</button>
 		</MediaControls>
+
+		<div v-if="curTask" class="flex items-center justify-center
+			w-full gap-x-1 h-3">
+			<div class="h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
+				<div class="h-full bg-green-600 border-r-2 border-green-800/60"
+					 :style="{
+						width: curTask.total > 0 ? `${(100 * curTask.current / curTask.total)}%` : 0
+					}">
+				</div>
+			</div>
+			<button type="button" @click="curTask = null" class="h-10">
+				<X class="rounded-full border border-red-600 h-1/3 w-auto bg-red-600" />
+			</button>
+		</div>
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"

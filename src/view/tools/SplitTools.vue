@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { TEditTask } from '@/store/task-store';
 import { MediaCut, SplitEdit } from '@/tools/split';
-import TaskPercent from '@/view/components/TaskPercent.vue';
 import SplitBar from '@/view/tools/SplitBar.vue';
 import { Download, SplitSquareHorizontal, Trash } from 'lucide-vue-next';
 import { MediaState } from '../composables/media-state';
@@ -60,14 +59,12 @@ function deleteCut() {
 					@click="deleteCut">
 				<Trash />
 			</button>
-			<button v-if="!task || task.state == 'complete' || task.state == 'failed'"
-					type="button" class="disabled:opacity-50"
-					:disabled="Object.keys(edit.cuts).length == 0"
+			<button type="button" class="disabled:opacity-50"
+					:disabled="Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'inactive')"
 					title="Split video"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
-			<TaskPercent v-else :task="task" />
 		</div>
 		<SplitBar :edit="edit" :media="media"
 				  v-model:cur-cut="curCut"
