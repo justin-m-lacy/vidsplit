@@ -26,6 +26,7 @@ function setSliceMode() {
 	if (!props.media?.hasSource) return;
 	tools.setSliceMode(props.media);
 }
+
 function setSplitMode() {
 
 	if (!props.media?.hasSource) return;
