@@ -78,17 +78,14 @@ function makeSplitEdit(media: MediaState) {
 	}
 
 	/// apply operation.
-	const apply = async () => {
-
-		const curCuts = toTimeArray(cuts.value, media);
+	async function apply(this: SplitEdit) {
 
 		// convert from percents to time in seconds.
 		return window.electron.splitMedia({
-
-			file: media.file!,
-			duration: media.duration,
-			cuts: curCuts,
-
+			id: this.id,
+			file: this.media.file!,
+			duration: this.media.duration,
+			cuts: toTimeArray(this.cuts, this.media)
 		});
 	}
 

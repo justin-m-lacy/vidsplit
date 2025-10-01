@@ -20,12 +20,7 @@
     "forceConsistentCasingInFileNames": true,
     "lib": [
       "esnext"
-    ],
-    "paths": {
-      "#/*": [
-        "./electron/*"
-      ],
-    },
+    ]
   },
   "typeAcquisition": {
     "enable": true
@@ -37,6 +32,6 @@
   "include": [
     "electron",
     "shared",
-    "./electron/**/*.ts"
+    "electron/**/*.ts"
   ]
 }

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-type Task = {
+export type TEditTask = {
 
 	id: string,
 	promise: Promise<any>,
@@ -19,20 +19,23 @@ type Task = {
 
 export const useTaskStore = defineStore('progress', () => {
 
-	const tasks = ref<Record<string, Task>>(Object.create(null));
+	const tasks = ref<Record<string, TEditTask>>(Object.create(null));
 
-	window.electron.onProgress((id: string, cur: number, total: number) => {
+	// won't be available when testing only front-end.
+	if (window.electron) {
+		window.electron.onProgress((id: string, cur: number, total: number) => {
 
-		const task = tasks.value[id];
-		if (!task || task.state == 'complete' || task.state === 'failed') return;
-		task.state = 'active';
+			const task = tasks.value[id];
+			if (!task || task.state == 'complete' || task.state === 'failed') return;
+			task.state = 'active';
 
-		task.current = cur;
-		task.total = total;
+			task.current = cur;
+			task.total = total;
 
-	});
+		});
+	}
 
-	function add<T extends any>(id: string, promise: Promise<T>) {
+	function add<T extends any>(id: string, promise: Promise<T>): TEditTask {
 
 		const task = tasks.value[id] = shallowReactive({
 			id,

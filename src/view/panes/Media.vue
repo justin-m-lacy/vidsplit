@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { TMediaEdit } from '@/model/edit';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
+import { TEditTask, useTaskStore } from '@/store/task-store';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
 import { useMediaState } from '@/view/composables/media-state';
@@ -15,6 +17,10 @@ const videoElm = shallowRef<HTMLVideoElement>();
 
 const mediaStore = useMediaStore();
 
+const tasks = useTaskStore();
+
+const curTask = shallowRef<TEditTask | null>(null);
+
 const fileInput = shallowRef<HTMLInputElement>();
 
 const tools = useEditTool();
@@ -26,6 +32,12 @@ onMounted(() => {
 		tools.setSliceMode(media);
 	}
 })
+
+function applyEdit(edit: TMediaEdit) {
+
+	curTask.value = tasks.add(edit.id, edit.apply());
+
+}
 
 async function loadFile(files: FileList) {
 	try {
@@ -110,15 +122,17 @@ async function onFilePicked(event: Event) {
 		</MediaControls>
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
-					@apply="tools.applyEdit($event)"
+					@apply="applyEdit($event)"
 					class="flex justify-center items-center grow w-full max-w-11/12"
 					:edit="tools.curEdit"
-					:media="media" />
+					:media="media"
+					:task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
-					@apply="tools.applyEdit($event)"
+					@apply="applyEdit($event)"
 					class="flex justify-stretch items-center grow max-w-11/12"
 					:edit="tools.curEdit"
-					:media="media" />
+					:media="media"
+					:task="curTask" />
 
 		<ScrubBar v-else-if="videoElm"
 				  class="flex items-center justify-center grow max-w-11/12"

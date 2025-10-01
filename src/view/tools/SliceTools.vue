@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useSnapshot } from '@/store/snapshot';
+import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
+import TaskPercent from '@/view/components/TaskPercent.vue';
 import { Download, X } from 'lucide-vue-next';
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
@@ -8,7 +10,8 @@ import SliceBar from './SliceBar.vue';
 
 const props = defineProps<{
 	edit: SliceEdit,
-	media: MediaState
+	media: MediaState,
+	task?: TEditTask | null
 }>();
 
 const emit = defineEmits<{
@@ -136,13 +139,14 @@ function addSlice() {
 				<Timestamp :time="media.to" />
 			</span>
 
-			<button type="button"
-					class="disabled:opacity-50"
+			<button v-if="!task || task.state == 'complete' || task.state == 'failed'"
+					type="button" class="disabled:opacity-50"
 					:disabled="edit.slices.length == 0"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
+			<TaskPercent v-else :task="task" />
 		</div>
 		<SliceBar :edit="edit" :media="media" />
 		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"

@@ -1,5 +1,4 @@
 import { TEditTool, TMediaEdit } from "@/model/edit";
-import { useTaskStore } from "@/store/task-store";
 import { SliceTool } from "@/tools/slice";
 import { SplitTool } from "@/tools/split";
 import type { MediaState } from "@/view/composables/media-state";
@@ -40,10 +39,6 @@ export const useEditTool = defineStore('editTool', () => {
 		toggleTool(SplitTool, media)
 	}
 
-	function applyEdit(edit: TMediaEdit) {
-		return useTaskStore().add(edit.id, edit.apply());
-	}
-
 	return {
 		curEdit,
 		setSliceMode,
@@ -51,8 +46,7 @@ export const useEditTool = defineStore('editTool', () => {
 		tool: curTool,
 		toggleTool,
 		beginEdit,
-		clearTool,
-		applyEdit
+		clearTool
 	}
 
 });

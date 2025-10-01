@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { TEditTask } from '@/store/task-store';
 import { MediaCut, SplitEdit } from '@/tools/split';
+import TaskPercent from '@/view/components/TaskPercent.vue';
 import SplitBar from '@/view/tools/SplitBar.vue';
 import { Download, SplitSquareHorizontal, Trash } from 'lucide-vue-next';
-import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 
 const props = defineProps<{
 	edit: SplitEdit,
-	media: MediaState
+	media: MediaState,
+	// running task.
+	task?: TEditTask | null
 }>();
 
 
@@ -35,8 +38,6 @@ function deleteCut() {
 	if (cut.id == curCut.value?.id) {
 		curCut.value = null;
 	}
-
-
 }
 
 </script>
@@ -59,18 +60,14 @@ function deleteCut() {
 					@click="deleteCut">
 				<Trash />
 			</button>
-			<span class="flex items-center text-[0.7rem]">
-				<Timestamp :time="media.from" />&nbsp;to&nbsp;
-				<Timestamp :time="media.to" />
-			</span>
-
-			<button type="button"
-					class="disabled:opacity-50"
+			<button v-if="!task || task.state == 'complete' || task.state == 'failed'"
+					type="button" class="disabled:opacity-50"
 					:disabled="Object.keys(edit.cuts).length == 0"
 					title="Split video"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
+			<TaskPercent v-else :task="task" />
 		</div>
 		<SplitBar :edit="edit" :media="media"
 				  v-model:cur-cut="curCut"

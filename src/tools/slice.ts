@@ -57,12 +57,13 @@ function makeSliceEdit(media: MediaState) {
 	}
 
 	/// apply operation.
-	const apply = async () => {
+	async function apply(this: MediaSlice) {
 
 		if (slices.value.length === 0) return;
 
 		return window.electron.sliceMedia({
 
+			id: this.id,
 			file: media.file!,
 			slices: slices.value.concat(),
 
