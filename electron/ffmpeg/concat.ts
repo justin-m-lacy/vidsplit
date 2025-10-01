@@ -1,6 +1,6 @@
 import { unlink, writeFile } from 'fs/promises';
 import * as path from 'path';
-import { quoteStr, waitSpawn } from "../util/files";
+import { quoteStr, spawnFFMpeg } from "./files";
 
 export async function concatMedia(inFiles: string[], outFile: string, tmpDir: string) {
 
@@ -16,7 +16,7 @@ export async function concatMedia(inFiles: string[], outFile: string, tmpDir: st
 	args.push(`-f concat -safe 0 -i ${textFile}`);
 	args.push('-c copy', quoteStr(outFile))
 
-	await waitSpawn('ffmpeg', args);
+	await spawnFFMpeg('ffmpeg', args);
 
 	// delete text file.
 	unlink(textFile).catch();

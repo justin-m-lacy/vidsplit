@@ -46,7 +46,7 @@ export const useEditTool = defineStore('editTool', () => {
 		tool: curTool,
 		toggleTool,
 		beginEdit,
-		clearTool,
+		clearTool
 	}
 
 });

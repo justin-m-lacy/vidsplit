@@ -1,4 +1,4 @@
-import { quoteStr, waitSpawn } from "../util/files";
+import { quoteStr, spawnFFMpeg } from "./files";
 
 type SliceRange = {
 	from: number,
@@ -99,9 +99,22 @@ function optimizeCuts(slices: SliceRange[]) {
 	}
 }
 
-export async function saveSlice(slice: SliceRange, inUrl: string, outUrl: string) {
+/**
+ * 
+ * @param slice 
+ * @param inUrl 
+ * @param outUrl 
+ * @param progress - progress callback.
+ * @returns 
+ */
+export async function saveSlice(slice: SliceRange,
+	inUrl: string,
+	outUrl: string,
+	progress?: (cur: number, tot: number) => void
+) {
 
-	const args: string[] = ['-progress pipe:1', '-y'];
+	const args: string[] = ['-y -loglevel error'];
+	if (progress) args.push('-progress pipe:1');
 
 	args.push('-ss', `${slice.from}`, '-to', `${slice.to}`);
 	args.push(`-i ${quoteStr(inUrl)}`);
@@ -109,7 +122,7 @@ export async function saveSlice(slice: SliceRange, inUrl: string, outUrl: string
 	//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
 	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
 
-	await waitSpawn('ffmpeg', args);
+	await spawnFFMpeg('ffmpeg', args, progress, (slice.to - slice.from));
 
 	return outUrl;
 
@@ -118,13 +131,13 @@ export async function saveSlice(slice: SliceRange, inUrl: string, outUrl: string
 // -ss seek start
 // -t duration
 // -to to duration
-export function buildSliceCmd(
+function buildSliceCmd(
 	slices: SliceRange[],
 	inUrl: string,
 	outUrl: string,
 	audio: boolean = true) {
 
-	const args: string[] = ['-progress pipe:1', '-y'];
+	const args: string[] = ['-progress pipe:1', '-y -loglevel error'];
 
 	const times = optimizeCuts(slices);
 
@@ -137,7 +150,6 @@ export function buildSliceCmd(
 		return {
 			cmd: 'ffmpeg',
 			args
-
 		}
 
 	}

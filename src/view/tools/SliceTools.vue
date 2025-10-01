@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSnapshot } from '@/store/snapshot';
+import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
 import Timestamp from '../components/Timestamp.vue';
@@ -8,7 +9,12 @@ import SliceBar from './SliceBar.vue';
 
 const props = defineProps<{
 	edit: SliceEdit,
-	media: MediaState
+	media: MediaState,
+	task?: TEditTask | null
+}>();
+
+const emit = defineEmits<{
+	(e: 'apply', edit: SliceEdit): void;
 }>();
 
 const snapshots = useSnapshot();
@@ -108,14 +114,6 @@ function addSlice() {
 	}
 }
 
-async function saveSlice() {
-	try {
-		await props.edit.apply();
-	} catch (err) {
-		console.warn(err);
-	}
-}
-
 </script>
 <template>
 	<div class="flex flex-col w-full items-center gap-y-3">
@@ -140,11 +138,11 @@ async function saveSlice() {
 				<Timestamp :time="media.to" />
 			</span>
 
-			<button type="button"
-					class="disabled:opacity-50"
-					:disabled="edit.slices.length == 0"
+			<button type="button" class="disabled:opacity-50"
+					:disabled="edit.slices.length == 0
+						|| (task?.state == 'active' || task?.state == 'inactive')"
 					title="Save sliced clips"
-					@click="saveSlice">
+					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>

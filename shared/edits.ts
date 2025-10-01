@@ -1,5 +1,5 @@
 export type WebSplitOp = {
-
+	id: string,
 	file: File,
 	cuts: Array<{ id: string, t: number }>,
 
@@ -18,6 +18,7 @@ export type NodeSplitOp = Omit<WebSplitOp, 'file'> & {
 }
 
 export type WebSliceOp = {
+	id: string,
 	file: File,
 	slices: { from: number, to: number }[],
 	audio?: boolean,

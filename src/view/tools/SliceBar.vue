@@ -45,31 +45,32 @@ function getPos(pct: number) {
 
 	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-5">
-		<div ref="barElm" class="relative flex items-center w-full grow min-h-1 border border-red-700 bg-red-500">
+		<div ref="barElm"
+			 class="relative flex items-center w-full grow min-h-1 border-l-0 border-r-0 border-red-700 bg-red-500">
 
 			<div class="absolute min-h-2 h-2 bg-sky-200
 				select-none pointer-events-none "
 				 :style="fillStyle(toBarPct(media.fromPct), toBarPct(media.toPct))">
 
 			</div>
-			<div class="absolute bg-green-500 left-0 min-h-2 h-2
+			<div class="absolute bg-green-500 min-h-2 h-2
 				select-none pointer-events-none"
-				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)">&nbsp;</div>
+				 :style="fillStyle(toBarPct(media.fromPct), tl.scrubPct.value)"></div>
 
 			<div ref="fromElm"
 				 class="absolute z-10 w-2 h-5 min-h-4
 				 rounded-l-full rounded-r-none -translate-x-full
-			 	border border-slate-800 bg-amber-500 shadow-sm"
+			 	border border-slate-500/80 bg-amber-500 shadow-sm"
 				 :style="getPos(toBarPct(media.fromPct))">
 			</div>
 
 			<div ref="toElm"
 				 class="absolute z-10 w-2 h-5 min-h-4 rounded-r-full rounded-l-none
-			 	border border-slate-800 bg-amber-500 shadow-sm"
+			 	border border-slate-500/80 bg-amber-500 shadow-sm"
 				 :style="getPos(toBarPct(media.toPct))"></div>
 
 			<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
-			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
+			border border-slate-700/70 bg-slate-400 rounded-xs shadow-sm"
 				 :style="getPos(scrubPct)">&nbsp;</div>
 
 

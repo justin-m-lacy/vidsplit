@@ -1,4 +1,4 @@
-import { dialog, ipcMain, type App, type IpcMain } from "electron";
+import { BrowserWindow, dialog, ipcMain, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
@@ -30,9 +30,9 @@ export function handleOpenMedia() {
 
 }
 
-export function handleSlice(ipcMain: IpcMain, app: App) {
+export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
-	ipcMain.handle('sliceMedia', async (_, op: NodeSliceOp) => {
+	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
 
 		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
 		if (dialogRes.canceled) {
@@ -45,18 +45,22 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
 
+		const updates = createUpdaters(win, op.id);
+
 		if (op.slices.length === 1) {
-			return await saveSlice(op.slices[0], inPath, outPath);
+			await saveSlice(op.slices[0], inPath, outPath, updates[0]);
+			win.setProgressBar(0);
+			return outPath;
 		}
 
 		const tempDir = path.dirname(inPath);
-		const tmpFiles = op.slices.map((s, i) => {
+		const tmpFiles = op.slices.map((_, i) => {
 			return path.join(tempDir, baseName + '_' + i + `${ext}`);
 		});
 
 		// copy parts to temp files.
 		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSlice(op.slices[i], inPath, tmpFile);
+			return saveSlice(op.slices[i], inPath, tmpFile, updates[i]);
 		}));
 
 		await concatMedia(tmpFiles, outPath, tempDir);
@@ -67,21 +71,24 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 			console.warn(`error removing files: ${err}`);
 		}
 
+		win.setProgressBar(0);
+
 		return outPath;
 
 	});
 
 }
 
-export function handleSplit(ipcMain: IpcMain, app: App) {
 
-	ipcMain.handle('splitMedia', async (_, op: NodeSplitOp) => {
+export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
+	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
+
+		// pick save dir?
 		/*const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
 		if (dialogRes.canceled) {
 			return false;
 		}*/
-
 		const inPath = op.filePath;
 		const baseDir = path.dirname(inPath);
 
@@ -90,6 +97,8 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		const cuts = op.cuts;
 		const saves: Promise<string>[] = [];
+
+		const updates = createUpdaters(win, op.id);
 
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
@@ -102,7 +111,8 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 					from: 0, to: sliceEnd
 				},
 				inPath,
-				path.join(baseDir, `${baseName}-${i}${ext}`)
+				path.join(baseDir, `${baseName}-${i}${ext}`),
+				updates[i]
 			));
 			if (i > 0) sliceEnd = cuts[i - 1].t
 
@@ -110,8 +120,52 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		// copy parts to files.
 		await Promise.allSettled(saves);
+		win.setProgressBar(0);
 
 		return true;
+
+	});
+
+}
+
+/**
+ * 
+ * @param to 
+ * @param id 
+ * @param parts - number of separate parts opertation is broken into.
+ * @returns 
+ */
+function createUpdaters(win: BrowserWindow,
+	id: string,
+	parts: number = 1, trayUpdate: boolean = true) {
+
+	let total = 0;
+	let current = 0;
+
+	// current/total for each sub-part.
+	const subTotals = new Array<number>(parts).fill(0);
+	const subProgs = new Array<number>(parts).fill(0);
+
+	const to = win.webContents;
+
+	return subProgs.map((_, i) => {
+
+		// update sub current, sub total.
+		return (subCur, subTot) => {
+
+			// rough estimate only. current sometimes > total
+			current += (subCur - subProgs[i]);
+			total += (subTot - subTotals[i]);
+
+			subProgs[i] = subCur;
+			subTotals[i] = subTot;
+
+			to.send('progress', id, current, total);
+			if (trayUpdate) {
+				win.setProgressBar(Math.min(current / total, 1));
+			}
+
+		}
 
 	});
 

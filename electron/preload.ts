@@ -4,11 +4,15 @@ import type { WebSliceOp, WebSplitOp } from '../shared/edits';
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
 
+	onProgress(cb: (id: string, cur: number, total: number) => void) {
+		ipcRenderer.on('progress', (_evt, id, cur, total) => cb(id, cur, total));
+	},
+
 	sliceMedia: (edit: WebSliceOp) => {
 
-		const path = webUtils.getPathForFile(edit.file)
 		return ipcRenderer.invoke('sliceMedia', {
-			filePath: path,
+			id: edit.id,
+			filePath: webUtils.getPathForFile(edit.file),
 			slices: edit.slices,
 			audio: edit.audio,
 			video: edit.video
@@ -17,9 +21,9 @@ contextBridge.exposeInMainWorld('electron', {
 	},
 	splitMedia: (edit: WebSplitOp) => {
 
-		const path = webUtils.getPathForFile(edit.file)
 		return ipcRenderer.invoke('splitMedia', {
-			filePath: path,
+			id: edit.id,
+			filePath: webUtils.getPathForFile(edit.file),
 			duration: edit.duration,
 			cuts: edit.cuts,
 			audio: edit.audio,

@@ -194,7 +194,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		get src() { return mediaRef.value?.src },
 
-		get hasMedia() { return mediaRef.value != null },
+		get hasSource() { return mediaRef.value?.src != null && mediaRef.value.src.length > 0 },
 
 		/**
 		 * current play time.

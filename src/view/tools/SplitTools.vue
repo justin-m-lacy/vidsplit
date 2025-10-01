@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import { TEditTask } from '@/store/task-store';
 import { MediaCut, SplitEdit } from '@/tools/split';
 import SplitBar from '@/view/tools/SplitBar.vue';
 import { Download, SplitSquareHorizontal, Trash } from 'lucide-vue-next';
-import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 
 const props = defineProps<{
 	edit: SplitEdit,
-	media: MediaState
+	media: MediaState,
+	// running task.
+	task?: TEditTask | null
+}>();
+
+
+const emit = defineEmits<{
+	(e: 'apply', edit: SplitEdit): void;
 }>();
 
 /// selected cutting point.
@@ -29,16 +36,6 @@ function deleteCut() {
 	props.edit.removeCut(cut);
 	if (cut.id == curCut.value?.id) {
 		curCut.value = null;
-	}
-
-
-}
-
-async function saveSplits() {
-	try {
-		await props.edit.apply();
-	} catch (err) {
-		console.warn(err);
 	}
 }
 
@@ -62,16 +59,10 @@ async function saveSplits() {
 					@click="deleteCut">
 				<Trash />
 			</button>
-			<span class="flex items-center text-[0.7rem]">
-				<Timestamp :time="media.from" />&nbsp;to&nbsp;
-				<Timestamp :time="media.to" />
-			</span>
-
-			<button type="button"
-					class="disabled:opacity-50"
-					:disabled="Object.keys(edit.cuts).length == 0"
+			<button type="button" class="disabled:opacity-50"
+					:disabled="Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'inactive')"
 					title="Split video"
-					@click="saveSplits">
+					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>
