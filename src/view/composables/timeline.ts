@@ -6,13 +6,13 @@ export type Timeline = ReturnType<typeof useTimeline>;
 
 /**
  * Enable select current play state on timeline.
- * @param state 
+ * @param media 
  * @param scrubRef 
  * @param barRef 
  * @returns 
  */
 export function useTimeline(
-	state: MediaState,
+	media: MediaState,
 	scrubRef: MaybeRefOrGetter<HTMLElement | undefined>,
 	barRef: MaybeRefOrGetter<HTMLElement | undefined>
 ) {
@@ -48,7 +48,7 @@ export function useTimeline(
 
 		viewScale.value = pct;
 
-		const playPct = state.time / state.duration;
+		const playPct = media.time / media.duration;
 		let newOffset = playPct - scrubPct.value * pct;
 
 		if (newOffset < 0) newOffset = 0;
@@ -61,10 +61,10 @@ export function useTimeline(
 
 	}
 
-	watch(() => state.time, (t) => {
+	watch(() => media.time, (t) => {
 		if (dragging.value) return;
-		if (state.duration != 0) {
-			scrubPct.value = (t / state.duration);
+		if (media.duration != 0) {
+			scrubPct.value = (t / media.duration);
 		} else {
 			scrubPct.value = 0;
 		}
@@ -123,10 +123,10 @@ export function useTimeline(
 	function startDrag(e: MouseEvent) {
 
 		if (e.target != e.currentTarget) return;
-		if (!state.ready) return;
+		if (!media.ready) return;
 
 		scrubPct.value = posToBarPct(e.clientX);
-		state.time = state.duration * toGlobalPct(scrubPct.value);
+		media.time = media.duration * toGlobalPct(scrubPct.value);
 
 		dragging.value = true;
 
@@ -138,7 +138,7 @@ export function useTimeline(
 	function onDrag(e: MouseEvent) {
 
 		scrubPct.value = posToBarPct(e.clientX);
-		state.time = state.duration * toGlobalPct(scrubPct.value);
+		media.time = media.duration * toGlobalPct(scrubPct.value);
 
 	}
 
@@ -154,6 +154,7 @@ export function useTimeline(
 	useEventListener(scrubRef, 'mousedown', startDrag,);
 
 	return {
+		media,
 		scrubPct,
 		viewScale,
 		viewOffset,

@@ -55,6 +55,8 @@ export function useSplitDrags(
 		curDragElm.value = targ;
 		e.stopPropagation();
 
+		tl.media.time = cut.pct * tl.media.duration;
+
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
 
@@ -74,6 +76,7 @@ export function useSplitDrags(
 			return;
 		}
 		cut.pct = tl.posToGlobalPct(e.clientX);
+		tl.media.time = cut.pct * tl.media.duration;
 
 	}
 
