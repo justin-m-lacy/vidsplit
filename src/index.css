@@ -3,4 +3,9 @@
 @theme {
 	--text-xxs:0.6rem;
 	--spacing-25:100px;
+	--color-light-50:#FCFCFC;
+}
+
+body {
+	@apply bg-light-50;
 }

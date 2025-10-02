@@ -6,7 +6,7 @@ import Media from './panes/Media.vue';
 
 <template>
 
-  <div class="flex justify-center w-full cursor-auto select-none duration-200">
+  <div class="flex justify-center w-full cursor-auto select-none duration-200 bg-light-50">
     <Media />
   </div>
 </template>

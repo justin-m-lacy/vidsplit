@@ -98,16 +98,19 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-center m-1 gap-y-2 w-3/5">
-		<div class="self-center flex justify-center relative m-1  border"
-			 @drop.prevent="fileDrop" @dragover="fileDrag" @click="clickVideo">
-			<video ref="videoElm" class="h-auto max-h-96 w-auto"
+	<div class="flex flex-col items-center m-1 gap-y-2 w-3/5 mt-3">
+		<div class="transition-colors flex justify-center m-0 p-0
+		rounded-xs hover:bg-blue-100 items-center relative
+		 bg-blue-50"
+			 :class="media.hasSource ? '' : 'border'"
+			 @drop.prevent="fileDrop"
+			 @dragover="fileDrag" @click="clickVideo">
+			<video ref="videoElm" class="h-auto max-h-96 w-auto aspect-auto"
 				   autoplay :controls="false"
 				   :src="mediaStore.sourceUrl">
 			</video>
 			<Upload v-if="!mediaStore.sourceUrl"
-					class="absolute top-1/2 left-1/2 pointer-events-none select-none
-				 	 flex justify-center items-center" />
+					class="absolute translate-x-1/4 pointer-events-none" />
 		</div>
 		<MediaControls :state="media"
 					   class="flex items-center w-full mx-4">

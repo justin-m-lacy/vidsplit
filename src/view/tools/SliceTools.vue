@@ -121,7 +121,8 @@ function addSlice() {
 			<button type="button"
 					class="disabled:opacity-50 px-1 max-h-6
 					flex items-center justify-center text-sm
-					border border-green-800/40 rounded-sm bg-green-700/25"
+					border border-green-800/40 rounded-sm bg-green-700/25
+					hover:bg-green-700/40 transition-colors"
 					title="Set slice Start to current time"
 					@click="setStart">
 				&nbsp;
@@ -131,7 +132,8 @@ function addSlice() {
 			</button>
 			<button type="button"
 					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
-					border border-green-800/40 rounded-sm bg-green-700/25"
+					border border-green-800/40 rounded-sm bg-green-700/25
+					hover:bg-green-700/40 transition-colors"
 					title="Set slice End to current time"
 					@click="setEnd">&nbsp;
 				<div class="w-2 h-4 rounded-r-full rounded-l-none
@@ -140,7 +142,8 @@ function addSlice() {
 			</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/25"
+					border border-green-800/40 rounded-sm bg-green-700/25
+					hover:bg-green-700/40 transition-colors"
 					title="Add Slice"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">

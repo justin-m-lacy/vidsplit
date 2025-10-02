@@ -43,14 +43,15 @@ function setSplitMode() {
 			<Camera />
 		</button>
 		<button type="button" title="Create Slices"
-				class="flex justify-center disabled:opacity-50 p-0.5 text-sm"
+				class="flex justify-center disabled:opacity-50 p-0.5 text-sm
+				transition-colors"
 				:class="IsSliceEdit(tools.curEdit) ?
 					'bg-amber-500/40 rounded-md border border-amber-700' :
 					''"
 				:disabled="!media?.media"
 				@click="setSliceMode">✂</button>
 		<button type="button" title="Split Media"
-				class="flex justify-center items-center disabled:opacity-50 p-0.5 text-sm max-h-7"
+				class="flex justify-center transition-colors items-center disabled:opacity-50 p-0.5 text-sm max-h-7"
 				:class="IsSplitEdit(tools.curEdit) ?
 					'bg-amber-500/40 rounded-md border border-amber-700' : ''"
 				:disabled="!media?.media"

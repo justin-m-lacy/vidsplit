@@ -28,7 +28,7 @@ defineProps<{
 		<button type="button" @click="state.loop = !state.loop" title="Loop Playback"
 				:class="[
 					state.loop ? 'bg-blue-300/80' : 'bg-none',
-					'p-0.5 rounded-md',
+					'transition-colors p-0.5 rounded-md',
 					'outline-none',
 					'disabled:opacity-50'
 				]">
