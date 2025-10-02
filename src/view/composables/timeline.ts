@@ -115,6 +115,7 @@ export function useTimeline(
 	function startDrag(e: MouseEvent) {
 
 		if (e.target != e.currentTarget) return;
+		e.stopPropagation();
 		if (!media.ready) return;
 
 		scrubPct.value = posToBarPct(e.clientX);

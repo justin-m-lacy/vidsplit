@@ -17,7 +17,7 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 	<div class="flex items-center gap-x-1 text-xs w-full">
 		<Timestamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barRef" id="scrubBar"
-			 class="flex items-center w-full min-h-2 relative border bg-sky-200 border-sky-700 select-none">
+			 class="flex items-center w-full min-h-2 relative border bg-sky-200 border-sky-700">
 
 			<div class="absolute bg-green-500/75 h-full left-0
 				pointer-events-none select-none"
