@@ -119,18 +119,28 @@ function addSlice() {
 	<div class="flex flex-col w-full items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
-					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30"
-					title="Set Slice start to Current time"
-					@click="setStart">[Set Start]</button>
+					class="disabled:opacity-50 px-1 max-h-6
+					flex items-center justify-center text-sm
+					border border-green-800/40 rounded-sm bg-green-700/25"
+					title="Set slice Start to current time"
+					@click="setStart">
+				&nbsp;
+				<div class="w-2 h-4 rounded-l-full rounded-r-none
+			 	border bg-amber-400 shadow-sm" />
+				&nbsp;
+			</button>
+			<button type="button"
+					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
+					border border-green-800/40 rounded-sm bg-green-700/25"
+					title="Set slice End to current time"
+					@click="setEnd">&nbsp;
+				<div class="w-2 h-4 rounded-r-full rounded-l-none
+			 	border bg-amber-400 shadow-sm" />
+				&nbsp;
+			</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30"
-					title="Set Slice end to Current time"
-					@click="setEnd">[Set End]</button>
-			<button type="button"
-					class="disabled:opacity-50 p-[1px] text-sm
-					border border-green-800/40 rounded-sm bg-green-700/30"
+					border border-green-800/40 rounded-sm bg-green-700/25"
 					title="Add Slice"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">

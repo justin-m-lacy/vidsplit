@@ -47,8 +47,14 @@ function getPos(pct: number) {
 
 	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-6">
-		<div ref="barElm" class="relative flex items-center w-full grow min-h-2 border border-red-700 bg-red-500"
+		<div ref="barElm" class="relative flex items-center w-full grow min-h-2 border bg-sky-200 border-sky-700"
 			 @dblclick="onDblClickBar($event)">
+
+			<div class="absolute bg-green-500/75 h-full left-0
+				pointer-events-none select-none"
+				 :style="{
+					width: `${100 * tl.scrubPct.value}%`
+				}">&nbsp;</div>
 
 			<CutPoint ref="cutElms" v-for="cut of edit.cuts"
 					  :id="cut.id" :key="cut.id"
@@ -56,10 +62,18 @@ function getPos(pct: number) {
 					  :selected="cut.id == curCut?.id"
 					  :style="getPos(toBarPct(cut.pct))" />
 
-			<div ref="scrubElm" class="absolute w-2 h-4 min-h-4 -translate-x-1/2
+			<div ref="scrubElm" class="absolute w-[1px] h-4 min-h-4 -translate-x-1/2
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
 				 :style="getPos(scrubPct)">&nbsp;</div>
 
+			<div class="absolute w-full h-full pointer-events-none
+			border-l border-r border-sky-800" :style="{
+				backgroundImage: `repeating-linear-gradient( 90deg,
+				#00000077,
+				transparent 1px,
+				transparent 15px )`
+			}">
+			</div>
 
 		</div>
 		<ViewSize :timeline="tl" />

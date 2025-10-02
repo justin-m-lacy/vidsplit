@@ -9,8 +9,8 @@ import { useMediaState } from '@/view/composables/media-state';
 import SplitTools from '@/view/tools/SplitTools.vue';
 import { Upload, X } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
-import ScrubBar from '../components/ScrubBar.vue';
 import ToolsBar from '../components/ToolsBar.vue';
+import ScrubBar from '../tools/ScrubBar.vue';
 import SliceTools from '../tools/SliceTools.vue';
 
 const videoElm = shallowRef<HTMLVideoElement>();
@@ -99,9 +99,9 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col items-center m-1 gap-y-2 w-3/5">
-		<div class="self-center relative m-1 border border-black w-full"
+		<div class="self-center flex justify-center relative m-1  border"
 			 @drop.prevent="fileDrop" @dragover="fileDrag" @click="clickVideo">
-			<video ref="videoElm" class="w-full h-full"
+			<video ref="videoElm" class="h-auto max-h-96 w-auto"
 				   autoplay :controls="false"
 				   :src="mediaStore.sourceUrl">
 			</video>

@@ -27,8 +27,9 @@ defineProps<{
 		</button>
 		<button type="button" @click="state.loop = !state.loop" title="Loop Playback"
 				:class="[
-					state.loop ? 'outline-solid outline-2 outline-blue-700' : 'outline-none',
-					'p-0',
+					state.loop ? 'bg-blue-300/80' : 'bg-none',
+					'p-0.5 rounded-md',
+					'outline-none',
 					'disabled:opacity-50'
 				]">
 			<Repeat class=" stroke-2 w-5" />
