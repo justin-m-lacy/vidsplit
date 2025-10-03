@@ -3,6 +3,9 @@
 .vscode/
 *.code-workspace
 
+# Electron Forge output files
+out/
+
 # Eclipse project stuff.
 .idea/
 

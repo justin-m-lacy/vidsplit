@@ -104,6 +104,9 @@ export default async function ({ mode, command }) {
           data: {
             contentSecurityPolicy: securityPolicies.join("; "),
           },
+          ejsOptions: {
+            rmWhitespace: true,
+          }
         },
       }),
       vue(),

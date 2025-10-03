@@ -1,9 +1,8 @@
 import { execSync } from "child_process";
-import { quoteStr } from "../util/files";
 
 export function probeTypes(file: string) {
 
-	const cmd = `ffprobe -v error -show_entries stream=codec_type,codec_name -of default=noprint_wrappers=1:nokey=1 ` + quoteStr(file);
+	const cmd = `ffprobe -v error -show_entries stream=codec_type,codec_name -of default=noprint_wrappers=1:nokey=1 ` + `"${file}"`;
 
 	const result = execSync(cmd).toString('utf-8');
 
@@ -28,7 +27,7 @@ export function probeTypes(file: string) {
 
 export function probeFull(file: string) {
 
-	const cmd = 'ffprobe -v error -show_entries stream -of json ' + quoteStr(file);
+	const cmd = `ffprobe -v error -show_entries stream -of json "${file}"`;
 	const result = execSync(cmd);
 
 

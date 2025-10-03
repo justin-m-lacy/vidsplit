@@ -2,32 +2,28 @@ const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
+  name: "VidSplit",
+  ignore: [
+    ".vscode",
+    ".editorconfig",
+    ".gitignore"
+  ],
+  junk: true,
+  overwrite: true,
   packagerConfig: {
     asar: true,
   },
+  derefSymlinks: false,
   rebuildConfig: {},
   makers: [
     {
-      name: '@electron-forge/maker-squirrel',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
-    },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
-    },
+      name: '@electron-forge/maker-zip'
+    }
   ],
   plugins: [
     {
       name: '@electron-forge/plugin-auto-unpack-natives',
-      config: {},
+      config: {}
     },
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application

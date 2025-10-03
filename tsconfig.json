@@ -1,45 +1,11 @@
 {
-  "compilerOptions": {
-    "rootDir": "./",
-    "baseUrl": "./",
-    "outDir": "app",
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "incremental": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "allowJs": true,
-    "checkJs": false,
-    "sourceMap": true,
-    "noErrorTruncation": true,
-    "noUnusedParameters": false,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-    },
-  },
-  "typeAcquisition": {
-    "enable": true
-  },
-  "exclude": [
-    "assets/dist",
-    "node_modules"
-  ],
-  "include": [
-    "src/@types",
-    "./src",
-    "src/**/*.ts",
-    "src/**/*.vue",
-  ]
+	"files": [],
+	"references": [
+		{
+			"path": "./tsconfig.node.json"
+		},
+		{
+			"path": "./tsconfig.web.json"
+		}
+	]
 }

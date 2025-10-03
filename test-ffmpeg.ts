@@ -1,7 +1,5 @@
-import { execSync } from 'child_process';
 import path from "path";
 import { probeTypes } from './electron/ffmpeg/probe';
-import { buildSliceCmd } from "./electron/ffmpeg/slice";
 
 //testSlice();
 testProbe();
@@ -22,7 +20,7 @@ async function testSlice() {
 		const inFile = './test.mp4';
 		const outFile = path.resolve('./', 'out.mp4');
 
-		const cmd = await buildSliceCmd(
+		/*const cmd = await buildSliceCmd(
 			[
 				{ id: crypto.randomUUID(), from: 12, to: 14.5 },
 				{ id: crypto.randomUUID(), from: 1, to: 2 }
@@ -30,7 +28,7 @@ async function testSlice() {
 			inFile,
 			outFile);
 
-		execSync(cmd);
+		execSync(cmd);*/
 
 	} catch (err) {
 		console.error(err);

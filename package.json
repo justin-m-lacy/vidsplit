@@ -2,19 +2,24 @@
   "name": "vidsplit",
   "version": "1.0.0",
   "description": "",
-  "main": "app/main.js",
+  "main": "./out/main/main.js",
   "type": "module",
+  "build": {
+    "appId": "vidSplit"
+  },
   "scripts": {
-    "dev": "vite",
     "run": "electron .",
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev",
+    "prebuild": "electron-vite build",
     "preview": "vite preview",
     "build": "pnpm buildweb && pnpm buildapp",
     "buildapp": "pnpm buildnode && pnpm buildpreload",
     "buildnode": "esbuild electron/main.ts --format=esm --tsconfig=tsconfig.node.json --platform=node --bundle --outdir=app --packages=external",
     "buildpreload": "esbuild electron/preload.ts --format=cjs --platform=node --outdir=app --packages=external",
     "buildweb": "vite build",
+    "vdev": "electron-vite dev",
     "test-ffmpeg": "tsx test-ffmpeg.ts",
-    "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -22,7 +27,6 @@
   "author": "justin lacy",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@tailwindcss/vite": "^4.1.7",
     "@vueuse/core": "^10.7.1",
     "electron-squirrel-startup": "^1.0.1",

@@ -23,8 +23,20 @@ Run command:
 
 In terminal:
 
-`pnpm run`
+`pnpm run run`
 
+
+# Build
+
+Compile without bundling:
+
+In Terminal:
+
+`pnpm build`
+
+Optimized Build:
+
+`pnpm package`
 
 # FAQ
 
