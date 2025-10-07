@@ -3,6 +3,7 @@ import { MediaCut, SplitEdit } from '@/tools/split';
 import CutPoint from '@/view/components/CutPoint.vue';
 import { useSplitDrags } from '@/view/composables/split-drag';
 import { ComponentPublicInstance } from 'vue';
+import { formatTime } from '../../../shared/time';
 import ViewSize from '../components/ViewSize.vue';
 import { MediaState } from '../composables/media-state';
 import { useTimeline } from '../composables/timeline';
@@ -47,6 +48,7 @@ function getPos(pct: number) {
 
 	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-6">
+		<Timestamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barElm" class="relative flex items-center w-full grow min-h-2 border bg-sky-200 border-sky-700"
 			 @dblclick="onDblClickBar($event)">
 
@@ -76,6 +78,8 @@ function getPos(pct: number) {
 			</div>
 
 		</div>
+		<Timestamp :time="media.duration ?? 0" class="text-xxs" hide-ms
+				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ViewSize from '@/view/components/ViewSize.vue';
 import { useTimeline } from '@/view/composables/timeline';
+import { formatTime } from '../../../shared/time';
 import Timestamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 
@@ -37,6 +38,8 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 			}">
 			</div>
 		</div>
+		<Timestamp :time="media.duration ?? 0" class="text-xxs" hide-ms
+				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" class="text-xxs" />
 	</div>
 </template>
