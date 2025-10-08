@@ -26,7 +26,7 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
+      ]
     },
   },
   "typeAcquisition": {
@@ -37,6 +37,7 @@
     "node_modules"
   ],
   "include": [
+    "./shared/**/*.ts",
     "src/@types",
     "./src",
     "src/**/*.ts",
