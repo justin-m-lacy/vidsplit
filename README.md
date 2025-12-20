@@ -23,7 +23,7 @@ Run command:
 
 In terminal:
 
-`pnpm run`
+`pnpm run run`
 
 
 # FAQ
