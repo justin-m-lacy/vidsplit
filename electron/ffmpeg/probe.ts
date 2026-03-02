@@ -1,6 +1,9 @@
 import { execSync } from "child_process";
-import { quoteStr } from "../util/files";
+import { quoteStr } from "./files";
 
+/**
+ * Use if dynamic codec-type information is required.
+ */
 export function probeTypes(file: string) {
 
 	const cmd = `ffprobe -v error -show_entries stream=codec_type,codec_name -of default=noprint_wrappers=1:nokey=1 ` + quoteStr(file);

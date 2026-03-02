@@ -4,8 +4,19 @@ import type { WebSliceOp, WebSplitOp } from '../shared/edits';
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
 
+	/**
+	 * surprisingly this is the official method for main->renderer communication.
+	 */
 	onProgress(cb: (id: string, cur: number, total: number) => void) {
 		ipcRenderer.on('progress', (_evt, id, cur, total) => cb(id, cur, total));
+	},
+
+	testFFMpeg() {
+		return ipcRenderer.invoke('testFFMpeg');
+	},
+
+	installFFMpeg() {
+		return ipcRenderer.invoke('installFFMpeg');
 	},
 
 	sliceMedia: (edit: WebSliceOp) => {

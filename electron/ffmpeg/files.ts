@@ -4,6 +4,7 @@ export const quoteStr = (s: string) => { return `"${s}"` }
 // find progress information in ffmpeg update.
 const progRE = /out_time_us=(\d+)/;
 
+// microseconds per second
 const US_PER_SEC = 1000000;
 
 /**
