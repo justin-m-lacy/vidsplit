@@ -27,4 +27,7 @@ const store = useAppState();
 		</div>
 
 	</div>
+	<div v-else-if="store.ffmpegVers" class="text-xs">
+		ffmpeg: {{ store.ffmpegVers }}
+	</div>
 </template>

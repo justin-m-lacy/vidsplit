@@ -3,7 +3,9 @@ import { defineStore } from 'pinia';
 export const useAppState = defineStore('appState', () => {
 
 	// assume available until first check shows as 'false'
-	const ffmpegVers = shallowRef(true);
+	const hasFFMpeg = shallowRef<boolean>(true);
+	const ffmpegVers = shallowRef<string | undefined>(undefined);
+
 	const ffmpegErr = shallowRef<undefined | string>(undefined);
 
 	const checkingFFMpeg = shallowRef(false);
@@ -35,11 +37,13 @@ export const useAppState = defineStore('appState', () => {
 		try {
 
 			checkingFFMpeg.value = true;
-			const res = await window.electron.testFFMpeg();
-			if (typeof res === 'boolean') {
-				ffmpegVers.value = res;
+			const res = await window.electron.checkFFMpeg();
+			if ('version' in res) {
+				hasFFMpeg.value = true;
+				ffmpegVers.value = res.version;
 			} else {
-				ffmpegVers.value = false;
+				hasFFMpeg.value = false;
+				ffmpegVers.value = undefined;
 				ffmpegErr.value = res.err;
 			}
 
@@ -59,6 +63,7 @@ export const useAppState = defineStore('appState', () => {
 		installingFFMpeg,
 		checkingFFMpeg,
 		ffmpegVers,
+		hasFFMpeg,
 		installFFMpeg,
 		checkFFMpeg,
 	}

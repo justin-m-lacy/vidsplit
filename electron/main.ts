@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { handleOpenMedia, handleSlice, handleSplit, handleTestFFMpeg } from './handlers';
+import { handleCheckFFMpeg, handleOpenMedia, handleSlice, handleSplit } from './handlers';
 
 const createWindow = () => {
 
@@ -13,7 +13,7 @@ const createWindow = () => {
 		}
 	});
 
-	handleTestFFMpeg();
+	handleCheckFFMpeg();
 	handleOpenMedia();
 	handleSlice(ipcMain, win, app);
 	handleSplit(ipcMain, win, app);
