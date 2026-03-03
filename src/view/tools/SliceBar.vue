@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
+import Timestamp from '@/view/components/Timestamp.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 import { formatTime } from '../../../shared/time';
 import ViewSize from '../components/ViewSize.vue';
 import { MediaState } from '../composables/media-state';
 import { useTimeline } from '../composables/timeline';
-
 const props = defineProps<{
 	edit: SliceEdit,
 	media: MediaState

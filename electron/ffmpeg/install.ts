@@ -11,7 +11,7 @@ export { ffmpegPath, ffmpegVers };
 /**
  * Tests for ffmpeg install and returns version information, if available.
  */
-export function testFFMpegInstall() {
+export function getFFMpegVers() {
 	return new Promise<{ path: string, version: string }>((res, rej) => {
 		exec('ffmpeg -version', (error, stdout, stderr) => {
 
@@ -41,9 +41,10 @@ export async function installFFmpeg() {
 			throw new Error(`Failed to find installer.`);
 		}
 	}
+
 	ffmpegPath = installer.path.replace('app.asar', 'app.asar.unpacked');
 	ffmpegVers = installer.version;
-
+	console.log(`ffmpeg install package found: ${ffmpegPath}`);
 	return {
 		path: ffmpegPath,
 		version: ffmpegVers
