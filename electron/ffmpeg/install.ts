@@ -41,7 +41,7 @@ export async function installFFmpeg() {
 			throw new Error(`Failed to find installer.`);
 		}
 	}
-	ffmpegPath = installer.path;
+	ffmpegPath = installer.path.replace('app.asar', 'app.asar.unpacked');
 	ffmpegVers = installer.version;
 
 	return {
