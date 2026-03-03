@@ -11,11 +11,11 @@ contextBridge.exposeInMainWorld('electron', {
 		ipcRenderer.on('progress', (_evt, id, cur, total) => cb(id, cur, total));
 	},
 
-	checkFFMpeg(): Promise<{ version: string } | { err: string }> {
+	checkFFMpeg(): Promise<{ path: string, version: string } | { err: string }> {
 		return ipcRenderer.invoke('checkFFMpeg');
 	},
 
-	installFFMpeg() {
+	installFFMpeg(): Promise<{ path: string, version: string } | { err: string }> {
 		return ipcRenderer.invoke('installFFMpeg');
 	},
 

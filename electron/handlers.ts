@@ -29,10 +29,9 @@ export function handleOpenMedia() {
 export function handleCheckFFMpeg() {
 
 	ipcMain.handle('checkFFMpeg',
-		async (evt): Promise<{ version: string } | { err: string }> => {
-
+		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
 			try {
-				return { version: await getFFMpegVers() };
+				return getFFMpegVers()
 			} catch (err) {
 				return { err }
 			}
@@ -42,15 +41,14 @@ export function handleCheckFFMpeg() {
 
 export function handleInstallFFMpeg() {
 
-	ipcMain.handle('installFFMpeg', async (evt) => {
-
-		try {
-			await installFFmpeg();
-			return true;
-		} catch (err) {
-			return { err }
-		}
-	});
+	ipcMain.handle('installFFMpeg',
+		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
+			try {
+				return installFFmpeg();
+			} catch (err) {
+				return { err }
+			}
+		});
 
 }
 

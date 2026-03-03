@@ -12,7 +12,7 @@ export { ffmpegPath, ffmpegVers };
  * Tests for ffmpeg install and returns version information, if available.
  */
 export function testFFMpegInstall() {
-	return new Promise<string>((res, rej) => {
+	return new Promise<{ path: string, version: string }>((res, rej) => {
 		exec('ffmpeg -version', (error, stdout, stderr) => {
 
 			if (error || stderr) {
@@ -25,7 +25,7 @@ export function testFFMpegInstall() {
 			ffmpegVers = vers ? vers[1] : 'unknown';
 			ffmpegPath = 'ffmpeg';
 
-			res(ffmpegVers);
+			res({ path: ffmpegPath, version: ffmpegVers });
 
 		});
 	});
@@ -33,26 +33,20 @@ export function testFFMpegInstall() {
 
 export async function installFFmpeg() {
 
-	try {
-
-		const pkg = '@ffmpeg-installer/ffmpeg';
-		let installer: FFMpegModule | undefined = await findPackage(pkg);
+	const pkg = '@ffmpeg-installer/ffmpeg';
+	let installer: FFMpegModule | undefined = await findPackage(pkg);
+	if (!installer) {
+		installer = await installPackage(pkg);
 		if (!installer) {
-			installer = await installPackage(pkg);
-			if (!installer) {
-				throw new Error(`Failed to find installer.`);
-			}
+			throw new Error(`Failed to find installer.`);
 		}
-		ffmpegPath = installer.path;
-		ffmpegVers = installer.version;
+	}
+	ffmpegPath = installer.path;
+	ffmpegVers = installer.version;
 
-		return {
-			path: ffmpegPath,
-			version: ffmpegVers
-		}
-
-	} catch (err) {
-		console.error('Error:', err.stderr || err.message);
+	return {
+		path: ffmpegPath,
+		version: ffmpegVers
 	}
 
 }

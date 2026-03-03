@@ -1,6 +1,9 @@
-import { quoteStr, spawnFFMpeg } from "./files";
+import { quoteStr } from "../util/text";
+import { spawnFFMpeg } from "./spawn";
 
 type SliceRange = {
+	// optional slice identifier
+	id?: string,
 	from: number,
 	to: number
 }
@@ -37,7 +40,8 @@ function makeConcat(slices: SliceRange[], audio?: boolean, outTrack = 'out') {
 	}
 }
 
-const trimNum = (n: number) => {
+
+function trimNum(n: number) {
 	return (Math.round(n * 1000) / 1000).toFixed(2);
 }
 /**
@@ -122,16 +126,19 @@ export async function saveSlice(slice: SliceRange,
 	//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
 	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
 
-	await spawnFFMpeg('ffmpeg', args, progress, (slice.to - slice.from));
+	await spawnFFMpeg(args, progress, (slice.to - slice.from));
 
 	return outUrl;
 
 }
 
-// -ss seek start
-// -t duration
-// -to to duration
-function buildSliceCmd(
+/**
+ * Export for testing purposes.
+ *  -ss seek start
+ *  -t duration
+ *  -to to duration
+ */
+export function buildSliceCmd(
 	slices: SliceRange[],
 	inUrl: string,
 	outUrl: string,
@@ -147,10 +154,7 @@ function buildSliceCmd(
 	if (slices.length === 1) {
 		//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
 		args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl))
-		return {
-			cmd: 'ffmpeg',
-			args
-		}
+		return args;
 
 	}
 
@@ -163,9 +167,6 @@ function buildSliceCmd(
 	args.push(trims);
 	args.push(mapOutput(outUrl, audio));
 
-	return {
-		cmd: 'ffmpeg',
-		args
-	};
+	return args;
 
 }

@@ -6,7 +6,7 @@ async function versionCheck() {
 	try {
 
 		const res = await testFFMpegInstall();
-		console.log(`ffmpeg found: ${res}`);
+		console.log(`ffmpeg found: ${res.version}`);
 
 	} catch (err) {
 		console.log(`error: ${err}`);
@@ -20,7 +20,7 @@ let lib: FFMpegModule | undefined = await findPackage(pkg);
 
 if (lib) {
 	console.log(`ffmpeg-installer vers: ${lib.version}`)
-	console.log(`installed path: ${lib.path}`)
+	console.log(`path: ${lib.path}`)
 } else {
 
 	lib = await installPackage(pkg);

@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 
 export const useAppState = defineStore('appState', () => {
 
+	const FFMpegUrl = `https://ffmpeg.org/download.html`;
+
 	// assume available until first check shows as 'false'
 	const hasFFMpeg = shallowRef<boolean>(true);
 	const ffmpegVers = shallowRef<string | undefined>(undefined);
