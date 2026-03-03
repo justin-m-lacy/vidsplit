@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppState } from '@/store/app-state';
+import FFMpegState from '@/view/components/FFMpegState.vue';
 import Media from './panes/Media.vue';
-
 </script>
 
 <template>
