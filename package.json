@@ -4,7 +4,12 @@
   "description": "",
   "main": "app/main.js",
   "type": "module",
-  "keywords": [],
+  "keywords": [
+    "video",
+    "video splitter",
+    "typescript",
+    "electron"
+  ],
   "author": "justin lacy",
   "build": {
     "appId": "vidsplit.jmlacy",
@@ -20,16 +25,13 @@
     "preview": "vite preview",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
+    "buildrun": "pnpm build && pnpm run run",
     "build": "pnpm buildweb && pnpm buildapp",
     "buildapp": "pnpm buildnode && pnpm buildpreload",
     "buildnode": "esbuild electron/main.ts --format=esm --tsconfig=tsconfig.node.json --platform=node --bundle --outdir=app --packages=external",
     "buildpreload": "esbuild electron/preload.ts --format=cjs --platform=node --outdir=app --packages=external",
     "buildweb": "vite build",
-    "checkasar": "npx asar list dist/win-unpacked/resources/app.asar",
-    "test-ffmpeg": "tsx test-ffmpeg.ts",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "test-ffmpeg": "tsx test-ffmpeg.ts"
   },
   "dependencies": {
     "@vueuse/core": "^10.7.1",

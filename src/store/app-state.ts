@@ -15,6 +15,17 @@ export const useAppState = defineStore('appState', () => {
 
 	const electron = shallowRef(window.electron);
 
+	function setFFMpegInfo(info: { version: string, path?: string } | { err: string }) {
+		if ('version' in info) {
+			hasFFMpeg.value = true;
+			ffmpegVers.value = info.version;
+		} else {
+			hasFFMpeg.value = false;
+			ffmpegErr.value = info.err;
+			ffmpegVers.value = undefined;
+		}
+	}
+
 	async function installFFMpeg() {
 
 		if (installingFFMpeg.value) return;
@@ -23,12 +34,18 @@ export const useAppState = defineStore('appState', () => {
 		try {
 
 			installingFFMpeg.value = true;
+			const res = await electron.value.installFFMpeg();
+			setFFMpegInfo(res);
 
 		} catch (err) {
 
+			hasFFMpeg.value = false;
+			ffmpegVers.value = undefined;
+
+		} finally {
+			installingFFMpeg.value = false;
 		}
 
-		installingFFMpeg.value = false;
 	}
 
 	async function checkFFMpeg() {
@@ -40,17 +57,10 @@ export const useAppState = defineStore('appState', () => {
 
 			checkingFFMpeg.value = true;
 			const res = await window.electron.checkFFMpeg();
-			if ('version' in res) {
-				hasFFMpeg.value = true;
-				ffmpegVers.value = res.version;
-			} else {
-				hasFFMpeg.value = false;
-				ffmpegVers.value = undefined;
-				ffmpegErr.value = res.err;
-			}
+			setFFMpegInfo(res);
 
-		} catch (err) {
-
+		} catch (err: any) {
+			ffmpegErr.value = typeof err == 'string' ? err : '';
 		}
 		checkingFFMpeg.value = false;
 

@@ -6,7 +6,7 @@ const store = useAppState();
 
 </script>
 <template>
-	<div v-if="!store.ffmpegVers || true" class="flex flex-col text-sm space-y-1">
+	<div v-if="!store.ffmpegVers" class="flex flex-col text-sm space-y-1">
 
 		<div class="text-sm font-semibold">FFMpeg not found. Video Editing not available.</div>
 		<div class="flex justify-evenly">
@@ -14,7 +14,6 @@ const store = useAppState();
 					class="btn"
 					@click="store.installFFMpeg()">
 				Install FFMPEG
-
 			</button>
 			<button v-else class="btn">
 				<span>Installing</span>
@@ -30,7 +29,7 @@ const store = useAppState();
 		</div>
 
 	</div>
-	<div v-else-if="store.ffmpegVers" class="btn">
+	<div v-else-if="store.ffmpegVers" class="text-xs font-semibold">
 		ffmpeg: {{ store.ffmpegVers }}
 	</div>
 </template>

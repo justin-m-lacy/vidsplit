@@ -3,7 +3,7 @@ import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
 import { concatMedia } from "./ffmpeg/concat";
-import { testFFMpegInstall as getFFMpegVers, installFFmpeg } from './ffmpeg/install';
+import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
 import { saveSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 //import { probeTypes } from "./ffmpeg/probe";
@@ -31,7 +31,7 @@ export function handleCheckFFMpeg() {
 	ipcMain.handle('checkFFMpeg',
 		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
 			try {
-				return getFFMpegVers()
+				return await getFFMpegVers()
 			} catch (err) {
 				return { err }
 			}
@@ -44,7 +44,8 @@ export function handleInstallFFMpeg() {
 	ipcMain.handle('installFFMpeg',
 		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
 			try {
-				return installFFmpeg();
+				console.log(`got handle-install event...`);
+				return await installFFmpeg();
 			} catch (err) {
 				return { err }
 			}
