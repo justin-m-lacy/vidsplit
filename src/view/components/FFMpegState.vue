@@ -8,7 +8,7 @@ const store = useAppState();
 <template>
 	<div v-if="!store.ffmpegVers" class="flex flex-col">
 
-		<div class="text-sm">FFMpeg not found. Video Editing not available.</div>
+		<div class="text-sm font-bold">FFMpeg not found. Video Editing not available.</div>
 		<div class="flex">
 			<button v-if="!store.installingFFMpeg" class="" @click="store.installFFMpeg()">
 				Install FFMPeg
