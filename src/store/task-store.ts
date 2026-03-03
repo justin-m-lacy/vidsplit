@@ -21,7 +21,7 @@ export const useTaskStore = defineStore('progress', () => {
 
 	const tasks = ref<Record<string, TEditTask>>(Object.create(null));
 
-	// won't be available when testing only front-end.
+	// window.electron won't exist when testing front-end only.
 	if (window.electron) {
 		window.electron.onProgress((id: string, cur: number, total: number) => {
 

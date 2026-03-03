@@ -3,15 +3,11 @@ import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
 import { concatMedia } from "./ffmpeg/concat";
+import { testFFMpegInstall as getFFMpegVers, installFFmpeg } from './ffmpeg/install';
 import { saveSlice } from "./ffmpeg/slice";
+import { copyExt } from './util/files';
 //import { probeTypes } from "./ffmpeg/probe";
 
-const withExt = (outPath: string, inPath: string) => {
-	if (path.extname(outPath) == '') {
-		return outPath + path.extname(inPath);
-	}
-	return outPath;
-}
 export function handleOpenMedia() {
 
 	return ipcMain.handle('open-media', async (_,) => {
@@ -30,6 +26,32 @@ export function handleOpenMedia() {
 
 }
 
+export function handleCheckFFMpeg() {
+
+	ipcMain.handle('checkFFMpeg',
+		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
+			try {
+				return getFFMpegVers()
+			} catch (err) {
+				return { err }
+			}
+		});
+
+}
+
+export function handleInstallFFMpeg() {
+
+	ipcMain.handle('installFFMpeg',
+		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
+			try {
+				return installFFmpeg();
+			} catch (err) {
+				return { err }
+			}
+		});
+
+}
+
 export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
 	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
@@ -40,7 +62,7 @@ export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 		}
 
 		const inPath = op.filePath;
-		const outPath = withExt((dialogRes.filePath), inPath);
+		const outPath = copyExt((dialogRes.filePath), inPath);
 
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));

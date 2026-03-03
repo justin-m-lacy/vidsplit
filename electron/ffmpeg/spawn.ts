@@ -1,31 +1,31 @@
 import { spawn } from 'child_process';
-export const quoteStr = (s: string) => { return `"${s}"` }
-
-// find progress information in ffmpeg update.
-const progRE = /out_time_us=(\d+)/;
-
-const US_PER_SEC = 1000000;
+import { ffmpegPath } from './install';
 
 /**
- * 
- * @param cmd 
- * @param args 
+ * @param args - arguments to pass to ffmpeg.
  * @param progress 
  * @param timeTotal - total clip length in seconds.
  * necessary because ffmpeg doesn't give total length information in updates.
  * @returns 
  */
-export function spawnFFMpeg(cmd: string, args: string[],
+export function spawnFFMpeg(args: string[],
 	progress?: (cur: number, tot: number) => void, timeTotal: number = 0) {
 
-	// convert to microseconds
-	timeTotal *= US_PER_SEC;
+	// find progress information in ffmpeg update.
+	const progRE = /out_time_us=(\d+)/;
 
 	return new Promise<void>((res, rej) => {
 
-		const child = spawn(cmd, args, { windowsVerbatimArguments: true });
+		const child = spawn(ffmpegPath ?? 'ffmpeg', args,
+			{ windowsVerbatimArguments: true });
 
 		if (progress) {
+
+			// microseconds per second
+			const US_PER_SEC = 1000000;
+			// convert to microseconds
+			timeTotal *= US_PER_SEC;
+
 			child.stdout.on('data', (data: Buffer) => {
 				//type is object.
 				const prog = data.toString('utf-8').match(progRE);
