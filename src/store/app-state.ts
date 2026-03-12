@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useAppState = defineStore('appState', () => {
 
+	// url for manual download.
 	const FFMpegUrl = `https://ffmpeg.org/download.html`;
 
 	// assume available until first check shows as 'false'
