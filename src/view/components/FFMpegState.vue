@@ -6,7 +6,7 @@ const store = useAppState();
 
 </script>
 <template>
-	<div v-if="!store.ffmpegVers" class="flex flex-col text-sm space-y-1">
+	<div v-if="!store.ffmpegVers" class="flex flex-col shrink text-sm gap-y-1">
 
 		<div class="text-sm font-semibold">FFMpeg not found. Video Editing not available.</div>
 		<div class="flex justify-evenly">
@@ -29,7 +29,7 @@ const store = useAppState();
 		</div>
 
 	</div>
-	<div v-else-if="store.ffmpegVers" class="text-xs font-semibold">
+	<div v-else-if="store.ffmpegVers" class="flex justify-start text-xxs font-semibold">
 		ffmpeg: {{ store.ffmpegVers }}
 	</div>
 </template>

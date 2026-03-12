@@ -6,12 +6,12 @@ import Media from './panes/Media.vue';
 
 <template>
 
-  <div class="flex flex-col justify-center items-center w-full
-  cursor-auto select-none duration-200 bg-light-50">
+  <div class="flex flex-col justify-center items-center h-screen max-h-screen w-full
+  cursor-auto select-none duration-200 bg-light-50 m-0 p-0">
     <div v-if="!useAppState().electron"
-         class="flex w-full justify-center font-bold text-sm mt-2">
+         class="flex justify-center font-bold text-sm mt-2">
       Can't connect to main process.</div>
-    <FFMpegState />
-    <Media />
+    <FFMpegState class="min-h-fit mb-2" />
+    <Media class="shrink grow max-h-10/12 h-10/12 mb-2" />
   </div>
 </template>
