@@ -11,9 +11,15 @@ Javascript Video Splitter
 
 # Develop Front-end
 
+Front-end development with no backend support.
+
 `pnpm dev`
 
-# Compile
+# Build and Run Application:
+
+In terminal: `pnpm buildrun`
+
+# Build Application
 
 Run in terminal:
 
@@ -21,7 +27,7 @@ Run in terminal:
 
 # Run Built Application
 
-In terminal:
+After `pnpm build` run in terminal:
 
 `pnpm run run`
 
