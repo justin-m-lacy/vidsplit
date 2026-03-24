@@ -39,9 +39,6 @@
     "buildweb": "vite build",
     "test-ffmpeg": "tsx test-ffmpeg.ts"
   },
-  "dependencies": {
-    "pinia": "^2.1.7"
-  },
   "devDependencies": {
     "@electron/fuses": "^1.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -58,6 +55,7 @@
     "esbuild": "^0.25.4",
     "eslint": "^9.23.0",
     "lucide-vue-next": "^0.469.0",
+    "pinia": "^2.3.1",
     "rimraf": "^5.0.5",
     "tailwindcss": "^4.1.7",
     "ts-node": "^10.9.2",
