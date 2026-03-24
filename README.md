@@ -39,10 +39,13 @@ After `pnpm build` run in terminal:
 
 `pnpm app:dir`
 
-You can view contents of .asar file by running:
+View contents of .asar file by running:
 
 `npx asar list [path]/app.asar`
 
+Extract contents of asar:
+
+`npx asar extract app.asar tempDir`
 
 # FAQ
 

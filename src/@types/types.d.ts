@@ -4,7 +4,7 @@ declare global {
 	interface Window {
 
 		electron: {
-			installFFMpeg(): Promise<{ version: string } | { err: string }>,
+			installFFMpeg(): Promise<{ path: string | undefined, version: string } | { err: string }>,
 			checkFFMpeg(): Promise<{ version: string } | { err: string }>,
 			onProgress(cb: (id: string, cur: number, total: number) => void),
 			sliceMedia(edit: WebSliceOp): Promise<any>,

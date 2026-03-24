@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld('electron', {
 		return ipcRenderer.invoke('checkFFMpeg');
 	},
 
-	installFFMpeg(): Promise<{ path: string, version: string } | { err: string }> {
+	installFFMpeg(): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> {
 		return ipcRenderer.invoke('installFFMpeg');
 	},
 
