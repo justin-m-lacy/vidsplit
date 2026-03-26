@@ -120,7 +120,7 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir -p $env:ARTIFACT_DIR
-          Copy-Item -Path dist\*.exe -Destination $env:ARTIFACT_DIR -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path dist\*.exe -Destination $env:ARTIFACT_DIR -Force
         shell: powershell
 
       - name: Upload Windows assets
