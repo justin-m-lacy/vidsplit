@@ -43,7 +43,7 @@ jobs:
         run: pnpm run build
 
       - name: Build Linux artifact
-        run: pnpm dlx electron-builder --linux --x64 --publish never --config.extraMetadata.version=${{ github.ref_name }}
+        run: pnpm run app:linux
         shell: bash
 
       - name: Collect artifacts
@@ -122,7 +122,7 @@ jobs:
         shell: pwsh
 
       - name: Build Windows artifact
-        run: pnpm dlx electron-builder --win --x64 --publish never
+        run: pnpm run app:win
         shell: powershell
 
       - name: Collect artifacts
