@@ -117,7 +117,7 @@ jobs:
       - name: Verify NSIS
         run: |
           RefreshEnv
-          Get-Command makensis -ErrorAction Stop
+          $env:PATH = "$env:ALLUSERSPROFILE\chocolatey\bin;$env:PATH"
           makensis -VERSION
         shell: pwsh
 
