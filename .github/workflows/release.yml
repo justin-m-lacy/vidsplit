@@ -115,7 +115,9 @@ jobs:
         shell: powershell
 
       - name: Verify NSIS
-        run: Get-Command makensis -ErrorAction Stop
+        run: |
+          RefreshEnv
+          Get-Command makensis -ErrorAction Stop
           makensis -VERSION
         shell: pwsh
 
