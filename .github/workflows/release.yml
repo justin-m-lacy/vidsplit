@@ -110,9 +110,18 @@ jobs:
         run: pnpm run build
         shell: powershell
 
+      - name: Clean electron-builder NSIS cache
+        run: Remove-Item -Recurse -Force $env:LOCALAPPDATA\electron-builder\Cache\nsis
+        shell: pwsh
+
       - name: Install NSIS
         run: choco install nsis -y
         shell: powershell
+
+      - name: Verify NSIS
+        run: Get-Command makensis -ErrorAction Stop
+          makensis -VERSION
+        shell: pwsh
 
       - name: Build Windows artifact
         run: pnpm dlx electron-builder --win --x64 --publish never
