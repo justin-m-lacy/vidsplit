@@ -111,14 +111,7 @@ jobs:
         shell: powershell
 
       - name: Install NSIS
-        run: choco install nsis -y
-        shell: powershell
-
-      - name: Verify NSIS
-        run: |
-          RefreshEnv
-          makensis -VERSION
-        shell: powershell
+        uses: negrutiu/nsis-install@v2
 
       - name: Build Windows artifact
         run: pnpm run app:win
