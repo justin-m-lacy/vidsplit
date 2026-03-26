@@ -77,62 +77,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  macos:
-    name: macOS build & upload
-    runs-on: macos-latest
-    needs: linux
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Enable pnpm (Corepack)
-        run: corepack enable && corepack prepare pnpm@latest --activate
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            pnpm-store-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm run build
-
-      - name: Build macOS artifact
-        run: pnpm dlx electron-builder --mac --x64 --publish never --config.extraMetadata.version=${{ github.ref_name }}
-        shell: bash
-
-      - name: Collect artifacts
-        run: |
-          mkdir -p $ARTIFACT_DIR
-          cp -R dist/* $ARTIFACT_DIR/ || true
-        shell: bash
-
-      - name: Create checksums
-        run: |
-          cd $ARTIFACT_DIR || exit 0
-          if [ -n "$(ls -A . 2>/dev/null)" ]; then shasum -a 256 * > checksums.txt || true; fi
-        shell: bash
-
-      - name: Upload macOS assets
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ env.ARTIFACT_DIR }}/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   windows:
     name: Windows build & upload
     runs-on: windows-latest
-    needs: [linux, macos]
+    needs: [linux]
     steps:
       - uses: actions/checkout@v4
 
