@@ -42,7 +42,7 @@ export function handleCheckFFMpeg() {
 export function handleInstallFFMpeg() {
 
 	ipcMain.handle('installFFMpeg',
-		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
+		async (evt): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> => {
 			try {
 				console.log(`got handle-install event...`);
 				return await installFFmpeg();

@@ -11,9 +11,15 @@ Javascript Video Splitter
 
 # Develop Front-end
 
+Front-end development with no backend support.
+
 `pnpm dev`
 
-# Compile
+# Build and Run Application:
+
+In terminal: `pnpm buildrun`
+
+# Build Application
 
 Run in terminal:
 
@@ -21,7 +27,7 @@ Run in terminal:
 
 # Run Built Application
 
-In terminal:
+After `pnpm build` run in terminal:
 
 `pnpm run run`
 
@@ -33,10 +39,13 @@ In terminal:
 
 `pnpm app:dir`
 
-You can view contents of .asar file by running:
+View contents of .asar file by running:
 
 `npx asar list [path]/app.asar`
 
+Extract contents of asar:
+
+`npx asar extract app.asar tempDir`
 
 # FAQ
 

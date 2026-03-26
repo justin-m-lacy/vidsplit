@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TMediaEdit } from '@/model/edit';
+import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { TEditTask, useTaskStore } from '@/store/task-store';
@@ -19,6 +20,8 @@ const mediaStore = useMediaStore();
 
 const tasks = useTaskStore();
 
+const appState = useAppState();
+
 const curTask = shallowRef<TEditTask | null>(null);
 
 const fileInput = shallowRef<HTMLInputElement>();
@@ -35,7 +38,9 @@ onMounted(() => {
 
 function applyEdit(edit: TMediaEdit) {
 
-	curTask.value = tasks.add(edit.id, edit.apply());
+	if (appState.hasFFMpeg) {
+		curTask.value = tasks.add(edit.id, edit.apply());
+	}
 
 }
 
@@ -98,8 +103,8 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-center justify-center gap-y-2">
-		<div class="relative flex justify-center items-center w-full min-h-1/2 m-0 p-0
+	<div class="flex flex-col items-stretch justify-center gap-y-2">
+		<div class="relative flex justify-center items-center w-full grow min-h-1/2 m-0 p-0
 		rounded-xs transition-colors "
 			 :class="media.hasSource ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
 			 @drop.prevent="fileDrop"
@@ -112,9 +117,9 @@ async function onFilePicked(event: Event) {
 					class="absolute translate-x-1/4 pointer-events-none" />
 		</div>
 		<MediaControls :state="media"
-					   class="flex items-center w-full mx-4">
+					   class="flex w-full mx-4">
 			<ToolsBar :media="media" class="ml-3" />
-			<button type="button" class="btn" id="drop-file"
+			<button type="button" class="icon-btn" id="drop-file"
 					title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
@@ -123,7 +128,7 @@ async function onFilePicked(event: Event) {
 			</button>
 		</MediaControls>
 
-		<div v-if="curTask" class="flex items-center justify-center
+		<div v-if="curTask" class="flex justify-center items-center 
 			w-full gap-x-1 h-3">
 			<div class="h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
 				<div class="h-full bg-green-600 border-r-2 border-green-800/60"
@@ -139,19 +144,21 @@ async function onFilePicked(event: Event) {
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-center items-center grow w-full max-w-11/12"
+					class="flex justify-center items-center my-1 w-full max-w-11/12"
+					:canEdit="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-stretch items-center grow max-w-11/12"
+					class="flex justify-stretch items-center my-1  max-w-11/12"
 					:edit="tools.curEdit"
+					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
 					:task="curTask" />
 
 		<ScrubBar v-else-if="videoElm"
-				  class="flex items-center justify-center grow max-w-11/12"
+				  class="flex items-center justify-center my-1  max-w-11/12"
 				  :media="media" />
 
 		<input ref="fileInput" type="file" accept="video/*"
