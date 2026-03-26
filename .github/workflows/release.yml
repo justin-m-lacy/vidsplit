@@ -117,11 +117,12 @@ jobs:
         run: pnpm run app:win
         shell: powershell
 
-      - name: Collect artifacts
+      - name: Copy artifacts (bash)
+        shell: bash
         run: |
-          mkdir -p "$env:ARTIFACT_DIR"
-          Copy-Item -Path dist\*.exe -Destination "$env:ARTIFACT_DIR" -Force
-        shell: powershell
+         mkdir -p "$ARTIFACT_DIR"
+         ls -la dist
+         cp -v dist/*.exe "$ARTIFACT_DIR/" || true
 
       - name: Upload Windows assets
         uses: softprops/action-gh-release@v1
