@@ -48,8 +48,9 @@ jobs:
 
       - name: Collect artifacts
         run: |
-          mkdir -p $ARTIFACT_DIR
-          cp -R dist/* $ARTIFACT_DIR/ || true
+          mkdir -p "$ARTIFACT_DIR"
+          shopt -s nullglob
+          cp -v dist/*.deb dist/*.rpm dist/*.AppImage dist/*.snap dist/*.tar.gz "$ARTIFACT_DIR/" || true
         shell: bash
 
       - name: Create checksums
@@ -116,7 +117,7 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir -p $env:ARTIFACT_DIR
-          Copy-Item -Path dist\* -Destination $env:ARTIFACT_DIR -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path dist\*.exe -Destination $env:ARTIFACT_DIR -Force -ErrorAction SilentlyContinue
         shell: powershell
 
       - name: Create checksums
