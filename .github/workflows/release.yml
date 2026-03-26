@@ -56,7 +56,7 @@ jobs:
       - name: Create checksums
         run: |
           cd $ARTIFACT_DIR || exit 0
-          if [ -n "$(ls -A . 2>/dev/null)" ]; then sha256sum * > checksums.txt || true; fi
+          if [ -n "$(ls -A . 2>/dev/null)" ]; then sha256sum * > checksums-linux.txt || true; fi
         shell: bash
 
       - name: Create Release
@@ -127,7 +127,7 @@ jobs:
         run: |
           Push-Location $env:ARTIFACT_DIR
           if ((Get-ChildItem -File | Measure-Object).Count -gt 0 ) {
-            Get-FileHash -Algorithm SHA256 * | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Out-File checksums.txt -Encoding utf8
+            Get-FileHash -Algorithm SHA256 * | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Out-File checksums-win.txt -Encoding utf8
           }
           Pop-Location
         shell: powershell
