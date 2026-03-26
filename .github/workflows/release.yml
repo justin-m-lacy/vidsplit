@@ -126,7 +126,7 @@ jobs:
       - name: Create checksums
         run: |
           Push-Location $env:ARTIFACT_DIR
-          if (Get-ChildItem -File | Measure-Object).Count -gt 0 {
+          if ((Get-ChildItem -File | Measure-Object).Count -gt) 0 {
             Get-FileHash -Algorithm SHA256 * | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Out-File checksums.txt -Encoding utf8
           }
           Pop-Location
