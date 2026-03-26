@@ -110,6 +110,10 @@ jobs:
         run: pnpm run build
         shell: powershell
 
+      - name: Install NSIS
+        run: choco install nsis -y
+        shell: bash
+
       - name: Build Windows artifact
         run: pnpm dlx electron-builder --win --x64 --publish never
         shell: powershell
