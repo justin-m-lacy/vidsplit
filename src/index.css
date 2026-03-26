@@ -15,6 +15,14 @@ body {
 	  @apply inline-flex items-center justify-center text-sm font-semibold rounded-sm border-gray-800 border px-1 py-0.5 transition-all duration-200 focus:outline-none
 	  hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed;
 	}
+
+  .icon-btn {
+	  @apply inline-flex items-center justify-center text-sm font-semibold rounded-sm px-1 py-0.5 transition-all duration-200 focus:outline-none
+    outline-none outline-gray-800/0
+    hover:outline hover:outline-solid hover:outline-gray-800/60
+	  hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed;
+	}
+
 }
 
   .busy {

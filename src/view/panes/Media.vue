@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TMediaEdit } from '@/model/edit';
+import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { TEditTask, useTaskStore } from '@/store/task-store';
@@ -19,6 +20,8 @@ const mediaStore = useMediaStore();
 
 const tasks = useTaskStore();
 
+const appState = useAppState();
+
 const curTask = shallowRef<TEditTask | null>(null);
 
 const fileInput = shallowRef<HTMLInputElement>();
@@ -35,7 +38,9 @@ onMounted(() => {
 
 function applyEdit(edit: TMediaEdit) {
 
-	curTask.value = tasks.add(edit.id, edit.apply());
+	if (appState.hasFFMpeg) {
+		curTask.value = tasks.add(edit.id, edit.apply());
+	}
 
 }
 
@@ -114,7 +119,7 @@ async function onFilePicked(event: Event) {
 		<MediaControls :state="media"
 					   class="flex w-full mx-4">
 			<ToolsBar :media="media" class="ml-3" />
-			<button type="button" class="btn" id="drop-file"
+			<button type="button" class="icon-btn" id="drop-file"
 					title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
 					@drop.prevent="fileDrop" @dragover="fileDrag"
@@ -140,6 +145,7 @@ async function onFilePicked(event: Event) {
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
 					class="flex justify-center items-center my-1 w-full max-w-11/12"
+					:canEdit="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
@@ -147,6 +153,7 @@ async function onFilePicked(event: Event) {
 					@apply="applyEdit($event)"
 					class="flex justify-stretch items-center my-1  max-w-11/12"
 					:edit="tools.curEdit"
+					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
 					:task="curTask" />
 

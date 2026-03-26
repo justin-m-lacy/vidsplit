@@ -8,6 +8,7 @@ import { MediaState } from '../composables/media-state';
 const props = defineProps<{
 	edit: SplitEdit,
 	media: MediaState,
+	hasFFMpeg?: boolean,
 	// running task.
 	task?: TEditTask | null
 }>();
@@ -60,7 +61,7 @@ function deleteCut() {
 				<Trash />
 			</button>
 			<button type="button" class="disabled:opacity-50"
-					:disabled="Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'inactive')"
+					:disabled="!hasFFMpeg || Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'inactive')"
 					title="Split video"
 					@click="emit('apply', edit)">
 				<Download />

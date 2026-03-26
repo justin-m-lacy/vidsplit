@@ -10,6 +10,7 @@ import SliceBar from './SliceBar.vue';
 const props = defineProps<{
 	edit: SliceEdit,
 	media: MediaState,
+	hasFFMpeg?: boolean,
 	task?: TEditTask | null
 }>();
 
@@ -152,7 +153,7 @@ function addSlice() {
 			</span>
 
 			<button type="button" class="disabled:opacity-50"
-					:disabled="edit.slices.length == 0
+					:disabled="!hasFFMpeg || (edit.slices.length == 0)
 						|| (task?.state == 'active' || task?.state == 'inactive')"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
