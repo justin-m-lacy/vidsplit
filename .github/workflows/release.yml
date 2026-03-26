@@ -127,6 +127,6 @@ jobs:
       - name: Upload Windows assets
         uses: softprops/action-gh-release@v1
         with:
-          files: $env:ARTIFACT_DIR
+          files: ${{ env.ARTIFACT_DIR }}/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
