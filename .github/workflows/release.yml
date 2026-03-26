@@ -117,9 +117,8 @@ jobs:
       - name: Verify NSIS
         run: |
           RefreshEnv
-          $env:PATH = "$env:ALLUSERSPROFILE\chocolatey\bin;$env:PATH"
           makensis -VERSION
-        shell: pwsh
+        shell: powershell
 
       - name: Build Windows artifact
         run: pnpm run app:win
