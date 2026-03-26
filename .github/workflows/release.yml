@@ -111,7 +111,7 @@ jobs:
         shell: powershell
 
       - name: Build Windows artifact
-        run: pnpm dlx electron-builder --win --x64 --publish never --config.extraMetadata.version=${{ github.ref_name }}
+        run: pnpm dlx electron-builder --win --x64 --publish never
         shell: powershell
 
       - name: Collect artifacts

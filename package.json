@@ -13,6 +13,7 @@
   "author": "justin lacy",
   "build": {
     "appId": "vidsplit.jmlacy",
+    "buildVersion": "0.7.0",
     "extraFiles": [],
     "executableName": "VidSplit",
     "files": [
