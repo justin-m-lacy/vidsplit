@@ -12,37 +12,27 @@ body {
 
 @layer components {
 	.btn {
-	  @apply inline-flex items-center justify-center text-sm font-semibold rounded-sm border-gray-800 border px-1 py-0.5 transition-colors duration-200 focus:outline-none
-	  hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+	  @apply inline-flex items-center justify-center text-sm font-semibold rounded-sm border-gray-800 border px-1 py-0.5 transition-all duration-200 focus:outline-none
+	  hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed;
 	}
 }
 
-.busy {
-	width: 12px;
-	height: 12px;
-	border-radius: 50%;
-	display: block;
-	margin:15px auto;
-	position: relative;
-	color: #FFF;
-	box-sizing: border-box;
-	animation: animbusy 2s linear infinite;
-  }
-  
-  @keyframes animbusy {
-	0% {
-	  box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
-	}
-	25% {
-	  box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 2px;
-	}
-	50% {
-	  box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 2px,  -38px 0 0 -2px;
-	}
-	75% {
-	  box-shadow: 14px 0 0 2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
-	}
-	100% {
-	  box-shadow: 14px 0 0 -2px,  38px 0 0 2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
-	}
-  }
+  .busy {
+    width: 18px;
+    height: 18px;
+    border: 4px solid #adaaaa;
+    border-bottom-color: #3066ab;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 
