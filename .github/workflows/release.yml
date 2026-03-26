@@ -53,11 +53,11 @@ jobs:
           cp -v dist/*.deb dist/*.rpm dist/*.AppImage dist/*.snap dist/*.tar.gz "$ARTIFACT_DIR/" || true
         shell: bash
 
-      - name: Create checksums
-        run: |
-          cd $ARTIFACT_DIR || exit 0
-          if [ -n "$(ls -A . 2>/dev/null)" ]; then sha256sum * > checksums-linux.txt || true; fi
-        shell: bash
+      #- name: Create checksums
+      #  run: |
+      #    cd $ARTIFACT_DIR || exit 0
+      #    if [ -n "$(ls -A . 2>/dev/null)" ]; then sha256sum * > checksums.txt || true; fi
+      #  shell: bash
 
       - name: Create Release
         id: create_release
@@ -126,8 +126,8 @@ jobs:
       - name: Create checksums
         run: |
           Push-Location $env:ARTIFACT_DIR
-          if ((Get-ChildItem -File | Measure-Object).Count -gt 0 ) {
-            Get-FileHash -Algorithm SHA256 * | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Out-File checksums-win.txt -Encoding utf8
+          if ((Get-ChildItem -File | Where-Object { $_.Name -notmatch '(?i)checksums' } | Measure-Object).Count -gt 0 ) {
+            Get-FileHash -Algorithm SHA256 * | ForEach-Object { "{0}  {1}" -f $_.Hash, $_.Path } | Out-File checksums.txt -Encoding utf8
           }
           Pop-Location
         shell: powershell
