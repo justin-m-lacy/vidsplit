@@ -91,7 +91,7 @@ jobs:
           node-version: '20'
 
       - name: Enable pnpm (Corepack)
-        run: corepack enable && corepack prepare pnpm@latest --activate
+        run: corepack enable; corepack prepare pnpm@latest --activate
         shell: powershell
 
       - name: Cache pnpm store
