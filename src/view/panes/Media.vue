@@ -104,12 +104,12 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col items-stretch justify-center gap-y-2">
-		<div class="relative flex justify-center items-center w-full grow min-h-1/2 m-0 p-0
-		rounded-xs transition-colors "
-			 :class="media.hasSource ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
+		<div class="relative flex justify-center items-center grow min-h-1/2 mx-0.5 p-0
+		rounded-xs transition-colors overflow-clip"
+			 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
 			 @drop.prevent="fileDrop"
 			 @dragover="fileDrag" @click="clickVideo">
-			<video ref="videoElm" class="max-h-full w-auto max-w-full aspect-auto"
+			<video ref="videoElm" class="max-w-full max-h-full h-auto aspect-auto"
 				   autoplay :controls="false"
 				   :src="mediaStore.sourceUrl">
 			</video>
@@ -130,10 +130,13 @@ async function onFilePicked(event: Event) {
 
 		<div v-if="curTask" class="flex justify-center items-center 
 			w-full gap-x-1 h-3">
-			<div class="h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
-				<div class="h-full bg-green-600 border-r-2 border-green-800/60"
+			<span class="text-sm font-bold">{{ curTask.total > 0 ?
+				Math.round(100 * curTask.current / curTask.total) : 0 }}%</span>
+			<div class="relative h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
+				<div class="absolute left-0 h-full bg-green-600 border-r-2 transition-[width] border-green-800/60"
 					 :style="{
-						width: curTask.total > 0 ? `${(100 * curTask.current / curTask.total)}%` : 0
+						width: curTask.state == 'complete' ? '100%' :
+							(curTask.total > 0 ? `${(100 * curTask.current / curTask.total)}%` : 0)
 					}">
 				</div>
 			</div>

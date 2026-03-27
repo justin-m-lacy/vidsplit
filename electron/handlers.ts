@@ -53,7 +53,6 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 	ipcMain.handle('installFFMpeg',
 		async (evt): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> => {
 			try {
-				console.log(`got handle-install event...`);
 				return await installFFmpeg();
 			} catch (err) {
 				return { err: errToStr(err) }
@@ -75,8 +74,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const outPath = copyExt((dialogRes.filePath), inPath);
 
 		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
-
+		const baseName = path.basename(inPath, ext);
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.slices.length === 1) {
@@ -103,7 +101,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 			console.warn(`error removing files: ${err}`);
 		}
 
-		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
 
 		return outPath;
 
@@ -125,22 +123,21 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		const baseDir = path.dirname(inPath);
 
 		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
+		const baseName = path.basename(inPath, ext);
 
 		const cuts = op.cuts;
 		const saves: Promise<string>[] = [];
 
 		const updates = createUpdaters(evt.sender, op.id);
 
+		console.log(`in path: ${inPath}  out: ${baseName}`);
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
 			saves.push(saveSlice(
-				i > 0 ? {
-					from: cuts[i - 1].t,
+				{
+					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd
-				} : {
-					from: 0, to: sliceEnd
 				},
 				inPath,
 				path.join(baseDir, `${baseName}-${i}${ext}`),
@@ -150,9 +147,11 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		}
 
+		console.log(`cuts: ${cuts.length}  endlen: ${op.duration}`);
+
 		// copy parts to files.
 		await Promise.allSettled(saves);
-		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
 
 		return true;
 

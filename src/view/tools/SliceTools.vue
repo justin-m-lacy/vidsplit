@@ -3,7 +3,7 @@ import { useSnapshot } from '@/store/snapshot';
 import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { Download, X } from 'lucide-vue-next';
-import Timestamp from '../components/Timestamp.vue';
+import TimeStamp from '../components/TimeStamp.vue';
 import { MediaState } from '../composables/media-state';
 import SliceBar from './SliceBar.vue';
 
@@ -148,13 +148,13 @@ function addSlice() {
 					title="Add Slice"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">
-				<Timestamp :time="media.from" />&nbsp;to&nbsp;
-				<Timestamp :time="media.to" />
+				<TimeStamp :time="media.from" />&nbsp;to&nbsp;
+				<TimeStamp :time="media.to" />
 			</span>
 
 			<button type="button" class="disabled:opacity-50"
 					:disabled="!hasFFMpeg || (edit.slices.length == 0)
-						|| (task?.state == 'active' || task?.state == 'inactive')"
+						|| (task?.state == 'active' || task?.state == 'pending')"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
 				<Download />

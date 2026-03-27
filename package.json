@@ -3,6 +3,7 @@
   "version": "0.7.1",
   "description": "Electron Video Splitter",
   "main": "app/main.js",
+  "displayName": "VidSplit",
   "type": "module",
   "keywords": [
     "video",

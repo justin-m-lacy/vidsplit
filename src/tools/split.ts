@@ -36,7 +36,7 @@ function makeSplitEdit(media: MediaState) {
 	}
 
 	/**
-	 * convert cut percents to array of time based cuts.
+	 * convert cut percents to time-based cuts.
 	 */
 	const toTimeArray = (cuts: Record<string, MediaCut>, media: MediaState) => {
 
@@ -107,7 +107,7 @@ export const SplitTool: TEditTool<SplitEdit> = {
 
 	canUse: true,
 
-	beginEdit: makeSplitEdit
+	newEdit: makeSplitEdit
 
 }
 

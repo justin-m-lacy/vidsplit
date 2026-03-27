@@ -18,14 +18,14 @@ export const useEditTool = defineStore('editTool', () => {
 		if (curTool.value?.id == tool.id) {
 			clearTool();
 		} else {
-			beginEdit(tool, media)
+			newEdit(tool, media)
 		}
 	}
 
-	function beginEdit(tool: TEditTool, media: MediaState) {
+	function newEdit(tool: TEditTool, media: MediaState) {
 
 		if (curTool.value?.id != tool.id) {
-			curEdit.value = tool.beginEdit(media);
+			curEdit.value = tool.newEdit(media);
 			curTool.value = tool;
 		}
 
@@ -45,7 +45,6 @@ export const useEditTool = defineStore('editTool', () => {
 		setSplitMode,
 		tool: curTool,
 		toggleTool,
-		beginEdit,
 		clearTool
 	}
 

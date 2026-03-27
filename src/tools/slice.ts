@@ -89,6 +89,6 @@ export const SliceTool: TEditTool<SliceEdit> = {
 
 	canUse: true,
 
-	beginEdit: makeSliceEdit
+	newEdit: makeSliceEdit
 
 }

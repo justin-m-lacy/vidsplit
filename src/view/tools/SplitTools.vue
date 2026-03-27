@@ -61,7 +61,7 @@ function deleteCut() {
 				<Trash />
 			</button>
 			<button type="button" class="disabled:opacity-50"
-					:disabled="!hasFFMpeg || Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'inactive')"
+					:disabled="!hasFFMpeg || Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'pending')"
 					title="Split video"
 					@click="emit('apply', edit)">
 				<Download />
