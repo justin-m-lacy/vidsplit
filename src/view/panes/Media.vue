@@ -145,7 +145,7 @@ async function onFilePicked(event: Event) {
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
 					class="flex justify-center items-center my-1 w-full max-w-11/12"
-					:canEdit="appState.hasFFMpeg"
+					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
