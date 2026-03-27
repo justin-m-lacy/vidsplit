@@ -13,11 +13,11 @@ const createWindow = () => {
 		}
 	});
 
-	handleCheckFFMpeg();
-	handleInstallFFMpeg();
-	handleOpenMedia();
-	handleSlice(ipcMain, win, app);
-	handleSplit(ipcMain, win, app);
+	handleCheckFFMpeg(ipcMain);
+	handleInstallFFMpeg(ipcMain);
+	handleOpenMedia(ipcMain);
+	handleSlice(ipcMain, app);
+	handleSplit(ipcMain, app);
 
 	win.loadFile(path.join(import.meta.dirname, './render/index.html'));
 
