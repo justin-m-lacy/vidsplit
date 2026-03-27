@@ -6,7 +6,6 @@ import { concatMedia } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
 import { saveSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
-//import { probeTypes } from "./ffmpeg/probe";
 
 export function handleOpenMedia(ipcMain: IpcMain) {
 
@@ -109,7 +108,6 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 }
 
-
 export function handleSplit(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
@@ -130,7 +128,6 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		const updates = createUpdaters(evt.sender, op.id);
 
-		console.log(`in path: ${inPath}  out: ${baseName}`);
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
@@ -146,8 +143,6 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 			if (i > 0) sliceEnd = cuts[i - 1].t
 
 		}
-
-		console.log(`cuts: ${cuts.length}  endlen: ${op.duration}`);
 
 		// copy parts to files.
 		await Promise.allSettled(saves);

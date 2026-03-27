@@ -45,10 +45,10 @@ function getPos(pct: number) {
 <template>
 
 	<div class="flex justify-stretch w-full items-center select-none
-	text-xxs gap-x-2 min-h-5">
+	text-xxs gap-x-4 min-h-5">
 		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barElm"
-			 class="relative flex items-center w-full grow min-h-2 border border-l-0 border-r-0 
+			 class="relative flex items-center w-full min-h-2 border border-l-0 border-r-0 
 			 border-red-500 bg-red-200 bg-repeat-x">
 
 			<div class="absolute min-h-2 h-2 bg-sky-200/90

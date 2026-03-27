@@ -161,7 +161,7 @@ function addSlice() {
 			</button>
 		</div>
 		<SliceBar :edit="edit" :media="media" />
-		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"
+		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1 min-h-12"
 			 @dragover.prevent @drop="onDropScreen">
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
 				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"

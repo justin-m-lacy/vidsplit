@@ -15,16 +15,9 @@ const createWindow = () => {
 		autoHideMenuBar: true,
 		webPreferences: {
 			preload: path.join(import.meta.dirname, 'preload.js'),
-			contextIsolation: true,
-			sandbox: false
+			contextIsolation: true
 		}
 	});
-
-	handleCheckFFMpeg(ipcMain);
-	handleInstallFFMpeg(ipcMain);
-	handleOpenMedia(ipcMain);
-	handleSlice(ipcMain, app);
-	handleSplit(ipcMain, app);
 
 	win.on('ready-to-show', () => {
 		win.show();
@@ -43,3 +36,9 @@ app.whenReady().then(createWindow);
 app.on('window-all-closed', function () {
 	if (process.platform !== 'darwin') app.quit()
 });
+
+handleCheckFFMpeg(ipcMain);
+handleInstallFFMpeg(ipcMain);
+handleOpenMedia(ipcMain);
+handleSlice(ipcMain, app);
+handleSplit(ipcMain, app);

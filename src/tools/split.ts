@@ -77,7 +77,9 @@ function makeSplitEdit(media: MediaState) {
 		delete cuts.value[cut.id];
 	}
 
-	/// apply operation.
+	/**
+	 * Apply split operation.
+	 */
 	async function apply(this: SplitEdit) {
 
 		// convert from percents to time in seconds.

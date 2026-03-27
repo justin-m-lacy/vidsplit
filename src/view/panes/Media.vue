@@ -103,8 +103,8 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch justify-center gap-y-2">
-		<div class="relative flex justify-center items-center grow min-h-1/2 mx-0.5 p-0
+	<div class="flex flex-col items-center justify-center gap-y-2">
+		<div class="relative flex justify-stretch items-center grow min-h-1/2 mx-0.5 p-0
 		rounded-xs transition-colors overflow-clip"
 			 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
 			 @drop.prevent="fileDrop"
@@ -147,14 +147,14 @@ async function onFilePicked(event: Event) {
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-center items-center my-1 w-full max-w-11/12"
+					class="flex justify-center items-center my-1 max-w-11/12"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-stretch items-center my-1  max-w-11/12"
+					class="flex justify-stretch items-center my-1 max-w-11/12"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
