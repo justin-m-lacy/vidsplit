@@ -26,6 +26,15 @@ export function handleOpenMedia(ipcMain: IpcMain) {
 
 }
 
+function errToStr(err: unknown) {
+	if (typeof err == 'string') {
+		return err;
+	} else if (err instanceof Error) {
+		return err.message
+	}
+	return 'An unknown error has occurred.';
+}
+
 export function handleCheckFFMpeg(ipcMain: IpcMain) {
 
 	ipcMain.handle('checkFFMpeg',
@@ -33,7 +42,7 @@ export function handleCheckFFMpeg(ipcMain: IpcMain) {
 			try {
 				return await getFFMpegVers()
 			} catch (err) {
-				return { err }
+				return { err: errToStr(err) }
 			}
 		});
 
@@ -47,7 +56,7 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 				console.log(`got handle-install event...`);
 				return await installFFmpeg();
 			} catch (err) {
-				return { err }
+				return { err: errToStr(err) }
 			}
 		});
 
@@ -172,7 +181,7 @@ function createUpdaters(web: WebContents,
 	return subProgs.map((_, i) => {
 
 		// update sub current, sub total.
-		return (subCur, subTot) => {
+		return (subCur: number, subTot: number) => {
 
 			// rough estimate only. current sometimes > total
 			current += (subCur - subProgs[i]);

@@ -1,6 +1,10 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { handleCheckFFMpeg, handleInstallFFMpeg, handleOpenMedia, handleSlice, handleSplit } from './handlers';
+import {
+	handleCheckFFMpeg,
+	handleInstallFFMpeg,
+	handleOpenMedia, handleSlice, handleSplit
+} from './handlers';
 
 const createWindow = () => {
 

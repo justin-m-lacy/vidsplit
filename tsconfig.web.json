@@ -1,16 +1,18 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": "./",
     "baseUrl": "./",
     "outDir": "app",
     "target": "esnext",
-    "module": "preserve",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
+    "noEmit": true,
     "allowJs": true,
     "checkJs": false,
     "sourceMap": true,
@@ -19,8 +21,14 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "lib": [
-      "esnext"
-    ]
+      "esnext",
+      "dom"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
   },
   "typeAcquisition": {
     "enable": true
@@ -30,9 +38,11 @@
     "node_modules"
   ],
   "include": [
-    "electron",
-    "shared",
-    "electron/**/*.ts",
-    "electron/**/*.d.ts"
+    "./shared/**/*.ts",
+    "./shared/**/*.d.ts",
+    "src/@types",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "electron/preload/*.d.ts"
   ]
 }
