@@ -22,18 +22,17 @@ export const useTaskStore = defineStore('progress', () => {
 	const tasks = ref<Record<string, TEditTask>>(Object.create(null));
 
 	// window.electron won't exist when testing front-end only.
-	if (window.electron) {
-		window.electron.onProgress((id: string, cur: number, total: number) => {
 
-			const task = tasks.value[id];
-			if (!task || task.state == 'complete' || task.state === 'failed') return;
-			task.state = 'active';
+	window.electron?.onProgress((id: string, cur: number, total: number) => {
 
-			task.current = cur;
-			task.total = total;
+		const task = tasks.value[id];
+		if (!task || task.state == 'complete' || task.state === 'failed') return;
+		task.state = 'active';
 
-		});
-	}
+		task.current = cur;
+		task.total = total;
+
+	});
 
 	function add<T extends any>(id: string, promise: Promise<T>): TEditTask {
 
