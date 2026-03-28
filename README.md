@@ -1,5 +1,19 @@
 Javascript Video Splitter
 
+# Electron/FFMpeg Video Splitter
+
+#### Slice and Save video segments
+
+![Screenshot](docs/img/slice-media.png)
+
+#### Slice & Reorder multiple segments
+
+![Screenshot](docs/img/combine-slices.png)
+
+#### Split whole video at cutting points
+
+![Screenshot](docs/img/split-video.png)
+
 # Setup
 
 * Install `node`
