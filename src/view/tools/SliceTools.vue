@@ -184,7 +184,7 @@ function addSlice() {
 
 				<X class="absolute rounded-full -right-1 -top-0.5
 					drop-shadow-2xl border border-red-700 bg-red-600 max-h-6 h-1/3 w-auto p-0.5"
-				   @click="removeSlice(s)" stroke-width="2.5" />
+				   @click.stop.prevent="removeSlice(s)" stroke-width="2.5" />
 
 				<img v-if="s.snapshot" :src="s.snapshot"
 					 class="w-full h-full">
