@@ -2,8 +2,9 @@
 import { useSnapshot } from '@/store/snapshot';
 import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
+import { useDrag } from '@/view/composables/drag-elm';
 import { Download, X } from 'lucide-vue-next';
-import Timestamp from '../components/Timestamp.vue';
+import TimeStamp from '../components/TimeStamp.vue';
 import { MediaState } from '../composables/media-state';
 import SliceBar from './SliceBar.vue';
 
@@ -20,41 +21,52 @@ const emit = defineEmits<{
 
 const snapshots = useSnapshot();
 
+
 /**
  * Parent of screenshot slices.
  */
 const snapsElm = shallowRef<HTMLElement>();
 
-const onDragSnapshot = (e: DragEvent, slice: MediaSlice) => {
-	e.dataTransfer!.setData('text/plain', slice.id);
+const dragger = useDrag<MediaSlice>((evt: MouseEvent, el: HTMLElement, data) => {
+	if (data) {
+		dragSlice(evt, data.id);
+	}
+});
+
+function onDragSnapshot(e: DragEvent, slice: MediaSlice) {
 	e.dataTransfer!.dropEffect = 'move';
+	dragger.startDrag(e.currentTarget as HTMLElement, slice);
 }
 
-const onDropScreen = (e: DragEvent) => {
 
-	e.preventDefault();
+function dragSlice(e: DragEvent | MouseEvent, mySlice: string) {
 
-	const sliceId = e.dataTransfer?.getData('text/plain');
 	const children = snapsElm.value?.children;
-	if (!sliceId || !children) return;
+	if (!mySlice || !children) return;
 
 	const dropX = e.clientX;
 
 	let inSlice: string | undefined;
+
 	for (let i = children.length - 1; i >= 0; i--) {
 
 		const elm = children.item(i) as HTMLElement;
 		if (!elm) continue;
 		const rect = elm.getBoundingClientRect();
-		if (rect.x <= dropX && rect.right >= dropX) {
-			// search has to be by group id since not all groups visible.
+		if (dropX >= rect.x) {
+
 			inSlice = elm.dataset.slice;
 			break;
+
+		} else if (dropX < rect.left + rect.width / 2) {
+
+			inSlice = elm.dataset.slice;
+
 		}
 
 	}
-	if (inSlice) {
-		moveSlice(sliceId, inSlice);
+	if (inSlice && inSlice != mySlice) {
+		moveSlice(mySlice, inSlice);
 	}
 
 }
@@ -146,23 +158,25 @@ function addSlice() {
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
 					title="Add Slice"
+					:disabled="!media.ready"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">
-				<Timestamp :time="media.from" />&nbsp;to&nbsp;
-				<Timestamp :time="media.to" />
+				<TimeStamp :time="media.from" />&nbsp;to&nbsp;
+				<TimeStamp :time="media.to" />
 			</span>
 
 			<button type="button" class="disabled:opacity-50"
 					:disabled="!hasFFMpeg || (edit.slices.length == 0)
-						|| (task?.state == 'active' || task?.state == 'inactive')"
+						|| (task?.state == 'active' || task?.state == 'pending')"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>
 		<SliceBar :edit="edit" :media="media" />
-		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1"
-			 @dragover.prevent @drop="onDropScreen">
+		<div ref="snapsElm"
+			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
+			 @dragover.prevent>
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
 				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"
 				 @dragstart="onDragSnapshot($event, s)"
@@ -170,7 +184,7 @@ function addSlice() {
 
 				<X class="absolute rounded-full -right-1 -top-0.5
 					drop-shadow-2xl border border-red-700 bg-red-600 max-h-6 h-1/3 w-auto p-0.5"
-				   @click="removeSlice(s)" stroke-width="2.5" />
+				   @click.stop.prevent="removeSlice(s)" stroke-width="2.5" />
 
 				<img v-if="s.snapshot" :src="s.snapshot"
 					 class="w-full h-full">

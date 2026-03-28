@@ -6,6 +6,7 @@ export type TMediaEdit = {
 	toolId: string | Symbol;
 	media: MediaState;
 	apply: () => Promise<any>;
+	reset?: () => void;
 
 }
 
@@ -15,6 +16,6 @@ export type TEditTool<D extends TMediaEdit = TMediaEdit> = {
 
 	canUse: boolean | ((media: MediaState) => boolean),
 
-	beginEdit: (media: MediaState) => D;
+	newEdit: (media: MediaState) => D;
 
 }

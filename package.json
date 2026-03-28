@@ -1,8 +1,9 @@
 {
   "name": "vidsplit",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Electron Video Splitter",
   "main": "app/main.js",
+  "displayName": "VidSplit",
   "type": "module",
   "keywords": [
     "video",
@@ -13,7 +14,7 @@
   "author": "justin lacy",
   "build": {
     "appId": "vidsplit.jmlacy",
-    "buildVersion": "0.7.1",
+    "buildVersion": "0.7.2",
     "extraFiles": [],
     "executableName": "VidSplit",
     "files": [

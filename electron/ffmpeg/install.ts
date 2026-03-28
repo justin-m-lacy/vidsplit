@@ -16,7 +16,7 @@ export function getFFMpegVers() {
 		exec('ffmpeg -version', (error, stdout, stderr) => {
 
 			if (error || stderr) {
-				rej(`${error?.message ?? stderr}`);
+				rej(new Error(`${error?.message ?? stderr}`));
 				return;
 			}
 
@@ -63,7 +63,7 @@ export async function findPackage<T extends string>(pkg: T) {
 	}
 }
 
-export async function installPackage(pkg) {
+export async function installPackage(pkg: string) {
 
 	try {
 		console.log(`Installing ${pkg}...`);
@@ -75,7 +75,7 @@ export async function installPackage(pkg) {
 		console.log(`${pkg} installed`);
 		return findPackage(pkg);
 
-	} catch (error) {
+	} catch (error: any) {
 		console.error(`Failed to install ${pkg}:`, error.message);
 		return undefined;
 	}

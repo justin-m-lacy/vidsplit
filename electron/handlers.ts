@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain, type App, type IpcMain } from 'electron';
+import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
@@ -6,9 +6,8 @@ import { concatMedia } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
 import { saveSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
-//import { probeTypes } from "./ffmpeg/probe";
 
-export function handleOpenMedia() {
+export function handleOpenMedia(ipcMain: IpcMain) {
 
 	return ipcMain.handle('open-media', async (_,) => {
 
@@ -26,34 +25,42 @@ export function handleOpenMedia() {
 
 }
 
-export function handleCheckFFMpeg() {
+function errToStr(err: unknown) {
+	if (typeof err == 'string') {
+		return err;
+	} else if (err instanceof Error) {
+		return err.message
+	}
+	return 'An unknown error has occurred.';
+}
+
+export function handleCheckFFMpeg(ipcMain: IpcMain) {
 
 	ipcMain.handle('checkFFMpeg',
 		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
 			try {
 				return await getFFMpegVers()
 			} catch (err) {
-				return { err }
+				return { err: errToStr(err) }
 			}
 		});
 
 }
 
-export function handleInstallFFMpeg() {
+export function handleInstallFFMpeg(ipcMain: IpcMain) {
 
 	ipcMain.handle('installFFMpeg',
 		async (evt): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> => {
 			try {
-				console.log(`got handle-install event...`);
 				return await installFFmpeg();
 			} catch (err) {
-				return { err }
+				return { err: errToStr(err) }
 			}
 		});
 
 }
 
-export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
+export function handleSlice(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
 
@@ -66,13 +73,12 @@ export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 		const outPath = copyExt((dialogRes.filePath), inPath);
 
 		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
-
-		const updates = createUpdaters(win, op.id);
+		const baseName = path.basename(inPath, ext);
+		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.slices.length === 1) {
 			await saveSlice(op.slices[0], inPath, outPath, updates[0]);
-			win.setProgressBar(0);
+			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
 			return outPath;
 		}
 
@@ -94,7 +100,7 @@ export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 			console.warn(`error removing files: ${err}`);
 		}
 
-		win.setProgressBar(0);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
 
 		return outPath;
 
@@ -102,8 +108,7 @@ export function handleSlice(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
 }
 
-
-export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
+export function handleSplit(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
 
@@ -116,22 +121,20 @@ export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 		const baseDir = path.dirname(inPath);
 
 		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath).slice(0, inPath.lastIndexOf('.'));
+		const baseName = path.basename(inPath, ext);
 
 		const cuts = op.cuts;
 		const saves: Promise<string>[] = [];
 
-		const updates = createUpdaters(win, op.id);
+		const updates = createUpdaters(evt.sender, op.id);
 
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
 			saves.push(saveSlice(
-				i > 0 ? {
-					from: cuts[i - 1].t,
+				{
+					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd
-				} : {
-					from: 0, to: sliceEnd
 				},
 				inPath,
 				path.join(baseDir, `${baseName}-${i}${ext}`),
@@ -143,7 +146,7 @@ export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
 
 		// copy parts to files.
 		await Promise.allSettled(saves);
-		win.setProgressBar(0);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
 
 		return true;
 
@@ -158,7 +161,7 @@ export function handleSplit(ipcMain: IpcMain, win: BrowserWindow, app: App) {
  * @param parts - number of separate parts opertation is broken into.
  * @returns 
  */
-function createUpdaters(win: BrowserWindow,
+function createUpdaters(web: WebContents,
 	id: string,
 	parts: number = 1, trayUpdate: boolean = true) {
 
@@ -169,12 +172,10 @@ function createUpdaters(win: BrowserWindow,
 	const subTotals = new Array<number>(parts).fill(0);
 	const subProgs = new Array<number>(parts).fill(0);
 
-	const to = win.webContents;
-
 	return subProgs.map((_, i) => {
 
 		// update sub current, sub total.
-		return (subCur, subTot) => {
+		return (subCur: number, subTot: number) => {
 
 			// rough estimate only. current sometimes > total
 			current += (subCur - subProgs[i]);
@@ -183,9 +184,11 @@ function createUpdaters(win: BrowserWindow,
 			subProgs[i] = subCur;
 			subTotals[i] = subTot;
 
-			to.send('progress', id, current, total);
+			web.send('progress', id, current, total);
 			if (trayUpdate) {
-				win.setProgressBar(Math.min(current / total, 1));
+				BrowserWindow.fromWebContents(web)?.setProgressBar(
+					Math.min(current / total, 1)
+				);
 			}
 
 		}

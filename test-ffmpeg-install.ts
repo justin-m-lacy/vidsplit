@@ -1,13 +1,10 @@
-import { FFMpegModule, findPackage, installPackage, testFFMpegInstall } from "./electron/ffmpeg/install";
+import { FFMpegModule, findPackage, getFFMpegVers, installPackage } from "./electron/ffmpeg/install";
 
 
 async function versionCheck() {
 
 	try {
-
-		const res = await testFFMpegInstall();
-		console.log(`ffmpeg found: ${res.version}`);
-
+		const res = await getFFMpegVers();
 	} catch (err) {
 		console.log(`error: ${err}`);
 	}

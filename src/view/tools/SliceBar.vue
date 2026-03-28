@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
-import Timestamp from '@/view/components/Timestamp.vue';
+import TimeStamp from '@/view/components/TimeStamp.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 import { formatTime } from '../../../shared/time';
 import ViewSize from '../components/ViewSize.vue';
@@ -45,10 +45,10 @@ function getPos(pct: number) {
 <template>
 
 	<div class="flex justify-stretch w-full items-center select-none
-	text-xxs gap-x-2 min-h-5">
-		<Timestamp :time="media.time ?? 0" class="text-xxs" />
+	text-xxs gap-x-4 min-h-5">
+		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barElm"
-			 class="relative flex items-center w-full grow min-h-2 border border-l-0 border-r-0 
+			 class="relative flex items-center w-full min-h-2 border border-l-0 border-r-0 
 			 border-red-500 bg-red-200 bg-repeat-x">
 
 			<div class="absolute min-h-2 h-2 bg-sky-200/90
@@ -85,7 +85,7 @@ function getPos(pct: number) {
 			}">
 			</div>
 		</div>
-		<Timestamp :time="media.duration ?? 0" class="text-xxs" hide-ms
+		<TimeStamp :time="media.duration ?? 0" class="text-xxs" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>
