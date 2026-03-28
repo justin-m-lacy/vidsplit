@@ -34,7 +34,6 @@ const dragger = useDrag<MediaSlice>((evt: MouseEvent, el: HTMLElement, data) => 
 });
 
 function onDragSnapshot(e: DragEvent, slice: MediaSlice) {
-	e.dataTransfer!.setData('text/plain', slice.id);
 	e.dataTransfer!.dropEffect = 'move';
 	dragger.startDrag(e.currentTarget as HTMLElement, slice);
 }
@@ -68,36 +67,6 @@ function dragSlice(e: DragEvent | MouseEvent, mySlice: string) {
 	}
 	if (inSlice && inSlice != mySlice) {
 		moveSlice(mySlice, inSlice);
-	}
-
-}
-
-const onDropScreen = (e: DragEvent) => {
-
-	e.preventDefault();
-
-	const sliceId = e.dataTransfer?.getData('text/plain');
-	const children = snapsElm.value?.children;
-	if (!sliceId || !children) return;
-
-	const dropX = e.clientX;
-
-	let inSlice: string | undefined;
-
-	for (let i = children.length - 1; i >= 0; i--) {
-
-		const elm = children.item(i) as HTMLElement;
-		if (!elm) continue;
-		const rect = elm.getBoundingClientRect();
-		if (rect.x <= dropX && rect.right >= dropX) {
-			// search has to be by group id since not all groups visible.
-			inSlice = elm.dataset.slice;
-			break;
-		}
-
-	}
-	if (inSlice) {
-		moveSlice(sliceId, inSlice);
 	}
 
 }

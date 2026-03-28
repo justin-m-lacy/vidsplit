@@ -9,7 +9,6 @@ export function useDrag<T extends object>(
 
 	const dragging = shallowRef(false);
 
-	useEventListener('mouseup', endDrag);
 	useEventListener('dragend', endDrag);
 
 	function startDrag(el: HTMLElement, data: T) {
@@ -19,7 +18,7 @@ export function useDrag<T extends object>(
 
 		if (!dragging.value) {
 			dragging.value = true;
-			window.addEventListener('drag', onDrag);
+			window.addEventListener('drag', _onMove);
 		}
 
 	}
@@ -29,15 +28,17 @@ export function useDrag<T extends object>(
 		dragData.value = undefined;
 		if (dragging.value) {
 			dragging.value = false;
-			window.removeEventListener('drag', onDrag);
+			window.removeEventListener('drag', _onMove);
 		}
 	}
 
 
-	const onDrag = (evt: MouseEvent) => {
+	const _onMove = (evt: MouseEvent) => {
 		dragging.value = true;
 		if (dragEl.value) {
-			onMove(evt, dragEl.value, dragData.value);
+			if (dragEl.value.clientTop
+			)
+				onMove(evt, dragEl.value, dragData.value);
 		}
 	}
 
