@@ -51,6 +51,7 @@ function getPos(pct: number) {
 	text-xxs gap-x-2 min-h-6">
 		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barElm" class="relative flex items-center w-full grow min-h-2 border bg-sky-200 border-sky-700"
+			 :disabled="!media.ready"
 			 @dblclick="onDblClickBar($event)">
 
 			<div class="absolute bg-green-500/75 h-full left-0

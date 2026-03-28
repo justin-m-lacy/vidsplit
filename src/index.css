@@ -7,7 +7,7 @@
 }
 
 body {
-	@apply bg-light-50;
+	@apply bg-light-50 overflow-hidden;
 }
 
 @layer components {

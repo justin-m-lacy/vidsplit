@@ -104,7 +104,7 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 	<div class="flex flex-col items-center justify-center gap-y-2">
-		<div class="relative flex justify-stretch items-center grow min-h-1/2 mx-0.5 p-0
+		<div class="relative flex justify-center items-center grow min-h-1/2 mx-0.5 p-0
 		rounded-xs transition-colors overflow-clip"
 			 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
 			 @drop.prevent="fileDrop"

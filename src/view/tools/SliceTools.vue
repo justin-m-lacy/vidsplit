@@ -2,6 +2,7 @@
 import { useSnapshot } from '@/store/snapshot';
 import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
+import { useDrag } from '@/view/composables/drag-elm';
 import { Download, X } from 'lucide-vue-next';
 import TimeStamp from '../components/TimeStamp.vue';
 import { MediaState } from '../composables/media-state';
@@ -25,9 +26,49 @@ const snapshots = useSnapshot();
  */
 const snapsElm = shallowRef<HTMLElement>();
 
-const onDragSnapshot = (e: DragEvent, slice: MediaSlice) => {
+const dragger = useDrag<MediaSlice>((evt: MouseEvent, el: HTMLElement, data) => {
+	if (data) {
+		dragSlice(evt, data.id);
+	}
+});
+
+function onDragSnapshot(e: DragEvent, slice: MediaSlice) {
 	e.dataTransfer!.setData('text/plain', slice.id);
 	e.dataTransfer!.dropEffect = 'move';
+	dragger.startDrag(e.currentTarget as HTMLElement, slice);
+}
+
+
+function dragSlice(e: DragEvent | MouseEvent, mySlice: string) {
+
+	const children = snapsElm.value?.children;
+	if (!mySlice || !children) return;
+
+	const dropX = e.clientX;
+
+	let inSlice: string | undefined;
+
+	for (let i = children.length - 1; i >= 0; i--) {
+
+		const elm = children.item(i) as HTMLElement;
+		if (!elm) continue;
+		const rect = elm.getBoundingClientRect();
+		if (dropX >= rect.x) {
+
+			inSlice = elm.dataset.slice;
+			break;
+
+		} else if (dropX < rect.left + rect.width / 2) {
+
+			inSlice = elm.dataset.slice;
+
+		}
+
+	}
+	if (inSlice && inSlice != mySlice) {
+		moveSlice(mySlice, inSlice);
+	}
+
 }
 
 const onDropScreen = (e: DragEvent) => {
@@ -41,6 +82,7 @@ const onDropScreen = (e: DragEvent) => {
 	const dropX = e.clientX;
 
 	let inSlice: string | undefined;
+
 	for (let i = children.length - 1; i >= 0; i--) {
 
 		const elm = children.item(i) as HTMLElement;
@@ -67,6 +109,7 @@ function moveSlice(sliceId: string, toSlice: string) {
 	const indTo = slices.findIndex(s => s.id == toSlice);
 
 	if (indFrom < 0 || indTo < 0 || indFrom == indTo) return;
+	console.log(`move: ${indFrom} => ${indTo}`);
 
 	// slice being moved.
 	const slice = slices[indFrom];
@@ -146,6 +189,7 @@ function addSlice() {
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
 					title="Add Slice"
+					:disabled="!media.ready"
 					@click="addSlice">+✂</button>
 			<span class="flex items-center text-[0.7rem]">
 				<TimeStamp :time="media.from" />&nbsp;to&nbsp;
@@ -161,8 +205,9 @@ function addSlice() {
 			</button>
 		</div>
 		<SliceBar :edit="edit" :media="media" />
-		<div ref="snapsElm" class="flex items-center mt-1 gap-x-1 min-h-12"
-			 @dragover.prevent @drop="onDropScreen">
+		<div ref="snapsElm"
+			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
+			 @dragover.prevent>
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
 				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"
 				 @dragstart="onDragSnapshot($event, s)"
