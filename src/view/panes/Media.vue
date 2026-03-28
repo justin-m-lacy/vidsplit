@@ -51,6 +51,7 @@ async function loadFile(files: FileList) {
 		media.file = file;
 
 		mediaStore.setSource(file);
+		tools.curEdit?.reset?.();
 
 	} catch (err) {
 		console.error(err);

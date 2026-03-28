@@ -21,6 +21,7 @@ const emit = defineEmits<{
 
 const snapshots = useSnapshot();
 
+
 /**
  * Parent of screenshot slices.
  */
@@ -109,7 +110,6 @@ function moveSlice(sliceId: string, toSlice: string) {
 	const indTo = slices.findIndex(s => s.id == toSlice);
 
 	if (indFrom < 0 || indTo < 0 || indFrom == indTo) return;
-	console.log(`move: ${indFrom} => ${indTo}`);
 
 	// slice being moved.
 	const slice = slices[indFrom];

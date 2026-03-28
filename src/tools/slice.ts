@@ -75,6 +75,9 @@ function makeSliceEdit(media: MediaState) {
 		toolId: SliceId,
 		apply,
 		media,
+		reset() {
+			slices.value = []
+		},
 		get slices() { return slices.value },
 		set slices(v: MediaSlice[]) { slices.value = v; },
 		addSlice,
