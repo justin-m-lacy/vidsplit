@@ -4,7 +4,7 @@ import CutPoint from '@/view/components/CutPoint.vue';
 import { useSplitDrags } from '@/view/composables/split-drag';
 import { ComponentPublicInstance } from 'vue';
 import { formatTime } from '../../../shared/time';
-import TimeStamp from '../components/TimeStamp.vue';
+import TimeStamp from '../components/Timestamp.vue';
 import ViewSize from '../components/ViewSize.vue';
 import { MediaState } from '../composables/media-state';
 import { useTimeline } from '../composables/timeline';

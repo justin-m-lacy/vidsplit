@@ -2,7 +2,7 @@
 import ViewSize from '@/view/components/ViewSize.vue';
 import { useTimeline } from '@/view/composables/timeline';
 import { formatTime } from '../../../shared/time';
-import TimeStamp from '../components/TimeStamp.vue';
+import TimeStamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 
 const props = defineProps<{

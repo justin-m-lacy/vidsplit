@@ -4,7 +4,7 @@ import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { useDrag } from '@/view/composables/drag-elm';
 import { Download, X } from 'lucide-vue-next';
-import TimeStamp from '../components/TimeStamp.vue';
+import TimeStamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state';
 import SliceBar from './SliceBar.vue';
 

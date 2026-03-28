@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SliceEdit } from '@/tools/slice';
-import TimeStamp from '@/view/components/TimeStamp.vue';
+import TimeStamp from '@/view/components/Timestamp.vue';
 import { useSliceDrag } from '@/view/composables/slice-drag';
 import { formatTime } from '../../../shared/time';
 import ViewSize from '../components/ViewSize.vue';
