@@ -1,7 +1,6 @@
 import path from "path";
 import { probeTypes } from './electron/ffmpeg/probe';
-import { buildSliceCmd } from "./electron/ffmpeg/slice";
-import { spawnFFMpeg } from './electron/ffmpeg/spawn';
+import { saveSlicesComplex } from "./electron/ffmpeg/slice";
 
 //testSlice();
 testProbe();
@@ -22,15 +21,13 @@ async function testSlice() {
 		const inFile = './test.mp4';
 		const outFile = path.resolve('./', 'out.mp4');
 
-		const args = await buildSliceCmd(
+		const op = await saveSlicesComplex(
 			[
 				{ id: crypto.randomUUID(), from: 12, to: 14.5 },
 				{ id: crypto.randomUUID(), from: 1, to: 2 }
 			],
 			inFile,
 			outFile);
-
-		await spawnFFMpeg(args);
 
 	} catch (err) {
 		console.error(err);

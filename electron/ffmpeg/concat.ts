@@ -3,7 +3,7 @@ import * as path from 'path';
 import { quoteStr } from '../util/text';
 import { spawnFFMpeg } from "./spawn";
 
-export async function concatMedia(inFiles: string[], outFile: string, tmpDir: string) {
+export async function concatFromFiles(inFiles: string[], outFile: string, tmpDir: string) {
 
 	const args: string[] = ['-y'];
 

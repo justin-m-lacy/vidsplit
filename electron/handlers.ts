@@ -2,9 +2,9 @@ import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'elec
 import { unlink } from 'fs/promises';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
-import { concatMedia } from "./ffmpeg/concat";
+import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { saveSlice } from "./ffmpeg/slice";
+import { saveSimpleSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
@@ -77,7 +77,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.slices.length === 1) {
-			await saveSlice(op.slices[0], inPath, outPath, updates[0]);
+			await saveSimpleSlice(op.slices[0], inPath, outPath, updates[0]);
 			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
 			return outPath;
 		}
@@ -89,10 +89,10 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 
 		// copy parts to temp files.
 		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSlice(op.slices[i], inPath, tmpFile, updates[i]);
+			return saveSimpleSlice(op.slices[i], inPath, tmpFile, updates[i]);
 		}));
 
-		await concatMedia(tmpFiles, outPath, tempDir);
+		await concatFromFiles(tmpFiles, outPath, tempDir);
 
 		try {
 			Promise.allSettled(tmpFiles.map(f => unlink(f)))
@@ -131,7 +131,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
-			saves.push(saveSlice(
+			saves.push(saveSimpleSlice(
 				{
 					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd

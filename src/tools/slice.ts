@@ -1,10 +1,9 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
 import type { MediaState } from "@/view/composables/media-state";
+import { SliceInfo } from "shared/edits";
 
-export type MediaSlice = {
+export type MediaSlice = SliceInfo & {
 	id: string,
-	from: number,
-	to: number,
 	snapshot?: string
 }
 
@@ -19,7 +18,6 @@ const SliceId = Symbol('slice');
 export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
 	return edit?.toolId === SliceId;
 }
-
 
 function makeSliceEdit(media: MediaState) {
 
