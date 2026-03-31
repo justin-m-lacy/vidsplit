@@ -1,3 +1,4 @@
+import { makeFilterArgs } from "electron/ffmpeg/filters";
 import { quoteStr } from "../util/text";
 import { spawnFFMpeg } from "./spawn";
 
@@ -28,7 +29,7 @@ function mapOutput(outFile: string, audio?: boolean, outTrack: string = 'out') {
  * ('v', 'a' will be added automatically to video,audio track ids)
  * @returns 
  */
-function makeConcat(inId: string, count: number, audio?: boolean, outId = 'out') {
+function makeConcatOp(inId: string, count: number, audio?: boolean, outId = 'out') {
 
 	if (audio) {
 		// collect input track names.
@@ -52,27 +53,20 @@ function makeSetFps(fps: number) {
 
 /**
  * Create single trim slice from video.
- * @param s 
- * @param outId 
+ * @param s
+ * @param vfilters - video trim arg is pushed onto this array.
+ * if omitted, video is not cut.
+ * @param afilters - autio trim arg is pushed to this this array.
+ * if omitted, audio is not cut.
  * @returns 
  */
-function makeTrimPart(s: SliceRange, outId: string, audio?: boolean) {
+function makeTrimPart(s: SliceRange, vfilters?: string[], afilters?: string[]) {
 
-	const from = (s.from);
-	const to = (s.to);
-
-	///setpts=PTS-STARTPTS - fixes presentation timestamp for new relative positions.
-	/// optional format change:
-	/// [0:v]trim=start=10.0:end=15.0,setpts=PTS-STARTPTS,format=yuv420p[0v];
-	if (audio) {
-
-		// trim input a/v track 0, write numbered output a/v tracks
-		const vid = `[0:v]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outId}v];`;
-		const aud = `[0:a]atrim=start=${from}:end=${to},asetpts=PTS-STARTPTS[${outId}a];`;
-		return vid + aud;
-
-	} else {
-		return `[0]trim=start=${from}:end=${to},setpts=PTS-STARTPTS[${outId}v];`;
+	if (vfilters) {
+		vfilters.push(`trim=start=${s.from}:end=${s.to},setpts=PTS-STARTPTS`);
+	}
+	if (afilters) {
+		afilters.push(`atrim=start=${s.from}:end=${s.to},asetpts=PTS-STARTPTS`);
 	}
 
 }
@@ -144,7 +138,6 @@ export async function saveSimpleSlice(slice: SliceRange,
 /**
  * Export for testing purposes.
  *  -ss seek start
- *  -t duration
  *  -to to duration
  */
 export async function saveSlicesComplex(
@@ -163,11 +156,24 @@ export async function saveSlicesComplex(
 
 	args.push('-filter_complex');
 
-	let trims = slices.map((s, i) => makeTrimPart(s, `o${i}`, audio)).join('');
-	// add concatenate operation after trim.
-	trims += makeConcat('o', slices.length, audio,);
+	// complete operations for each track: [inputTrack]filters,..[outTrack]
+	// join with ';'
+	const trackOps: string[] = [];
 
-	args.push(trims);
+	slices.map((s, i) => {
+
+		const vfilters: string[] = [];
+		const afilters: string[] | undefined = audio ? [] : undefined;
+
+		makeTrimPart(s, vfilters, afilters);
+		makeFilterArgs(i, `o${i}`, trackOps, vfilters, afilters);
+
+	}).join('');
+
+	// add concatenate operation after trim.
+	trackOps.push(makeConcatOp('o', slices.length, audio));
+
+	args.push(trackOps.join(';'));
 	args.push(mapOutput(outUrl, audio));
 
 	return await spawnFFMpeg(args, progress, (times.to - times.from));
