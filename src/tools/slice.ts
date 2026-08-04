@@ -1,4 +1,5 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
+import { InvalidDurationError } from "@/model/errors";
 import type { MediaState } from "@/view/composables/media-state";
 import { SliceInfo } from "shared/edits";
 
@@ -33,7 +34,7 @@ function makeSliceEdit(media: MediaState) {
 
 		const duration = media.duration;
 		if (!duration || Number.isNaN(duration)) {
-			throw new Error('Invalid Duration');
+			throw InvalidDurationError();
 		}
 
 		slices.value.push({

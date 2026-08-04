@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
 import path from "path";
-import { NodeSliceOp, NodeSplitOp } from "../shared/edits";
+import { NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
 import { saveSimpleSlice } from "./ffmpeg/slice";
@@ -60,6 +60,34 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 
 }
 
+function invertTimes(op: NodeSliceOp) {
+
+	const cuts = op.slices;
+	const slices = <SliceInfo[]>[];
+
+	let nextStartSec = 0;
+
+	for (let i = 0; i < cuts.length; i++) {
+
+		if (nextStartSec < cuts[i].from) {
+			// add video up to next cut.
+			slices.push({
+				from: nextStartSec,
+				to: cuts[i].from
+			})
+		}
+		// resume after next cut.
+		nextStartSec = cuts[i].to;
+
+	}
+
+	// add final slice
+	if (nextStartSec < op.duration) {
+		slices.push({ from: nextStartSec, to: op.duration });
+	}
+
+}
+
 export function handleSlice(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
@@ -75,6 +103,10 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const ext = path.extname(inPath);
 		const baseName = path.basename(inPath, ext);
 		const updates = createUpdaters(evt.sender, op.id);
+
+		if (op.type == 'cut') {
+			// invert time selection.
+		}
 
 		if (op.slices.length === 1) {
 			await saveSimpleSlice(op.slices[0], inPath, outPath, updates[0]);

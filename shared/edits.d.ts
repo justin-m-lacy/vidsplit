@@ -1,4 +1,4 @@
-import { CurvesFilter, FpsFilter, ScaleFilter, SliceFilter } from "shared/filters";
+import { CurvesFilter, FpsFilter, RangeFilter, ScaleFilter } from "shared/filters";
 
 type VideoOp = {
 	id: string,
@@ -32,12 +32,18 @@ type Maybe<D> = D | {};
  */
 type With<T extends object, K extends keyof T> = T & { [p in K]-?: T[p] };
 
-export type SliceInfo = SliceFilter & Partial<FpsFilter> & Partial<CurvesFilter>;
+export type SliceInfo = RangeFilter & Partial<FpsFilter> & Partial<CurvesFilter>;
 
+export type WebCutOp = VideoOp & {
+	cuts: RangeFilter[]
+}
 export type WebSliceOp = VideoOp & {
-	slices: SliceInfo[]
+	slices: SliceInfo[],
 }
 
 export type NodeSliceOp = Omit<WebSliceOp, 'file'> & {
 	filePath: string,
+	// total duration of pre-sliced video in seconds.
+	duration: number,
+	type: 'join' | 'cut'
 }

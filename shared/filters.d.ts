@@ -4,4 +4,4 @@ export type ScaleFilter = {
 }
 export type FpsFilter = { fps: number };
 export type CurvesFilter = { curves: string };
-export type SliceFilter = { from: number, to: number };
+export type RangeFilter = { from: number, to: number };

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
+import { IsCutEdit } from '@/tools/cut';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
 import { MediaState } from '@/view/composables/media-state';
-import { Camera, SquareSplitHorizontal } from 'lucide-vue-next';
+import { Camera, Film, SquareSplitHorizontal } from 'lucide-vue-next';
 
 const props = defineProps<{
 	media?: MediaState
@@ -19,6 +20,11 @@ async function doSnapshot() {
 
 	await useSnapshot().saveSnap(media, media.currentTime);
 
+}
+
+function setCutMode() {
+	if (!props.media) return;
+	tools.setCutMode(props.media);
 }
 
 function setSliceMode() {
@@ -42,14 +48,24 @@ function setSplitMode() {
 				@click="doSnapshot">
 			<Camera />
 		</button>
-		<button type="button" title="Create Slices"
+		<button type="button" title="Join Slices"
 				class="icon-btn flex justify-center disabled:opacity-50 p-0.5 text-sm
 				transition-colors"
 				:class="IsSliceEdit(tools.curEdit) ?
 					'bg-amber-500/40 rounded-md border border-amber-700' :
 					''"
 				:disabled="!media?.media"
-				@click="setSliceMode">✂</button>
+				@click="setSliceMode">
+			<Film />
+		</button>
+		<button type="button" title="Cut/Remove Slices"
+				class="icon-btn flex justify-center disabled:opacity-50 p-0.5 text-sm
+				transition-colors"
+				:class="IsCutEdit(tools.curEdit) ?
+					'bg-amber-500/40 rounded-md border border-amber-700' :
+					''"
+				:disabled="!media?.media"
+				@click="setCutMode">✂</button>
 		<button type="button" title="Split Media"
 				class="icon-btn flex justify-center transition-colors items-center disabled:opacity-50 p-0.5 text-sm max-h-7"
 				:class="IsSplitEdit(tools.curEdit) ?
