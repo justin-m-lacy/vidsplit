@@ -2,13 +2,13 @@ import { Timeline } from "@/view/composables/timeline";
 import { useEventListener } from "@vueuse/core";
 
 /**
- * Enables dragging of end points of a slice operation.
+ * Enables dragging the end points of a range selection.
  * @param media 
  * @param fromElm 
  * @param toElm 
  * @param barElm 
  */
-export function useSliceDrag(
+export function useRangeDrag(
 	tl: Timeline,
 	fromElm: Ref<HTMLElement | undefined>,
 	toElm: Ref<HTMLElement | undefined>

@@ -4,9 +4,11 @@ import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { TEditTask, useTaskStore } from '@/store/task-store';
+import { IsCutEdit } from '@/tools/cut.js';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
 import { useMediaState } from '@/view/composables/media-state';
+import CutTools from '@/view/tools/CutTools.vue';
 import SplitTools from '@/view/tools/SplitTools.vue';
 import { Upload, X } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
@@ -153,6 +155,13 @@ async function onFilePicked(event: Event) {
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
+		<CutTools v-if="IsCutEdit(tools.curEdit)"
+				  @apply="applyEdit($event)"
+				  class="flex justify-center items-center my-1 max-w-11/12"
+				  :hasFFMpeg="appState.hasFFMpeg"
+				  :edit="tools.curEdit"
+				  :media="media"
+				  :task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
 					class="flex justify-stretch items-center my-1 max-w-11/12"

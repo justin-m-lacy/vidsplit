@@ -76,6 +76,14 @@ export function useTimeline(
 	});
 
 	/**
+	 * Convert time in seconds, to percent of total playtime.
+	 */
+	const timeToPct = (secs: number) => {
+		if (secs < 0) return 0;
+		return secs > media.duration ? 1 : (secs / media.duration);
+	}
+
+	/**
 	 * Convert scaled % position on scrub bar to global media percent.
 	 * @param barPct 
 	 * @returns 
@@ -153,6 +161,7 @@ export function useTimeline(
 		viewOffset,
 		toBarPct,
 		posToGlobalPct,
+		timeToPct,
 		zooming,
 		dragging,
 		setViewSize

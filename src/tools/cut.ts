@@ -4,8 +4,7 @@ import type { MediaState } from "@/view/composables/media-state";
 import { RangeFilter } from "shared/filters";
 
 export type MediaCut = RangeFilter & {
-	id: string,
-	snapshot?: string
+	id: string
 }
 
 
@@ -27,11 +26,11 @@ function makeCutEdit(media: MediaState) {
 
 	/**
 	 * Add media slice from current left/right percents.
-	 * @param from - clip position in seconds
-	 * @param to - clip position in seconds
+	 * @param from - clip time in seconds
+	 * @param to - clip time in seconds
 	 * @param snapshot - snapshot string data.
 	 */
-	const addCut = (from: number, to: number, snapshot?: string) => {
+	const addCut = (from: number, to: number) => {
 
 		const duration = media.duration;
 		if (!duration || Number.isNaN(duration)) {
@@ -41,8 +40,7 @@ function makeCutEdit(media: MediaState) {
 		cuts.value.push({
 			id: window.crypto.randomUUID(),
 			from,
-			to,
-			snapshot
+			to
 		});
 
 		triggerRef(cuts);

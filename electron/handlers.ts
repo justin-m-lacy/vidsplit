@@ -85,6 +85,7 @@ function invertTimes(op: NodeSliceOp) {
 	if (nextStartSec < op.duration) {
 		slices.push({ from: nextStartSec, to: op.duration });
 	}
+	return slices;
 
 }
 
@@ -105,7 +106,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.type == 'cut') {
-			// invert time selection.
+			op.slices = invertTimes(op);		// invert time selection.
 		}
 
 		if (op.slices.length === 1) {

@@ -15,7 +15,6 @@ const scrubElm = shallowRef<HTMLElement>();
 const fromElm = shallowRef<HTMLElement>();
 const toElm = shallowRef<HTMLElement>();
 
-
 const tl = useTimeline(props.media, scrubElm, barElm);
 const { scrubPct, toBarPct } = tl;
 useRangeDrag(tl, fromElm, toElm);
@@ -39,8 +38,6 @@ useRangeDrag(tl, fromElm, toElm);
 				select-none pointer-events-none"
 				 :style="pctRangeToPos(toBarPct(media.fromPct), scrubPct)"></div>
 
-			<slot name="bar" :timeline="tl">
-			</slot>
 			<div ref="fromElm"
 				 class="absolute z-10 w-3 h-5 min-h-4
 				 rounded-l-full rounded-r-none -translate-x-full
@@ -66,8 +63,7 @@ useRangeDrag(tl, fromElm, toElm);
 			}">
 			</div>
 		</div>
-		<TimeStamp class="text-xxs"
-				   :time="media.duration ?? 0" hide-ms
+		<TimeStamp :time="media.duration ?? 0" class="text-xxs" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>

@@ -26,8 +26,8 @@ function makeSliceEdit(media: MediaState) {
 
 	/**
 	 * Add media slice from current left/right percents.
-	 * @param from - clip position in seconds
-	 * @param to - clip position in seconds
+	 * @param from - clip time in seconds
+	 * @param to - clip time in seconds
 	 * @param snapshot - snapshot string data.
 	 */
 	const addSlice = (from: number, to: number, snapshot?: string) => {

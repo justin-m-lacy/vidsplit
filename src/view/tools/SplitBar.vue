@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { MediaCut, SplitEdit } from '@/tools/split';
+import { pctToPos } from '@/util/view';
 import CutPoint from '@/view/components/CutPoint.vue';
 import { useSplitDrags } from '@/view/composables/split-drag';
 import { ComponentPublicInstance } from 'vue';
@@ -37,13 +38,6 @@ function onDblClickBar(e: MouseEvent) {
 	emit('newCut', tl.posToGlobalPct(e.clientX));
 }
 
-/**
- * Get style position for time.
- * @param t 
- */
-function getPos(pct: number) {
-	return { left: `${100 * pct}%` }
-}
 </script>
 <template>
 
@@ -64,11 +58,11 @@ function getPos(pct: number) {
 					  :id="cut.id" :key="cut.id"
 					  class="absolute z-10 h-7 min-h-4"
 					  :selected="cut.id == curCut?.id"
-					  :style="getPos(toBarPct(cut.pct))" />
+					  :style="pctToPos(toBarPct(cut.pct))" />
 
 			<div ref="scrubElm" class="absolute w-[1px] h-4 min-h-4 -translate-x-1/2
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
-				 :style="getPos(scrubPct)">&nbsp;</div>
+				 :style="pctToPos(scrubPct)">&nbsp;</div>
 
 			<div class="absolute w-full h-full pointer-events-none
 			border-l border-r border-sky-800" :style="{

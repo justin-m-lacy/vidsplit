@@ -22,3 +22,25 @@ export function getClickPctY(e: MouseEvent) {
 export function minmax(v: number, min: number, max: number): number {
 	return v < min ? min : (v > max ? max : v);
 }
+
+/**
+ * Convert from-to percent ranges to left-right css positions.
+ * @param from
+ * @param to 
+ */
+export const pctRangeToPos = (from: number, to: number) => {
+	return {
+		left: `${100 * from}%`,
+		right: `${100 * (1 - to)}%`
+	}
+}
+
+/**
+ * Get css-style position for range percent.
+ * @param t 
+ */
+export function pctToPos(pct: number) {
+	return {
+		left: `${100 * pct}%`
+	}
+}

@@ -173,7 +173,7 @@ function addSlice() {
 				<Download />
 			</button>
 		</div>
-		<SliceBar :edit="edit" :media="media" />
+		<SliceBar :media="media" />
 		<div ref="snapsElm"
 			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
 			 @dragover.prevent>
