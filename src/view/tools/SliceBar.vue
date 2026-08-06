@@ -18,7 +18,7 @@ const toElm = shallowRef<HTMLElement>();
 
 const tl = useTimeline(props.media, scrubElm, barElm);
 const { scrubPct, toBarPct } = tl;
-useRangeDrag(tl, fromElm, toElm);
+useRangeDrag({ tl, fromElm, toElm });
 
 </script>
 <template>

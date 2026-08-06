@@ -8,11 +8,12 @@ import { useEventListener } from "@vueuse/core";
  * @param toElm 
  * @param barElm 
  */
-export function useRangeDrag(
+export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 	tl: Timeline,
 	fromElm: Ref<HTMLElement | undefined>,
-	toElm: Ref<HTMLElement | undefined>
-) {
+	toElm: Ref<HTMLElement | undefined>,
+	onDragged?: (el: HTMLElement, mediaPct: number) => void
+}) {
 
 	// element currently being dragged.
 	const curDragElm = shallowRef<HTMLElement | null>(null);
@@ -40,6 +41,8 @@ export function useRangeDrag(
 			return;
 		}
 
+		onDragged?.(cur, tl.posToGlobalPct(e.clientX));
+
 		if (cur == fromElm.value) {
 			tl.media.fromPct = tl.posToGlobalPct(e.clientX);
 		} else if (cur == toElm.value) {
@@ -49,6 +52,7 @@ export function useRangeDrag(
 	}
 
 	function endDrag() {
+
 		curDragElm.value = null;
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)

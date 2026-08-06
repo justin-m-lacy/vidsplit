@@ -25,13 +25,13 @@ export function minmax(v: number, min: number, max: number): number {
 
 /**
  * Convert from-to percent ranges to left-right css positions.
- * @param from
- * @param to 
+ * @param fromPct
+ * @param toPct 
  */
-export const pctRangeToPos = (from: number, to: number) => {
+export const pctRangeToPos = (fromPct: number, toPct: number) => {
 	return {
-		left: `${100 * from}%`,
-		right: `${100 * (1 - to)}%`
+		left: `${100 * fromPct}%`,
+		right: `${100 * (1 - toPct)}%`
 	}
 }
 
