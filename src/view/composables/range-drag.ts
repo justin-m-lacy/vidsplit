@@ -7,12 +7,17 @@ import { useEventListener } from "@vueuse/core";
  * @param fromElm 
  * @param toElm 
  * @param barElm 
+ * @param onDragged - callback when endpoint dragged.
  */
 export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 	tl: Timeline,
 	fromElm: Ref<HTMLElement | undefined>,
 	toElm: Ref<HTMLElement | undefined>,
-	onDragged?: (el: HTMLElement, mediaPct: number) => void
+
+	/**
+	 * mediaPct - percent of total media duration where element was dragged.
+	 */
+	onDragged?: (el: HTMLElement, mediaPct: number, tl: Timeline) => void
 }) {
 
 	// element currently being dragged.
@@ -41,7 +46,7 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 			return;
 		}
 
-		onDragged?.(cur, tl.posToGlobalPct(e.clientX));
+		onDragged?.(cur, tl.posToGlobalPct(e.clientX), tl);
 
 		if (cur == fromElm.value) {
 			tl.media.fromPct = tl.posToGlobalPct(e.clientX);

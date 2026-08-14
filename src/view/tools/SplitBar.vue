@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MediaCut, SplitEdit } from '@/tools/split';
 import { pctToPos } from '@/util/view';
-import CutPoint from '@/view/components/CutPoint.vue';
+import SplitPoint from '@/view/components/SplitPoint.vue';
 import { useSplitDrags } from '@/view/composables/split-drag';
 import { ComponentPublicInstance } from 'vue';
 import { formatTime } from '../../../shared/time';
@@ -54,11 +54,12 @@ function onDblClickBar(e: MouseEvent) {
 					width: `${100 * tl.scrubPct.value}%`
 				}">&nbsp;</div>
 
-			<CutPoint ref="cutElms" v-for="cut of edit.cuts"
-					  :id="cut.id" :key="cut.id"
-					  class="absolute z-10 h-7 min-h-4"
-					  :selected="cut.id == curCut?.id"
-					  :style="pctToPos(toBarPct(cut.pct))" />
+			<SplitPoint ref="cutElms" v-for="cut of edit.cuts"
+						:id="cut.id" :key="cut.id"
+						:color="cut.id == curCut?.id ?
+							'bg-orange-400' : 'bg-blue-700'"
+						class="absolute z-10 h-7 min-h-4"
+						:style="pctToPos(toBarPct(cut.pct))" />
 
 			<div ref="scrubElm" class="absolute w-[1px] h-4 min-h-4 -translate-x-1/2
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"

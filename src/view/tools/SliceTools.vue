@@ -136,7 +136,7 @@ function addSlice() {
 					flex items-center justify-center text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
-					title="Set slice Start to current time"
+					title="Set slice start to current time"
 					@click="setStart">
 				&nbsp;
 				<div class="w-2 h-4 rounded-l-full rounded-r-none
@@ -147,7 +147,7 @@ function addSlice() {
 					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
-					title="Set slice End to current time"
+					title="Set slice end to current time"
 					@click="setEnd">&nbsp;
 				<div class="w-2 h-4 rounded-r-full rounded-l-none
 			 	border bg-amber-400 shadow-sm" />
