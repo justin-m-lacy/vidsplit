@@ -3,8 +3,10 @@ import { ffmpegPath } from './install';
 
 /**
  * @param args - arguments to pass to ffmpeg.
- * @param progress 
+ * do not pass 'ffmpeg' command.
+ * @param progress - receieves progress updates.
  * @param timeTotal - total clip length in seconds.
+ * used to estimate completion progress.
  * necessary because ffmpeg doesn't give total length information in updates.
  * @returns 
  */
@@ -59,8 +61,6 @@ total_size=922570
 out_time_us=2135000
 out_time_ms=2135000
 out_time=00:00:02.135000
-dup_frames=0
-drop_frames=0
 speed= 673x
 progress=end
  */

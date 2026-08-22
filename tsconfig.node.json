@@ -31,7 +31,7 @@
   ],
   "include": [
     "electron",
-    "shared",
+    "shared/*/*.ts",
     "electron/**/*.ts",
     "electron/**/*.d.ts"
   ]

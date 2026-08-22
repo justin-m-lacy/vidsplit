@@ -1,4 +1,5 @@
 import { TEditTool, TMediaEdit } from "@/model/edit";
+import { CutTool } from "@/tools/cut";
 import { SliceTool } from "@/tools/slice";
 import { SplitTool } from "@/tools/split";
 import type { MediaState } from "@/view/composables/media-state";
@@ -14,8 +15,8 @@ export const useEditTool = defineStore('editTool', () => {
 		curEdit.value = undefined;
 	}
 
-	function toggleTool(tool: TEditTool, media: MediaState) {
-		if (curTool.value?.id == tool.id) {
+	function toggleTool(tool: TEditTool, media?: MediaState) {
+		if (!media || curTool.value?.id == tool.id) {
 			clearTool();
 		} else {
 			newEdit(tool, media)
@@ -31,18 +32,23 @@ export const useEditTool = defineStore('editTool', () => {
 
 	}
 
-	const setSliceMode = (media: MediaState) => {
+	const setSliceMode = (media?: MediaState) => {
 		toggleTool(SliceTool, media)
 	}
 
-	const setSplitMode = (media: MediaState) => {
+	const setSplitMode = (media?: MediaState) => {
 		toggleTool(SplitTool, media)
+	}
+
+	const setCutMode = (media?: MediaState) => {
+		toggleTool(CutTool, media);
 	}
 
 	return {
 		curEdit,
 		setSliceMode,
 		setSplitMode,
+		setCutMode,
 		tool: curTool,
 		toggleTool,
 		clearTool

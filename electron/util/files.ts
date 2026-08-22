@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import path, { join } from "path";
+import path from "path";
 
 /**
  * If outpath is missing extension, add extension from inPath.
@@ -16,14 +16,14 @@ export function copyExt(outPath: string, inPath: string) {
  * @param base - base name of file.
  * @param ext - file extension with '.' included
  */
-export function uniqueName(path: string, base: string, ext: string = '') {
+export function uniqueName(dir: string, base: string, ext: string = '') {
 
-	base = join(path, base);
+	base = path.join(dir, base);
 	let n = 1;
-	let unique = join(base, ext);
+	let unique = path.join(base, ext);
 
 	while (existsSync(unique)) {
-		unique = join(base, `(${n++})${ext}`);
+		unique = path.join(base, `(${n++})${ext}`);
 	}
 
 	return unique;

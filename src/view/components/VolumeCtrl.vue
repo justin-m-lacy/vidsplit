@@ -11,15 +11,15 @@ const { dragging } = useBarSlider(barElm, volume, true);
 
 </script>
 <template>
-	<div class="flex justify-center items-center relative p-1 select-none"
+	<div class="flex justify-center items-center relative py-1 select-none"
 		 title="Volume"
 		 @mouseover="showBar = true" @mouseleave="showBar = false">
 
 		<Transition mode="in-out" class="z-10" @click="muted = !muted;">
-			<VolumeX class="absolute -top-full" v-if="muted" />
-			<Volume2 class="absolute -top-full" v-else-if="volume > 0.5" />
-			<Volume1 class="absolute -top-full" v-else-if="volume > 0" />
-			<Volume class="absolute -top-full" v-else />
+			<VolumeX class="icon-btn absolute px-0 py-0 -top-full" v-if="muted" />
+			<Volume2 class="icon-btn absolute px-0 py-0 -top-full" v-else-if="volume > 0.5" />
+			<Volume1 class="icon-btn absolute px-0 py-0 -top-full" v-else-if="volume > 0" />
+			<Volume class="icon-btn absolute px-0 py-0 -top-full" v-else />
 		</Transition>
 
 		<div class="absolute w-8 bg-transparent"
@@ -46,7 +46,6 @@ const { dragging } = useBarSlider(barElm, volume, true);
 
 			</div>
 		</Transition>
-
 
 
 	</div>

@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import type { WebSliceOp, WebSplitOp } from '../shared/edits';
+import type { WebCutOp, WebSliceOp, WebSplitOp } from '../shared/edits';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
@@ -19,17 +19,34 @@ contextBridge.exposeInMainWorld('electron', {
 		return ipcRenderer.invoke('installFFMpeg');
 	},
 
+	cutMedia: (edit: WebCutOp) => {
+
+		// convert to slice operation with 'cut' selected.
+		return ipcRenderer.invoke('sliceMedia', {
+			id: edit.id,
+			filePath: webUtils.getPathForFile(edit.file),
+			type: 'cut',
+			slices: edit.cuts,
+			audio: edit.audio,
+			video: edit.video,
+			duration: edit.duration
+		});
+
+	},
+
 	sliceMedia: (edit: WebSliceOp) => {
 
 		return ipcRenderer.invoke('sliceMedia', {
 			id: edit.id,
 			filePath: webUtils.getPathForFile(edit.file),
+			type: 'join',
 			slices: edit.slices,
 			audio: edit.audio,
 			video: edit.video
 		});
 
 	},
+
 	splitMedia: (edit: WebSplitOp) => {
 
 		return ipcRenderer.invoke('splitMedia', {

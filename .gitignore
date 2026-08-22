@@ -132,3 +132,6 @@ build/**/*
 *.mp4
 
 electron.exe.lnk
+
+
+notes.txt

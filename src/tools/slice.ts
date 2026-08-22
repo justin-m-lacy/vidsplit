@@ -1,10 +1,10 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
+import { InvalidDurationError } from "@/model/errors";
 import type { MediaState } from "@/view/composables/media-state";
+import { SliceInfo } from "shared/edits";
 
-export type MediaSlice = {
+export type MediaSlice = SliceInfo & {
 	id: string,
-	from: number,
-	to: number,
 	snapshot?: string
 }
 
@@ -20,22 +20,21 @@ export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
 	return edit?.toolId === SliceId;
 }
 
-
 function makeSliceEdit(media: MediaState) {
 
 	const slices = shallowRef<MediaSlice[]>([]);
 
 	/**
 	 * Add media slice from current left/right percents.
-	 * @param from - clip position in seconds
-	 * @param to - clip position in seconds
+	 * @param from - clip time in seconds
+	 * @param to - clip time in seconds
 	 * @param snapshot - snapshot string data.
 	 */
 	const addSlice = (from: number, to: number, snapshot?: string) => {
 
 		const duration = media.duration;
 		if (!duration || Number.isNaN(duration)) {
-			throw new Error('Invalid Duration');
+			throw InvalidDurationError();
 		}
 
 		slices.value.push({

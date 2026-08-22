@@ -131,29 +131,29 @@ function addSlice() {
 <template>
 	<div class="flex flex-col w-full items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
-			<button type="button"
+			<button type="button" id="btnSetStart"
 					class="disabled:opacity-50 px-1 max-h-6
 					flex items-center justify-center text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
-					title="Set slice Start to current time"
+					title="Set slice start to current time"
 					@click="setStart">
 				&nbsp;
 				<div class="w-2 h-4 rounded-l-full rounded-r-none
 			 	border bg-amber-400 shadow-sm" />
 				&nbsp;
 			</button>
-			<button type="button"
+			<button type="button" id="btnSetEnd"
 					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
-					title="Set slice End to current time"
+					title="Set slice end to current time"
 					@click="setEnd">&nbsp;
 				<div class="w-2 h-4 rounded-r-full rounded-l-none
 			 	border bg-amber-400 shadow-sm" />
 				&nbsp;
 			</button>
-			<button type="button"
+			<button type="button" id="btnAddSlice"
 					class="disabled:opacity-50 p-[1px] text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
@@ -173,7 +173,7 @@ function addSlice() {
 				<Download />
 			</button>
 		</div>
-		<SliceBar :edit="edit" :media="media" />
+		<SliceBar :media="media" />
 		<div ref="snapsElm"
 			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
 			 @dragover.prevent>

@@ -137,6 +137,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		set fromPct(v: number) {
 
 			if (Number.isNaN(duration.value)) return;
+
 			playRange.from = minmax(v * duration.value, 0, playRange.to);
 			if (time.value < playRange.from) {
 				forceTime(playRange.from);
@@ -202,7 +203,7 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 		 * current play time.
 		 */
 		get time() { return time.value },
-		set time(v: number) { forceTime(v) },
+		set time(v: number) { if (this.ready) forceTime(v) },
 
 		get playing() { return playing.value },
 		set playing(v: boolean) {
