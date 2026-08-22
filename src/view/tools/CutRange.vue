@@ -17,8 +17,11 @@ useRangeDrag({
 	tl: props.timeline, fromElm, toElm, onDragged: (elm, pct, tl) => {
 
 		if (elm == fromElm.value) {
+			console.log(`drag CUT from`);
 			props.cut.from = pct * tl.media.duration;
 		} else {
+
+			console.log(`drag CUT TO`);
 			props.cut.to = pct * tl.media.duration;
 		}
 
@@ -34,10 +37,12 @@ useRangeDrag({
 		...pctRangeToPos(timeline.timeToPct(cut.from), timeline.timeToPct(cut.to))
 	}">
 		<SplitPoint ref="fromElm"
-					class="absolute h-6 left-0
-			-translate-x-1/2 -translate-y-1/4 shadow-sm" />
+					:color="'bg-red-700'"
+					class="h-4 left-0
+			 shadow-sm" />
 		<SplitPoint ref="toElm"
-					class="absolute h-6 right-0 translate-x-1/2 -translate-y-1/4 shadow-sm" />
+					:color="'bg-red-700'"
+					class=" h-4 right-0 shadow-sm" />
 
 	</div>
 </template>

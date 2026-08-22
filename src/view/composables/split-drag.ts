@@ -55,8 +55,6 @@ export function useSplitDrags(
 		curDragElm.value = targ;
 		e.stopPropagation();
 
-		tl.media.time = cut.pct * tl.media.duration;
-
 		window.addEventListener('mousemove', onDrag);
 		window.addEventListener('mouseup', endDrag);
 

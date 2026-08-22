@@ -2,16 +2,16 @@
 defineProps<{ color?: string }>();
 </script>
 <template>
-	<div class="flex flex-col justify-stretch items-center -translate-x-1/2">
-		<div class="w-3 h-2"
-			 :class="color"
+	<div class="absolute top-1/2 -translate-y-1/2 pointer-events-auto">
+		<div class="absolute top-0 w-3 h-2 -translate-x-1/2 -translate-y-full"
+			 :class="color ?? 'bg-slate-950'"
 			 :style="{ clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)' }">
 			&nbsp;
 		</div>
-		<div class="grow w-[1px] bg-slate-950/90 shadow-sm m-0 p-0'">
+		<div class="w-[1px] left-0 -translate-x-1/2 h-full bg-slate-950/90 shadow-sm m-0 p-0'">
 		</div>
-		<div class="w-3 h-2"
-			 :class="color"
+		<div class="absolute bottom-0 w-3 h-2  -translate-x-1/2 translate-y-full"
+			 :class="color ?? 'bg-slate-950'"
 			 :style="{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }">
 			&nbsp;
 		</div>

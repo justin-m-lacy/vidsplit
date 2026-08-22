@@ -155,7 +155,7 @@ async function onFilePicked(event: Event) {
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
-		<CutTools v-if="IsCutEdit(tools.curEdit)"
+		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  @apply="applyEdit($event)"
 				  class="flex justify-center items-center my-1 max-w-11/12"
 				  :hasFFMpeg="appState.hasFFMpeg"
@@ -164,12 +164,11 @@ async function onFilePicked(event: Event) {
 				  :task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-stretch items-center my-1 max-w-11/12"
+					class="flex justify-center items-center my-1 max-w-11/12"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
 					:task="curTask" />
-
 		<ScrubBar v-else-if="videoElm"
 				  class="flex items-center justify-center my-1  max-w-11/12"
 				  :media="media" />

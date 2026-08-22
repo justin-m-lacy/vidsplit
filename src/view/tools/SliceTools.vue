@@ -131,7 +131,7 @@ function addSlice() {
 <template>
 	<div class="flex flex-col w-full items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
-			<button type="button"
+			<button type="button" id="btnSetStart"
 					class="disabled:opacity-50 px-1 max-h-6
 					flex items-center justify-center text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
@@ -143,7 +143,7 @@ function addSlice() {
 			 	border bg-amber-400 shadow-sm" />
 				&nbsp;
 			</button>
-			<button type="button"
+			<button type="button" id="btnSetEnd"
 					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
@@ -153,7 +153,7 @@ function addSlice() {
 			 	border bg-amber-400 shadow-sm" />
 				&nbsp;
 			</button>
-			<button type="button"
+			<button type="button" id="btnAddSlice"
 					class="disabled:opacity-50 p-[1px] text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"

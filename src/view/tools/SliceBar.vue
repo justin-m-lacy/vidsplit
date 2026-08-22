@@ -27,20 +27,23 @@ useRangeDrag({ tl, fromElm, toElm });
 	text-xxs gap-x-4 min-h-5">
 		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
 		<div ref="barElm"
-			 class="relative flex items-center w-full min-h-2 border border-l-0 border-r-0 
-			 border-red-500 bg-red-200 bg-repeat-x">
+			 class="relative flex items-center
+			pointer-events-auto
+			 w-full min-h-2 border border-l-0 border-r-0 
+			 border-orange-500 bg-orange-200">
 
-			<div class="absolute min-h-2 h-2 bg-sky-200/90
+			<div id="blueBarFill"
+				 class="absolute min-h-2 h-full bg-sky-200/90
 				select-none pointer-events-none"
 				 :style="pctRangeToPos(toBarPct(media.fromPct), toBarPct(media.toPct))">
 
 			</div>
-			<div class="absolute bg-green-500/75 min-h-2 h-2
+			<div class="absolute bg-green-500/75 h-full
 				select-none pointer-events-none"
 				 :style="pctRangeToPos(toBarPct(media.fromPct), scrubPct)"></div>
 
-			<slot name="bar" :timeline="tl">
-			</slot>
+			<slot name="bar" :timeline="tl">&nbsp;</slot>
+
 			<div ref="fromElm"
 				 class="absolute z-10 w-3 h-5 min-h-4
 				 rounded-l-full rounded-r-none -translate-x-full
