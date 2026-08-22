@@ -41,21 +41,22 @@ useRangeDrag({
 </script>
 <template>
 	<div class="h-3 absolute overflow-visible"
+		 :class="selected ? 'opacity-100' : 'opacity-50'"
 		 @click="emits('select')"
 		 :style="{
 			// bg-[repeating-linear-gradient(45deg,_#ea391ecc_0,_
 			background:
 				selected ?
-					'repeating-linear-gradient( -45deg, #dd170dd8 0 8px, #ea391e55 8px 16px)' :
-					'repeating-linear-gradient( -45deg, #ee470dbb 0 8px, #ea391e33 8px 16px)',
+					'repeating-linear-gradient( -45deg, #dd170d 0 8px, #ea391e55 8px 16px)' :
+					'repeating-linear-gradient( -45deg, #ee470d 0 8px, #ea391e33 8px 16px)',
 			...pctRangeToPos(timeline.timeToPct(fromTime), timeline.timeToPct(toTime))
 		}">
 		<SplitPoint ref="fromElm"
-					:color="selected ? 'bg-red-700' : 'bg-red-700/50'"
+					:color="selected ? 'bg-red-700' : 'bg-red-700'"
 					class="h-4 left-0
 			 shadow-sm" />
 		<SplitPoint ref="toElm" :selected="selected"
-					:color="selected ? 'bg-red-700' : 'bg-red-700/50'"
+					:color="selected ? 'bg-red-700' : 'bg-red-700'"
 					class=" h-4 right-0 shadow-sm" />
 
 	</div>

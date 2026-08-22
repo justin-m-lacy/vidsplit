@@ -35,7 +35,8 @@ type With<T extends object, K extends keyof T> = T & { [p in K]-?: T[p] };
 export type SliceInfo = RangeFilter & Partial<FpsFilter> & Partial<CurvesFilter>;
 
 export type WebCutOp = VideoOp & {
-	cuts: RangeFilter[]
+	cuts: RangeFilter[],
+	duration: number
 }
 export type WebSliceOp = VideoOp & {
 	slices: SliceInfo[],

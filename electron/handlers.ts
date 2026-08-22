@@ -60,6 +60,10 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 
 }
 
+/**
+ * Convert slice points to skip points, and vice versa.
+ * (Used for cut operation.)
+ */
 function invertTimes(op: NodeSliceOp) {
 
 	const cuts = op.slices;
@@ -85,18 +89,20 @@ function invertTimes(op: NodeSliceOp) {
 	if (nextStartSec < op.duration) {
 		slices.push({ from: nextStartSec, to: op.duration });
 	}
-	return slices;
+	op.slices = slices;
 
 }
 
-export function handleSlice(ipcMain: IpcMain, app: App) {
+export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
 
-		const dialogRes = await dialog.showSaveDialog({ title: 'Save Output' });
-		if (dialogRes.canceled) {
-			return null;
-		}
+		const dialogRes = await dialog.showSaveDialog({
+			title: 'Save Output',
+			defaultPath: op.filePath,
+
+		});
+		if (dialogRes.canceled) return null;
 
 		const inPath = op.filePath;
 		const outPath = copyExt((dialogRes.filePath), inPath);
@@ -106,7 +112,7 @@ export function handleSlice(ipcMain: IpcMain, app: App) {
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.type == 'cut') {
-			op.slices = invertTimes(op);		// invert time selection.
+			invertTimes(op);		// invert time selection.
 		}
 
 		if (op.slices.length === 1) {

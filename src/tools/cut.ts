@@ -65,6 +65,7 @@ function makeCutEdit(media: MediaState) {
 			id: this.id,
 			file: media.file!,
 			cuts: cuts.value.concat(),
+			duration: media.duration
 
 		});
 	}
@@ -74,6 +75,7 @@ function makeCutEdit(media: MediaState) {
 		toolId: CutId,
 		apply,
 		media,
+		duration: () => media.duration,
 		reset() {
 			cuts.value = []
 		},

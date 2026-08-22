@@ -28,7 +28,8 @@ contextBridge.exposeInMainWorld('electron', {
 			type: 'cut',
 			slices: edit.cuts,
 			audio: edit.audio,
-			video: edit.video
+			video: edit.video,
+			duration: edit.duration
 		});
 
 	},
