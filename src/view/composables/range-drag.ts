@@ -19,13 +19,15 @@ function matchTarget(el: HTMLElement, ref: ComponentPublicInstance | HTMLElement
  * @param barElm 
  * @param onDragged - callback when endpoint dragged.
  */
-export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
+export function useRangeDrag({ tl, fromElm, toElm, onDragged, onStartDrag }: {
 	tl: Timeline,
 	fromElm: Ref<ComponentPublicInstance | HTMLElement | undefined>,
 	toElm: Ref<ComponentPublicInstance | HTMLElement | undefined>,
 
+	onStartDrag?: () => void,
+
 	/**
-	 * mediaPct - percent of total media duration where element was dragged.
+	 * mediaPct - global percent of media duration where element was dragged.
 	 */
 	onDragged?: (el: HTMLElement, mediaPct: number, tl: Timeline) => void
 }) {
@@ -40,6 +42,7 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 		if (!matchTarget(el, fromElm.value) && !matchTarget(el, toElm.value)) return;
 
 		curDragElm.value = el;
+		onStartDrag?.();
 		e.stopPropagation();
 
 		window.addEventListener('mousemove', onDrag);
@@ -56,12 +59,6 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 		}
 
 		onDragged?.(cur, tl.posToGlobalPct(e.clientX), tl);
-
-		if (cur == fromElm.value) {
-			tl.media.fromPct = tl.posToGlobalPct(e.clientX);
-		} else if (cur == toElm.value) {
-			tl.media.toPct = tl.posToGlobalPct(e.clientX);
-		}
 
 	}
 

@@ -7,7 +7,12 @@ import { Timeline } from '@/view/composables/timeline';
 
 const props = defineProps<{
 	cut: MediaCut,
-	timeline: Timeline
+	timeline: Timeline,
+	selected?: boolean
+}>();
+
+const emits = defineEmits<{
+	(e: 'select'): void;
 }>();
 
 const fromElm = shallowRef<ComponentPublicInstance>();
@@ -25,24 +30,32 @@ useRangeDrag({
 		} else if (elm == toElm.value?.$el) {
 			toTime.value = props.cut.to = pct * tl.media.duration;
 		}
+		props.timeline.media.time = pct * tl.media.duration;
 
+	},
+	onStartDrag: () => {
+		emits('select');
 	}
 });
 
 </script>
 <template>
-	<div class="h-3 absolute overflow-visible" :style="{
-		//bg-[repeating-linear-gradient(45deg,_#ea391ecc_0,_#e1e1e1_1px,_transparent_0,_transparent_50%)] bg-[size:10px_10px]
-		background:
-			'repeating-linear-gradient( -45deg, #dd170dbb 0 8px, #ea391e63  8px 16px)',
-		...pctRangeToPos(timeline.timeToPct(fromTime), timeline.timeToPct(toTime))
-	}">
+	<div class="h-3 absolute overflow-visible"
+		 @click="emits('select')"
+		 :style="{
+			// bg-[repeating-linear-gradient(45deg,_#ea391ecc_0,_
+			background:
+				selected ?
+					'repeating-linear-gradient( -45deg, #dd170dd8 0 8px, #ea391e55 8px 16px)' :
+					'repeating-linear-gradient( -45deg, #ee470dbb 0 8px, #ea391e33 8px 16px)',
+			...pctRangeToPos(timeline.timeToPct(fromTime), timeline.timeToPct(toTime))
+		}">
 		<SplitPoint ref="fromElm"
-					:color="'bg-red-700'"
+					:color="selected ? 'bg-red-700' : 'bg-red-700/50'"
 					class="h-4 left-0
 			 shadow-sm" />
-		<SplitPoint ref="toElm"
-					:color="'bg-red-700'"
+		<SplitPoint ref="toElm" :selected="selected"
+					:color="selected ? 'bg-red-700' : 'bg-red-700/50'"
 					class=" h-4 right-0 shadow-sm" />
 
 	</div>

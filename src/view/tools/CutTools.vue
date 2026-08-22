@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { TEditTask } from '@/store/task-store';
-import { CutEdit } from '@/tools/cut.js';
-import { MediaSlice } from '@/tools/slice';
+import { CutEdit, MediaCut } from '@/tools/cut.js';
 import CutRange from '@/view/tools/CutRange.vue';
 import SliceBar from '@/view/tools/SliceBar.vue';
-import { Download } from 'lucide-vue-next';
+import { Download, Trash } from 'lucide-vue-next';
 import TimeStamp from '../components/Timestamp.vue';
 import { MediaState } from '../composables/media-state.js';
 
@@ -18,6 +17,10 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'apply', edit: CutEdit): void;
 }>();
+
+/// selected cut
+const curCut = shallowRef<MediaCut | null>(null);
+
 /**
  * set slice start to current play position.
  */
@@ -32,13 +35,17 @@ function setEnd() {
 	props.media.to = props.media.time;
 }
 
-function removeCut(s: MediaSlice) {
-	props.edit.removeCut(s);
+function removeCut() {
+	if (curCut.value) {
+		const curVal = curCut.value;
+		curCut.value = null;
+		props.edit.removeCut(curVal);
+	}
 }
 function addCut() {
 
 	if (props.media.media) {
-		props.edit.addCut(props.media.from, props.media.to);
+		curCut.value = props.edit.addCut(props.media.from, props.media.to);
 	}
 }
 
@@ -70,6 +77,14 @@ function addCut() {
 			</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
+					border border-red-800/40 rounded-sm bg-red-700/30"
+					title="Remove Split Point"
+					:disabled="!curCut"
+					@click="removeCut">
+				<Trash />
+			</button>
+			<button type="button"
+					class="disabled:opacity-50 p-[1px] text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
 					title="Cut"
@@ -91,8 +106,10 @@ function addCut() {
 		<SliceBar :media="media">
 			<template v-slot:bar="{ timeline }">
 				<CutRange v-for="cut in edit.cuts" :id="cut.id"
-						  :timeline="timeline"
 						  :cut="cut"
+						  :timeline="timeline"
+						  :selected="cut.id == curCut?.id"
+						  @select="curCut = cut"
 						  class="absolute" />
 			</template>
 		</SliceBar>

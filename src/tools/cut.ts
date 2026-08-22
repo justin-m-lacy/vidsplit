@@ -37,21 +37,22 @@ function makeCutEdit(media: MediaState) {
 			throw InvalidDurationError();
 		}
 
-		cuts.value.push({
+		const newCut = {
 			id: window.crypto.randomUUID(),
 			from,
 			to
-		});
+		};
+
+		cuts.value.push(newCut);
 
 		triggerRef(cuts);
+
+		return newCut;
 
 	}
 
 	const removeCut = (cut: MediaCut) => {
-
-		const id = cut.id;
-		cuts.value = cuts.value.filter(s => s.id !== id);
-
+		cuts.value = cuts.value.filter(s => s.id !== cut.id);
 	}
 
 	/// apply operation.
