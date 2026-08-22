@@ -69,25 +69,28 @@ function invertTimes(op: NodeSliceOp) {
 	const cuts = op.slices;
 	const slices = <SliceInfo[]>[];
 
-	let nextStartSec = 0;
+	// sort cuts by earliest cutting point.
+	cuts.sort((a, b) => a.from - b.from)
+
+	let sliceStart = 0;
 
 	for (let i = 0; i < cuts.length; i++) {
 
-		if (nextStartSec < cuts[i].from) {
+		if (sliceStart < cuts[i].from) {
 			// add video up to next cut.
 			slices.push({
-				from: nextStartSec,
+				from: sliceStart,
 				to: cuts[i].from
 			})
 		}
 		// resume after next cut.
-		nextStartSec = cuts[i].to;
+		sliceStart = cuts[i].to;
 
 	}
 
 	// add final slice
-	if (nextStartSec < op.duration) {
-		slices.push({ from: nextStartSec, to: op.duration });
+	if (sliceStart < op.duration) {
+		slices.push({ from: sliceStart, to: op.duration });
 	}
 	op.slices = slices;
 
