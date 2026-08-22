@@ -10,19 +10,20 @@ const props = defineProps<{
 	timeline: Timeline
 }>();
 
-const fromElm = shallowRef<HTMLElement>();
-const toElm = shallowRef<HTMLElement>();
+const fromElm = shallowRef<ComponentPublicInstance>();
+const toElm = shallowRef<ComponentPublicInstance>();
+
+const fromTime = shallowRef<number>(props.cut.from);
+const toTime = shallowRef<number>(props.cut.to);
+
 
 useRangeDrag({
 	tl: props.timeline, fromElm, toElm, onDragged: (elm, pct, tl) => {
 
-		if (elm == fromElm.value) {
-			console.log(`drag CUT from`);
-			props.cut.from = pct * tl.media.duration;
-		} else {
-
-			console.log(`drag CUT TO`);
-			props.cut.to = pct * tl.media.duration;
+		if (elm == fromElm.value?.$el) {
+			fromTime.value = props.cut.from = pct * tl.media.duration;
+		} else if (elm == toElm.value?.$el) {
+			toTime.value = props.cut.to = pct * tl.media.duration;
 		}
 
 	}
@@ -34,7 +35,7 @@ useRangeDrag({
 		//bg-[repeating-linear-gradient(45deg,_#ea391ecc_0,_#e1e1e1_1px,_transparent_0,_transparent_50%)] bg-[size:10px_10px]
 		background:
 			'repeating-linear-gradient( -45deg, #dd170dbb 0 8px, #ea391e63  8px 16px)',
-		...pctRangeToPos(timeline.timeToPct(cut.from), timeline.timeToPct(cut.to))
+		...pctRangeToPos(timeline.timeToPct(fromTime), timeline.timeToPct(toTime))
 	}">
 		<SplitPoint ref="fromElm"
 					:color="'bg-red-700'"

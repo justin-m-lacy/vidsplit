@@ -2,6 +2,16 @@ import { Timeline } from "@/view/composables/timeline";
 import { useEventListener } from "@vueuse/core";
 
 /**
+ * check if html element matches reference target
+ */
+function matchTarget(el: HTMLElement, ref: ComponentPublicInstance | HTMLElement | undefined) {
+	if (!ref) return false;
+	if (ref instanceof HTMLElement) return ref == el;
+	return ref.$el == el;
+}
+
+
+/**
  * Enables dragging the end points of a range selection.
  * @param media 
  * @param fromElm 
@@ -11,8 +21,8 @@ import { useEventListener } from "@vueuse/core";
  */
 export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 	tl: Timeline,
-	fromElm: Ref<HTMLElement | undefined>,
-	toElm: Ref<HTMLElement | undefined>,
+	fromElm: Ref<ComponentPublicInstance | HTMLElement | undefined>,
+	toElm: Ref<ComponentPublicInstance | HTMLElement | undefined>,
 
 	/**
 	 * mediaPct - percent of total media duration where element was dragged.
@@ -20,17 +30,16 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 	onDragged?: (el: HTMLElement, mediaPct: number, tl: Timeline) => void
 }) {
 
-	// element currently being dragged.
+	// current element being dragged.
 	const curDragElm = shallowRef<HTMLElement | null>(null);
+
 
 	function startDrag(e: MouseEvent) {
 
-		const targ = e.currentTarget as HTMLElement;
-		if (targ !== fromElm.value && targ !== toElm.value) {
-			return;
-		}
+		const el = e.currentTarget as HTMLElement;
+		if (!matchTarget(el, fromElm.value) && !matchTarget(el, toElm.value)) return;
 
-		curDragElm.value = targ;
+		curDragElm.value = el;
 		e.stopPropagation();
 
 		window.addEventListener('mousemove', onDrag);
@@ -57,15 +66,22 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged }: {
 	}
 
 	function endDrag() {
-
 		curDragElm.value = null;
 		window.removeEventListener('mousemove', onDrag);
 		window.removeEventListener('mouseup', endDrag)
 	}
 
-	useEventListener(fromElm, 'mousedown', startDrag, { capture: true });
-	useEventListener(toElm, 'mousedown', startDrag, { capture: true });
+	watch([fromElm, toElm], ([from, to]) => {
 
+		if (from) {
+			useEventListener(from instanceof HTMLElement ? from : from.$el, 'mousedown', startDrag, { capture: true });
+		}
+
+		if (to) {
+			useEventListener(to instanceof HTMLElement ? to : to.$el, 'mousedown', startDrag, { capture: true });
+		}
+
+	}, { immediate: true });
 
 	onUnmounted(() => {
 		endDrag();
