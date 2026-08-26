@@ -123,10 +123,12 @@ export async function saveSimpleSlice(slice: SliceRange,
 	const args: string[] = ['-y -loglevel error'];
 	if (progress) args.push('-progress pipe:1');
 
+	console.log(`new cut range: ${slice.from} to ${slice.to}`);
+
 	args.push('-ss', `${slice.from}`, '-to', `${slice.to}`);
 	args.push(`-i ${quoteStr(inUrl)}`);
 
-	//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
+	// exm: ffmpeg -ss 1.25 -i "video.mp4" -to 2.50 -c copy "cut.mp4"
 	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
 
 	await spawnFFMpeg(args, progress, (slice.to - slice.from));
@@ -156,7 +158,7 @@ export async function saveSlicesComplex(
 
 	args.push('-filter_complex');
 
-	// complete operations for each track: [inputTrack]filters,..[outTrack]
+	// operations for each track: [inTrack]filters,..[outTrack]
 	// join with ';'
 	const trackOps: string[] = [];
 
