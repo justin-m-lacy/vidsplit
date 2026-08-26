@@ -61,10 +61,10 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 }
 
 /**
- * Convert slice points to skip points, and vice versa.
+ * Convert slice points to skip points.
  * (Used for cut operation.)
  */
-function invertTimes(op: NodeSliceOp) {
+function invertSlices(op: NodeSliceOp) {
 
 	const cuts = op.slices;
 	const slices = <SliceInfo[]>[];
@@ -115,11 +115,16 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.type == 'cut') {
-			invertTimes(op);		// invert time selection.
+			invertSlices(op);
 		}
 
 		if (op.slices.length === 1) {
-			await saveSimpleSlice(op.slices[0], inPath, outPath, updates[0]);
+			await saveSimpleSlice({
+				range: op.slices[0],
+				inUrl: inPath,
+				outUrl: outPath,
+				progress: updates[0]
+			});
 			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
 			return outPath;
 		}
@@ -131,7 +136,12 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		// copy parts to temp files.
 		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSimpleSlice(op.slices[i], inPath, tmpFile, updates[i]);
+			return saveSimpleSlice({
+				range: op.slices[i],
+				inUrl: inPath,
+				outUrl: tmpFile,
+				progress: updates[i]
+			});
 		}));
 
 		await concatFromFiles(tmpFiles, outPath, tempDir);
@@ -154,11 +164,6 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
 
-		// pick save dir?
-		/*const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
-		if (dialogRes.canceled) {
-			return false;
-		}*/
 		const inPath = op.filePath;
 		const baseDir = path.dirname(inPath);
 
@@ -173,15 +178,15 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
-			saves.push(saveSimpleSlice(
-				{
+			saves.push(saveSimpleSlice({
+				range: {
 					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd
 				},
-				inPath,
-				path.join(baseDir, `${baseName}-${i}${ext}`),
-				updates[i]
-			));
+				inUrl: inPath,
+				outUrl: path.join(baseDir, `${baseName}-${i}${ext}`),
+				progress: updates[i]
+			}));
 			if (i > 0) sliceEnd = cuts[i - 1].t
 
 		}

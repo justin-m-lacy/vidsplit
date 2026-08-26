@@ -112,26 +112,51 @@ function optimizeCuts(slices: SliceRange[]) {
  * @param inUrl 
  * @param outUrl 
  * @param progress - progress callback.
+ * @param lead - lead time in seconds. preseeks before slice start
+ * for frame-perfect slicing. Slower encoding and video is lossy.
  * @returns 
  */
-export async function saveSimpleSlice(slice: SliceRange,
+export async function saveSimpleSlice({
+	range,
+	inUrl,
+	outUrl,
+	progress,
+	lead = 5
+}: {
+	range: SliceRange,
 	inUrl: string,
 	outUrl: string,
-	progress?: (cur: number, tot: number) => void
+	progress?: (cur: number, tot: number) => void,
+	lead?: number
+}
 ) {
 
 	const args: string[] = ['-y -loglevel error'];
 	if (progress) args.push('-progress pipe:1');
 
-	console.log(`new cut range: ${slice.from} to ${slice.to}`);
+	let from = range.from;
+	let duration = range.to - range.from;
 
-	args.push('-ss', `${slice.from}`, '-to', `${slice.to}`);
+	if (lead > 0) {
+
+		if (lead > from) lead = from;
+		from -= lead;
+
+	} else if (lead < 0) lead = 0;
+
+	args.push('-ss', `${from}`, '-t', `${duration + lead}`);
 	args.push(`-i ${quoteStr(inUrl)}`);
 
-	// exm: ffmpeg -ss 1.25 -i "video.mp4" -to 2.50 -c copy "cut.mp4"
-	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
+	if (lead > 0) {
+		// output seek ahead of lead.
+		args.push(`-ss ${lead}`, '-t', `${duration}`, `-c:v libx264 -c:a aac`);
+	} else {
+		args.push('-c copy');
+	}
+	// ex: ffmpeg -ss 1.25 -i "video.mp4" -to 2.50 -c copy "cut.mp4"
+	args.push('-avoid_negative_ts 1', quoteStr(outUrl));
 
-	await spawnFFMpeg(args, progress, (slice.to - slice.from));
+	await spawnFFMpeg(args, progress, duration + lead);
 
 	return outUrl;
 
@@ -139,8 +164,6 @@ export async function saveSimpleSlice(slice: SliceRange,
 
 /**
  * Export for testing purposes.
- *  -ss seek start
- *  -to to duration
  */
 export async function saveSlicesComplex(
 	slices: SliceRange[],
@@ -158,8 +181,7 @@ export async function saveSlicesComplex(
 
 	args.push('-filter_complex');
 
-	// operations for each track: [inTrack]filters,..[outTrack]
-	// join with ';'
+	// operations for each track: [inTrack]filters,..[outTrack] join with ';'
 	const trackOps: string[] = [];
 
 	slices.map((s, i) => {
