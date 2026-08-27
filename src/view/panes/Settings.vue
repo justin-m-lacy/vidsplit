@@ -7,11 +7,11 @@ const emits = defineEmits<{
 	(e: 'close'): void
 }>();
 const framePerfect = computed({
-	get: () => opts.store.slice?.framePerfect ?? false,
+	get: () => opts.store.video?.framePerfect ?? false,
 	set(v) {
 
-		opts.store.slice ??= {};
-		opts.store.slice.framePerfect = v;
+		opts.store.video ??= {};
+		opts.store.video.framePerfect = v;
 	}
 })
 const codec = computed({
@@ -19,7 +19,7 @@ const codec = computed({
 	get() { return opts.store.video?.codec ?? 'default' },
 	set(v) {
 		opts.store.video ??= {};
-		opts.store.video.codec = v;
+		opts.store.video.codec = v == 'default' ? undefined : v;
 	}
 
 });

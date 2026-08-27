@@ -6,15 +6,13 @@ type Options = {
 	video?: {
 
 		// ffmpeg -c:v option
-		codec?: 'libx264' | 'libx265' | 'libvpx-vp9' | 'libsvtav1' | 'default',
+		codec?: 'libx264' | 'libx265' | 'libvpx-vp9' | 'libsvtav1',
+		/**
+ * use frame perfect slicing.
+ */
+		framePerfect?: boolean
 
 	},
-	slice?: {
-		/**
-		 * use frame perfect slicing.
-		 */
-		framePerfect?: boolean
-	}
 
 }
 
@@ -26,12 +24,9 @@ export const useOptions = defineStore('options', () => {
 
 		video: {
 			codec: undefined,
-
-		},
-		slice: {
 			framePerfect: false
-		},
 
+		},
 
 	});
 

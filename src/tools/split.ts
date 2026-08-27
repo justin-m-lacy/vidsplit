@@ -1,4 +1,5 @@
 import { TMediaEdit, type TEditTool } from "@/model/edit";
+import { useOptions } from "@/store/options-store";
 import { MediaState } from "@/view/composables/media-state";
 
 /**
@@ -82,12 +83,16 @@ function makeSplitEdit(media: MediaState) {
 	 */
 	async function apply(this: SplitEdit) {
 
+		const options = useOptions().store;
+
 		// convert from percents to time in seconds.
 		return window.electron.splitMedia({
 			id: this.id,
 			file: this.media.file!,
 			duration: this.media.duration,
-			cuts: toTimeArray(this.cuts, this.media)
+			cuts: toTimeArray(this.cuts, this.media),
+			perfect: options.video?.framePerfect,
+			codec: options.video?.codec
 		});
 	}
 

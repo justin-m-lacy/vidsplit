@@ -58,13 +58,15 @@ function makeSliceEdit(media: MediaState) {
 
 		if (slices.value.length === 0) return;
 
+		const options = useOptions().store;
+
 		return window.electron.sliceMedia({
 
 			id: this.id,
 			file: media.file!,
 			slices: slices.value.concat(),
-			perfect: useOptions().slice?.framePerfect
-
+			perfect: options.video?.framePerfect,
+			codec: options.video?.codec
 		});
 	}
 

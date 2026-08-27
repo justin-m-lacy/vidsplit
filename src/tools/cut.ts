@@ -60,13 +60,16 @@ function makeCutEdit(media: MediaState) {
 
 		if (cuts.value.length === 0) return;
 
+		const options = useOptions().store;
+
 		return window.electron.cutMedia({
 
 			id: this.id,
 			file: media.file!,
 			cuts: cuts.value.concat(),
 			duration: media.duration,
-			perfect: useOptions().slice?.framePerfect
+			perfect: options.video?.framePerfect,
+			codec: options.video?.codec
 
 		});
 	}

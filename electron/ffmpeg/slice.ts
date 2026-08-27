@@ -148,6 +148,7 @@ export async function saveSimpleSlice({
 
 	if (lead > 0) {
 		// output seek ahead of lead.
+		codec ??= 'libx264';
 		args.push(`-ss ${lead}`, '-t', `${duration - lead}`, `-c:v ${codec} -c:a aac`);
 	} else if (codec) {
 		args.push(`-c:v ${codec} -c:a aac`);
