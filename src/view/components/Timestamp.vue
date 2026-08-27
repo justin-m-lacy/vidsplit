@@ -1,9 +1,7 @@
 <script setup lang="ts">
 
 const prop = defineProps<{
-	/**
-	 * time in seconds.
-	 */
+	// time in seconds
 	time: number,
 	hideMs?: boolean
 }>();
@@ -35,6 +33,6 @@ watch(() => prop.time, (time) => {
 	<div class="flex items-start">
 		<span v-if="hrs > 0">{{ hrs }}:</span>
 		{{ padNum(mins) }}:{{ padNum(secs) }}
-		<span v-if="!hideMs">:{{ ms.toString().padEnd(3, '0') }}</span>
+		<span v-if="!hideMs">:{{ ms.toString().padStart(3, '0') }}</span>
 	</div>
 </template>

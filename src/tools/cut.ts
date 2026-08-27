@@ -1,5 +1,6 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
 import { InvalidDurationError } from "@/model/errors";
+import { useOptions } from "@/store/options-store";
 import type { MediaState } from "@/view/composables/media-state";
 import { RangeFilter } from "shared/filters";
 
@@ -32,8 +33,7 @@ function makeCutEdit(media: MediaState) {
 	 */
 	const addCut = (from: number, to: number) => {
 
-		const duration = media.duration;
-		if (!duration || Number.isNaN(duration)) {
+		if (!media.duration || Number.isNaN(media.duration)) {
 			throw InvalidDurationError();
 		}
 
@@ -60,12 +60,16 @@ function makeCutEdit(media: MediaState) {
 
 		if (cuts.value.length === 0) return;
 
+		const options = useOptions().store;
+
 		return window.electron.cutMedia({
 
 			id: this.id,
 			file: media.file!,
 			cuts: cuts.value.concat(),
-			duration: media.duration
+			duration: media.duration,
+			perfect: options.video?.framePerfect,
+			codec: options.video?.codec
 
 		});
 	}
@@ -80,7 +84,7 @@ function makeCutEdit(media: MediaState) {
 			cuts.value = []
 		},
 		get cuts() { return cuts.value },
-		set cuts(v: MediaCut[]) { cuts.value = v; },
+		set cuts(v) { cuts.value = v },
 		addCut,
 		removeCut
 	};

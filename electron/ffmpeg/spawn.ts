@@ -6,8 +6,8 @@ import { ffmpegPath } from './install';
  * do not pass 'ffmpeg' command.
  * @param progress - receieves progress updates.
  * @param timeTotal - total clip length in seconds.
- * used to estimate completion progress.
- * necessary because ffmpeg doesn't give total length information in updates.
+ * used to estimate completion progress
+ * because ffmpeg doesn't give total length information in updates.
  * @returns 
  */
 export function spawnFFMpeg(args: string[],

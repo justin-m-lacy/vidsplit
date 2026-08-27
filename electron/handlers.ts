@@ -1,10 +1,11 @@
 import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
+import { tmpdir } from 'os';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { saveSimpleSlice } from "./ffmpeg/slice";
+import { ProgressUpdater, saveSimpleSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
@@ -61,10 +62,10 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 }
 
 /**
- * Convert slice points to skip points, and vice versa.
+ * Convert slice points to skip points.
  * (Used for cut operation.)
  */
-function invertTimes(op: NodeSliceOp) {
+function invertSlices(op: NodeSliceOp) {
 
 	const cuts = op.slices;
 	const slices = <SliceInfo[]>[];
@@ -109,44 +110,63 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		const inPath = op.filePath;
 		const outPath = copyExt((dialogRes.filePath), inPath);
-
-		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath, ext);
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.type == 'cut') {
-			invertTimes(op);		// invert time selection.
+			invertSlices(op);
 		}
 
 		if (op.slices.length === 1) {
-			await saveSimpleSlice(op.slices[0], inPath, outPath, updates[0]);
-			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
-			return outPath;
-		}
 
-		const tempDir = path.dirname(inPath);
-		const tmpFiles = op.slices.map((_, i) => {
-			return path.join(tempDir, baseName + '_' + i + `${ext}`);
-		});
+			await saveSimpleSlice({
+				range: op.slices[0],
+				inUrl: inPath,
+				outUrl: outPath,
+				progress: updates[0],
+				lead: op.lead,
+				codec: op.codec
+			});
 
-		// copy parts to temp files.
-		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSimpleSlice(op.slices[i], inPath, tmpFile, updates[i]);
-		}));
+		} else {
 
-		await concatFromFiles(tmpFiles, outPath, tempDir);
+			await saveMultiSlice(inPath, outPath, op, updates);
 
-		try {
-			Promise.allSettled(tmpFiles.map(f => unlink(f)))
-		} catch (err) {
-			console.warn(`error removing files: ${err}`);
 		}
 
 		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
-
 		return outPath;
 
 	});
+
+}
+
+async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, updates?: ProgressUpdater[]) {
+
+	const ext = path.extname(inPath);
+	const baseName = path.basename(inPath, ext);
+
+	const tempDir = tmpdir();
+	const tmpFiles = op.slices.map((_, i) => path.join(tempDir, baseName + '_' + i + `${ext}`));
+
+	try {
+		// copy parts to temp files.
+		await Promise.all(tmpFiles.map((tmpFile, i) => saveSimpleSlice({
+			range: op.slices[i],
+			inUrl: inPath,
+			outUrl: tmpFile,
+			progress: updates?.[i],
+			lead: op.lead,
+			codec: op.codec
+		})));
+
+		await concatFromFiles(tmpFiles, outPath, tempDir);
+
+	} catch (err) {
+		console.warn(`error removing files: ${err}`);
+	} finally {
+
+		Promise.allSettled(tmpFiles.map(f => unlink(f)));
+	}
 
 }
 
@@ -154,11 +174,6 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 	ipcMain.handle('splitMedia', async (evt, op: NodeSplitOp) => {
 
-		// pick save dir?
-		/*const dialogRes = await dialog.showSaveDialog({ title: 'Save Files As...' });
-		if (dialogRes.canceled) {
-			return false;
-		}*/
 		const inPath = op.filePath;
 		const baseDir = path.dirname(inPath);
 
@@ -173,15 +188,17 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
-			saves.push(saveSimpleSlice(
-				{
+			saves.push(saveSimpleSlice({
+				range: {
 					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd
 				},
-				inPath,
-				path.join(baseDir, `${baseName}-${i}${ext}`),
-				updates[i]
-			));
+				inUrl: inPath,
+				outUrl: path.join(baseDir, `${baseName}-${i}${ext}`),
+				progress: updates[i],
+				lead: op.lead,
+				codec: op.codec
+			}));
 			if (i > 0) sliceEnd = cuts[i - 1].t
 
 		}
@@ -219,7 +236,7 @@ function createUpdaters(web: WebContents,
 		// update sub current, sub total.
 		return (subCur: number, subTot: number) => {
 
-			// rough estimate only. current sometimes > total
+			// estimate only. current sometimes > total
 			current += (subCur - subProgs[i]);
 			total += (subTot - subTotals[i]);
 

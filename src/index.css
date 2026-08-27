@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/forms";
+
 @theme {
 	--text-xxs:0.6rem;
 	--spacing-25:100px;
@@ -19,6 +21,7 @@ body {
   .icon-btn {
 	  @apply inline-flex items-center justify-center text-sm font-semibold rounded-sm p-0.5 transition-all duration-200 focus:outline-none
     outline-none outline-gray-800/0
+    active:bg-gray-300 active:outline-gray-800/80
     hover:outline hover:outline-solid hover:outline-gray-800/60
 	  hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed;
 	}

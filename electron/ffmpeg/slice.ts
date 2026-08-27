@@ -1,4 +1,3 @@
-import { makeFilterArgs } from "electron/ffmpeg/filters";
 import { quoteStr } from "../util/text";
 import { spawnFFMpeg } from "./spawn";
 
@@ -106,41 +105,66 @@ function optimizeCuts(slices: SliceRange[]) {
 	}
 }
 
+export type ProgressUpdater = (cur: number, tot: number) => void;
+
 /**
  * 
  * @param slice 
  * @param inUrl 
  * @param outUrl 
  * @param progress - progress callback.
+ * @param lead - lead time in seconds. preseeks before slice start
+ * for frame-perfect slicing. Slower encoding and video is lossy.
  * @returns 
  */
-export async function saveSimpleSlice(slice: SliceRange,
+export async function saveSimpleSlice({
+	range,
+	inUrl,
+	outUrl,
+	progress,
+	lead = 0,
+	codec
+}: {
+	range: SliceRange,
 	inUrl: string,
 	outUrl: string,
-	progress?: (cur: number, tot: number) => void
+	progress?: ProgressUpdater,
+	lead?: number,
+	codec?: string
+}
 ) {
 
 	const args: string[] = ['-y -loglevel error'];
 	if (progress) args.push('-progress pipe:1');
 
-	args.push('-ss', `${slice.from}`, '-to', `${slice.to}`);
+	if (lead < 0) lead = 0;
+	else if (lead > range.from) lead = range.from;
+
+	const from = range.from - lead;
+	const duration = range.to - from;	// includes lead
+
+	args.push('-ss', `${from}`, '-t', `${duration}`);
 	args.push(`-i ${quoteStr(inUrl)}`);
 
-	//ffmpeg -ss 1:00 -i "video.mp4" -to 2:00 -c copy "cut.mp4"
-	args.push('-c copy', '-avoid_negative_ts 1', quoteStr(outUrl));
+	if (lead > 0) {
+		// output seek ahead of lead.
+		codec ??= 'libx264';
+		args.push(`-ss ${lead}`, '-t', `${duration - lead}`, `-c:v ${codec} -c:a aac`);
+	} else if (codec) {
+		args.push(`-c:v ${codec} -c:a aac`);
+	} else {
+		args.push('-c copy');
+	}
+	// ex: ffmpeg -ss 1.25 -i "video.mp4" -to 2.50 -c copy "cut.mp4"
+	args.push('-avoid_negative_ts 1', quoteStr(outUrl));
 
-	await spawnFFMpeg(args, progress, (slice.to - slice.from));
+	await spawnFFMpeg(args, progress, duration);
 
 	return outUrl;
 
 }
 
-/**
- * Export for testing purposes.
- *  -ss seek start
- *  -to to duration
- */
-export async function saveSlicesComplex(
+/*export async function saveSlicesComplex(
 	slices: SliceRange[],
 	inUrl: string,
 	outUrl: string,
@@ -156,8 +180,7 @@ export async function saveSlicesComplex(
 
 	args.push('-filter_complex');
 
-	// complete operations for each track: [inputTrack]filters,..[outTrack]
-	// join with ';'
+	// operations for each track: [inTrack]filters,..[outTrack] join with ';'
 	const trackOps: string[] = [];
 
 	slices.map((s, i) => {
@@ -179,4 +202,4 @@ export async function saveSlicesComplex(
 	return await spawnFFMpeg(args, progress, (times.to - times.from));
 
 
-}
+}*/

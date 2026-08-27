@@ -31,17 +31,16 @@ useRangeDrag({
 </script>
 <template>
 
-	<div class="flex justify-stretch w-full items-center select-none
-	text-xxs gap-x-4 min-h-5">
-		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
+	<div class="flex grow justify-stretch items-center select-none
+	text-xxs min-h-5">
+		<TimeStamp :time="media.time ?? 0" class="text-xxs pr-4" />
 		<div ref="barElm"
-			 class="relative flex items-center
+			 class="relative flex grow items-center box-content
 			pointer-events-auto
-			 w-full min-h-2 border border-l-0 border-r-0 
-			 border-orange-500 bg-orange-200">
+			 min-h-2 bg-orange-200">
 
 			<div id="blueBarFill"
-				 class="absolute min-h-2 h-full bg-sky-200/90
+				 class="absolute h-full bg-sky-200/90
 				select-none pointer-events-none"
 				 :style="pctRangeToPos(toBarPct(media.fromPct), toBarPct(media.toPct))">
 
@@ -69,15 +68,14 @@ useRangeDrag({
 				 :style="pctToPos(scrubPct)">&nbsp;</div>
 
 			<div class="absolute w-full h-full pointer-events-none
-			border-l border-r border-red-500" :style="{
+			border border-orange-500" :style="{
 				backgroundImage: `repeating-linear-gradient( 90deg,
 				#00000077,
 				transparent 1px,
 				transparent 15px )`
-			}">
-			</div>
+			}"></div>
 		</div>
-		<TimeStamp class="text-xxs"
+		<TimeStamp class="pl-4 text-xxs"
 				   :time="media.duration ?? 0" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />

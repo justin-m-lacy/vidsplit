@@ -1,5 +1,6 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
 import { InvalidDurationError } from "@/model/errors";
+import { useOptions } from "@/store/options-store";
 import type { MediaState } from "@/view/composables/media-state";
 import { SliceInfo } from "shared/edits";
 
@@ -49,10 +50,7 @@ function makeSliceEdit(media: MediaState) {
 	}
 
 	const removeSlice = (slice: MediaSlice) => {
-
-		const id = slice.id;
-		slices.value = slices.value.filter(s => s.id !== id);
-
+		slices.value = slices.value.filter(s => s.id !== slice.id);
 	}
 
 	/// apply operation.
@@ -60,12 +58,15 @@ function makeSliceEdit(media: MediaState) {
 
 		if (slices.value.length === 0) return;
 
+		const options = useOptions().store;
+
 		return window.electron.sliceMedia({
 
 			id: this.id,
 			file: media.file!,
 			slices: slices.value.concat(),
-
+			perfect: options.video?.framePerfect,
+			codec: options.video?.codec
 		});
 	}
 

@@ -29,7 +29,9 @@ contextBridge.exposeInMainWorld('electron', {
 			slices: edit.cuts,
 			audio: edit.audio,
 			video: edit.video,
-			duration: edit.duration
+			duration: edit.duration,
+			lead: edit.perfect ? 5 : undefined,
+			codec: edit.codec
 		});
 
 	},
@@ -41,8 +43,10 @@ contextBridge.exposeInMainWorld('electron', {
 			filePath: webUtils.getPathForFile(edit.file),
 			type: 'join',
 			slices: edit.slices,
+			lead: edit.perfect ? 5 : undefined,
 			audio: edit.audio,
-			video: edit.video
+			video: edit.video,
+			codec: edit.codec
 		});
 
 	},
@@ -55,7 +59,9 @@ contextBridge.exposeInMainWorld('electron', {
 			duration: edit.duration,
 			cuts: edit.cuts,
 			audio: edit.audio,
-			video: edit.video
+			video: edit.video,
+			lead: edit.perfect ? 5 : undefined,
+			codec: edit.codec
 		});
 
 	},

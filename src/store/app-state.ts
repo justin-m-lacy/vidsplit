@@ -14,6 +14,8 @@ export const useAppState = defineStore('appState', () => {
 	const checkingFFMpeg = shallowRef(false);
 	const installingFFMpeg = shallowRef(false);
 
+	const showSettings = shallowRef(false);
+
 	const electron = shallowRef(window.electron);
 
 	function setFFMpegInfo(info: { version: string, path?: string } | { err: string }) {
@@ -79,6 +81,7 @@ export const useAppState = defineStore('appState', () => {
 		hasFFMpeg,
 		installFFMpeg,
 		checkFFMpeg,
+		showSettings
 	}
 
 })

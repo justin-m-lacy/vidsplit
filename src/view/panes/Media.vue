@@ -33,7 +33,7 @@ const tools = useEditTool();
 const media = useMediaState(videoElm);
 
 onMounted(() => {
-	if (tools.tool == null) {
+	if (!tools.tool) {
 		tools.setSliceMode(media);
 	}
 })
@@ -106,22 +106,31 @@ async function onFilePicked(event: Event) {
 
 </script>
 <template>
-	<div class="flex flex-col items-center justify-center gap-y-2">
-		<div class="relative flex justify-center items-center grow min-h-1/2 mx-0.5 p-0
+
+	<div class="flex flex-col shrink grow justify-center gap-y-2">
+
+		<div class="flex max-h-9/12 grow justify-center gap-x-2">
+
+			<ToolsBar :media="media" class="ml-3 justify-end"
+					  @settings="appState.showSettings = true" />
+
+			<div class="relative flex justify-center items-center min-h-1/2 mx-0.5 p-0
 		rounded-xs transition-colors overflow-clip"
-			 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
-			 @drop.prevent="fileDrop"
-			 @dragover="fileDrag" @click="clickVideo">
-			<video ref="videoElm" class="max-w-full max-h-full h-auto aspect-auto"
-				   autoplay :controls="false"
-				   :src="mediaStore.sourceUrl">
-			</video>
-			<Upload v-if="!mediaStore.sourceUrl"
-					class="absolute translate-x-1/4 pointer-events-none" />
+				 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
+				 @drop.prevent="fileDrop"
+				 @dragover="fileDrag" @click="clickVideo">
+				<video ref="videoElm" class="max-w-full max-h-full h-auto aspect-auto"
+					   autoplay :controls="false"
+					   :src="mediaStore.sourceUrl">
+				</video>
+				<Upload v-if="!mediaStore.sourceUrl"
+						class="absolute translate-x-1/4 pointer-events-none" />
+			</div>
 		</div>
+
 		<MediaControls :state="media"
 					   class="flex w-full mx-4">
-			<ToolsBar :media="media" class="ml-3" />
+
 			<button type="button" class="icon-btn" id="drop-file"
 					title="Load Media"
 					@click.stop.prevent="fileInput?.click()"
@@ -150,21 +159,21 @@ async function onFilePicked(event: Event) {
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-center items-center my-1 max-w-11/12"
+					class="flex w-full my-1"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  @apply="applyEdit($event)"
-				  class="flex justify-center items-center my-1 max-w-11/12"
+				  class="flex w-full items-center my-1"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
 				  :task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-center items-center my-1 max-w-11/12"
+					class="flex w-full my-1 max-w-11/12"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
