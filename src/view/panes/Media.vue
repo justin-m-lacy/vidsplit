@@ -107,14 +107,14 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 
-	<div class="flex flex-col justify-center items-center gap-y-2">
+	<div class="flex flex-col shrink grow justify-center gap-y-2">
 
-		<div class="flex grow justify-stretch items-stretch gap-x-2">
+		<div class="flex max-h-9/12 grow justify-center gap-x-2">
 
 			<ToolsBar :media="media" class="ml-3 justify-end"
 					  @settings="appState.showSettings = true" />
 
-			<div class="relative flex grow justify-center items-center min-h-1/2 mx-0.5 p-0
+			<div class="relative flex justify-center items-center min-h-1/2 mx-0.5 p-0
 		rounded-xs transition-colors overflow-clip"
 				 :class="media.ready ? 'bg-slate-950' : 'border bg-blue-50 hover:bg-blue-100'"
 				 @drop.prevent="fileDrop"
@@ -159,21 +159,21 @@ async function onFilePicked(event: Event) {
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex items-center my-1 max-w-11/12"
+					class="flex w-full my-1"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:task="curTask" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  @apply="applyEdit($event)"
-				  class="flex justify-center items-center my-1 max-w-11/12"
+				  class="flex w-full items-center my-1"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
 				  :task="curTask" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
-					class="flex justify-center items-center my-1 max-w-11/12"
+					class="flex w-full my-1 max-w-11/12"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"

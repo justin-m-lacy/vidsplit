@@ -6,21 +6,25 @@ import { spawnFFMpeg } from "./spawn";
 export async function concatFromFiles(inFiles: string[], outFile: string, tmpDir: string) {
 
 	const args: string[] = ['-y'];
-
 	const textFile = path.join(tmpDir, `${path.basename(outFile)}.txt`);
 
-	// create temp input file.
-	await writeFile(textFile, inFiles.map((p) =>
-		`file '${p}'`
-	).join('\n'), { encoding: 'utf8' })
+	try {
 
-	args.push(`-f concat -safe 0 -i ${textFile}`);
-	args.push('-c copy', quoteStr(outFile))
 
-	await spawnFFMpeg(args);
+		// create temp input file.
+		await writeFile(textFile, inFiles.map((p) =>
+			`file '${p}'`
+		).join('\n'), { encoding: 'utf8' })
 
-	// delete text file.
-	unlink(textFile).catch();
+		args.push(`-f concat -safe 0 -i ${textFile}`);
+		args.push('-c copy', quoteStr(outFile))
+
+		await spawnFFMpeg(args);
+	} finally {
+
+		// delete text file.
+		unlink(textFile).catch();
+	}
 
 	return outFile;
 }

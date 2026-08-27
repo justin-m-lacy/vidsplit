@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/forms";
+
 @theme {
 	--text-xxs:0.6rem;
 	--spacing-25:100px;

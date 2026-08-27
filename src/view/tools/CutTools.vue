@@ -51,7 +51,7 @@ function addCut() {
 
 </script>
 <template>
-	<div class="flex flex-col w-full items-center gap-y-3">
+	<div class="flex flex-col w-full items-stretch gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="disabled:opacity-50 px-1 max-h-6

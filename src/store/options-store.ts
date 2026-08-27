@@ -3,6 +3,12 @@ import { defineStore } from 'pinia';
 
 type Options = {
 
+	video?: {
+
+		// ffmpeg -c:v option
+		codec?: 'libx264' | 'libx265' | 'libvpx-vp9' | 'libsvtav1' | 'default',
+
+	},
 	slice?: {
 		/**
 		 * use frame perfect slicing.
@@ -14,16 +20,25 @@ type Options = {
 
 export const useOptions = defineStore('options', () => {
 
+	const codecs = ['default', 'libx264', 'libx265', 'libvpx-vp9', 'libsvtav1',];
 
-	const opts = useLocalStorage<Options>('options', {
+	const store = useLocalStorage<Options>('options', {
 
+		video: {
+			codec: undefined,
+
+		},
 		slice: {
 			framePerfect: false
-		}
+		},
+
 
 	});
 
-	return opts;
+	return {
+		codecs,
+		store
+	};
 
 
 });

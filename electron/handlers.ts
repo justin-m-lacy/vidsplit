@@ -1,5 +1,6 @@
 import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'electron';
 import { unlink } from 'fs/promises';
+import { tmpdir } from 'os';
 import path from "path";
 import { NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
@@ -122,7 +123,8 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 				inUrl: inPath,
 				outUrl: outPath,
 				progress: updates[0],
-				lead: op.lead
+				lead: op.lead,
+				codec: op.codec
 			});
 
 		} else {
@@ -143,7 +145,7 @@ async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, 
 	const ext = path.extname(inPath);
 	const baseName = path.basename(inPath, ext);
 
-	const tempDir = path.dirname(inPath);
+	const tempDir = tmpdir();
 	const tmpFiles = op.slices.map((_, i) => path.join(tempDir, baseName + '_' + i + `${ext}`));
 
 	try {
@@ -153,7 +155,8 @@ async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, 
 			inUrl: inPath,
 			outUrl: tmpFile,
 			progress: updates?.[i],
-			lead: op.lead
+			lead: op.lead,
+			codec: op.codec
 		})));
 
 		await concatFromFiles(tmpFiles, outPath, tempDir);
@@ -192,7 +195,9 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 				},
 				inUrl: inPath,
 				outUrl: path.join(baseDir, `${baseName}-${i}${ext}`),
-				progress: updates[i]
+				progress: updates[i],
+				lead: op.lead,
+				codec: op.codec
 			}));
 			if (i > 0) sliceEnd = cuts[i - 1].t
 

@@ -1,6 +1,5 @@
-import path from "path";
 import { probeTypes } from './electron/ffmpeg/probe';
-import { saveSlicesComplex } from "./electron/ffmpeg/slice";
+//import { saveSlicesComplex } from "./electron/ffmpeg/slice";
 
 //testSlice();
 testProbe();
@@ -14,7 +13,7 @@ function testProbe() {
 /**
  * Test raw command.
  */
-async function testSlice() {
+/*async function testSlice() {
 
 	try {
 
@@ -33,4 +32,4 @@ async function testSlice() {
 		console.error(err);
 	}
 
-}
+}*/

@@ -1,4 +1,3 @@
-import { makeFilterArgs } from "electron/ffmpeg/filters";
 import { quoteStr } from "../util/text";
 import { spawnFFMpeg } from "./spawn";
 
@@ -123,13 +122,15 @@ export async function saveSimpleSlice({
 	inUrl,
 	outUrl,
 	progress,
-	lead = 0
+	lead = 0,
+	codec
 }: {
 	range: SliceRange,
 	inUrl: string,
 	outUrl: string,
 	progress?: ProgressUpdater,
-	lead?: number
+	lead?: number,
+	codec?: string
 }
 ) {
 
@@ -147,7 +148,9 @@ export async function saveSimpleSlice({
 
 	if (lead > 0) {
 		// output seek ahead of lead.
-		args.push(`-ss ${lead}`, '-t', `${duration - lead}`, `-c:v libx264 -c:a aac`);
+		args.push(`-ss ${lead}`, '-t', `${duration - lead}`, `-c:v ${codec} -c:a aac`);
+	} else if (codec) {
+		args.push(`-c:v ${codec} -c:a aac`);
 	} else {
 		args.push('-c copy');
 	}
@@ -160,10 +163,7 @@ export async function saveSimpleSlice({
 
 }
 
-/**
- * Export for testing purposes.
- */
-export async function saveSlicesComplex(
+/*export async function saveSlicesComplex(
 	slices: SliceRange[],
 	inUrl: string,
 	outUrl: string,
@@ -201,4 +201,4 @@ export async function saveSlicesComplex(
 	return await spawnFFMpeg(args, progress, (times.to - times.from));
 
 
-}
+}*/
