@@ -106,6 +106,8 @@ function optimizeCuts(slices: SliceRange[]) {
 	}
 }
 
+export type ProgressUpdater = (cur: number, tot: number) => void;
+
 /**
  * 
  * @param slice 
@@ -121,12 +123,12 @@ export async function saveSimpleSlice({
 	inUrl,
 	outUrl,
 	progress,
-	lead = 5
+	lead = 0
 }: {
 	range: SliceRange,
 	inUrl: string,
 	outUrl: string,
-	progress?: (cur: number, tot: number) => void,
+	progress?: ProgressUpdater,
 	lead?: number
 }
 ) {
@@ -134,29 +136,25 @@ export async function saveSimpleSlice({
 	const args: string[] = ['-y -loglevel error'];
 	if (progress) args.push('-progress pipe:1');
 
-	let from = range.from;
-	let duration = range.to - range.from;
+	if (lead < 0) lead = 0;
+	else if (lead > range.from) lead = range.from;
 
-	if (lead > 0) {
+	const from = range.from - lead;
+	const duration = range.to - from;	// includes lead
 
-		if (lead > from) lead = from;
-		from -= lead;
-
-	} else if (lead < 0) lead = 0;
-
-	args.push('-ss', `${from}`, '-t', `${duration + lead}`);
+	args.push('-ss', `${from}`, '-t', `${duration}`);
 	args.push(`-i ${quoteStr(inUrl)}`);
 
 	if (lead > 0) {
 		// output seek ahead of lead.
-		args.push(`-ss ${lead}`, '-t', `${duration}`, `-c:v libx264 -c:a aac`);
+		args.push(`-ss ${lead}`, '-t', `${duration - lead}`, `-c:v libx264 -c:a aac`);
 	} else {
 		args.push('-c copy');
 	}
 	// ex: ffmpeg -ss 1.25 -i "video.mp4" -to 2.50 -c copy "cut.mp4"
 	args.push('-avoid_negative_ts 1', quoteStr(outUrl));
 
-	await spawnFFMpeg(args, progress, duration + lead);
+	await spawnFFMpeg(args, progress, duration);
 
 	return outUrl;
 

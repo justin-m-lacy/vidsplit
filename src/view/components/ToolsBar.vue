@@ -11,6 +11,10 @@ const props = defineProps<{
 	media?: MediaState
 }>();
 
+const emits = defineEmits<{
+	(e: 'settings'): void
+}>();
+
 const tools = useEditTool();
 
 async function doSnapshot() {
@@ -41,7 +45,11 @@ function setSplitMode() {
 
 </script>
 <template>
-	<div class="flex justify-center items-center gap-x-2 select-none">
+	<div class="flex flex-col gap-y-2 select-none">
+		<button type="button" title="Open Settings"
+				class="icon-btn text-lg p-0 text-gray-800"
+				@click="emits('settings')">⚙️
+		</button>
 		<button type="button" title="Screenshot"
 				class="icon-btn disabled:opacity-50 text-sm"
 				:disabled="!media?.ready"

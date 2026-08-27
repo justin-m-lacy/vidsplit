@@ -4,7 +4,7 @@ import path from "path";
 import { NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { saveSimpleSlice } from "./ffmpeg/slice";
+import { ProgressUpdater, saveSimpleSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
@@ -109,9 +109,6 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		const inPath = op.filePath;
 		const outPath = copyExt((dialogRes.filePath), inPath);
-
-		const ext = path.extname(inPath);
-		const baseName = path.basename(inPath, ext);
 		const updates = createUpdaters(evt.sender, op.id);
 
 		if (op.type == 'cut') {
@@ -119,44 +116,54 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 		}
 
 		if (op.slices.length === 1) {
+
 			await saveSimpleSlice({
 				range: op.slices[0],
 				inUrl: inPath,
 				outUrl: outPath,
-				progress: updates[0]
+				progress: updates[0],
+				lead: op.lead
 			});
-			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
-			return outPath;
-		}
 
-		const tempDir = path.dirname(inPath);
-		const tmpFiles = op.slices.map((_, i) => {
-			return path.join(tempDir, baseName + '_' + i + `${ext}`);
-		});
+		} else {
 
-		// copy parts to temp files.
-		await Promise.all(tmpFiles.map((tmpFile, i) => {
-			return saveSimpleSlice({
-				range: op.slices[i],
-				inUrl: inPath,
-				outUrl: tmpFile,
-				progress: updates[i]
-			});
-		}));
+			await saveMultiSlice(inPath, outPath, op, updates);
 
-		await concatFromFiles(tmpFiles, outPath, tempDir);
-
-		try {
-			Promise.allSettled(tmpFiles.map(f => unlink(f)))
-		} catch (err) {
-			console.warn(`error removing files: ${err}`);
 		}
 
 		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
-
 		return outPath;
 
 	});
+
+}
+
+async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, updates?: ProgressUpdater[]) {
+
+	const ext = path.extname(inPath);
+	const baseName = path.basename(inPath, ext);
+
+	const tempDir = path.dirname(inPath);
+	const tmpFiles = op.slices.map((_, i) => path.join(tempDir, baseName + '_' + i + `${ext}`));
+
+	try {
+		// copy parts to temp files.
+		await Promise.all(tmpFiles.map((tmpFile, i) => saveSimpleSlice({
+			range: op.slices[i],
+			inUrl: inPath,
+			outUrl: tmpFile,
+			progress: updates?.[i],
+			lead: op.lead
+		})));
+
+		await concatFromFiles(tmpFiles, outPath, tempDir);
+
+	} catch (err) {
+		console.warn(`error removing files: ${err}`);
+	} finally {
+
+		Promise.allSettled(tmpFiles.map(f => unlink(f)));
+	}
 
 }
 
@@ -224,7 +231,7 @@ function createUpdaters(web: WebContents,
 		// update sub current, sub total.
 		return (subCur: number, subTot: number) => {
 
-			// rough estimate only. current sometimes > total
+			// estimate only. current sometimes > total
 			current += (subCur - subProgs[i]);
 			total += (subTot - subTotals[i]);
 
