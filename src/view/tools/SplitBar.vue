@@ -21,7 +21,7 @@ const emit = defineEmits<{
 
 const barElm = shallowRef<HTMLElement>();
 const scrubElm = shallowRef<HTMLElement>();
-const cutElms = useTemplateRef<ComponentPublicInstance[] | null>('cutElms');
+const cutElms = useTemplateRef<ComponentPublicInstance[]>('cutElms');
 
 const curCut = defineModel<MediaCut | null>('curCut', { default: null });
 
@@ -43,8 +43,10 @@ function onDblClickBar(e: MouseEvent) {
 
 	<div class="flex justify-stretch w-full items-center select-none
 	text-xxs gap-x-2 min-h-5">
-		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
-		<div ref="barElm" class="relative flex items-center w-full grow h-3 min-h-2 border bg-sky-200 border-sky-700"
+		<TimeStamp :time="media.time ?? 0" />
+		<div ref="barElm"
+			 class="relative flex grow items-center h-3 min-h-2
+			 bg-sky-200 outline outline-sky-800 "
 			 :disabled="!media.ready"
 			 @dblclick="onDblClickBar($event)">
 
@@ -65,8 +67,7 @@ function onDblClickBar(e: MouseEvent) {
 			border border-slate-800 bg-slate-400 rounded-xs shadow-sm"
 				 :style="pctToPos(scrubPct)">&nbsp;</div>
 
-			<div class="absolute w-full h-full pointer-events-none
-			border-l border-r border-sky-800" :style="{
+			<div class="absolute w-full h-full pointer-events-none" :style="{
 				backgroundImage: `repeating-linear-gradient( 90deg,
 				#00000077,
 				transparent 1px,
@@ -75,7 +76,7 @@ function onDblClickBar(e: MouseEvent) {
 			</div>
 
 		</div>
-		<TimeStamp :time="media.duration ?? 0" class="text-xxs" hide-ms
+		<TimeStamp :time="media.duration ?? 0" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>

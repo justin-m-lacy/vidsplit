@@ -2,7 +2,7 @@ import { Timeline } from "@/view/composables/timeline";
 import { useEventListener } from "@vueuse/core";
 
 /**
- * check if html element matches reference target
+ * check if html element matches ref element.
  */
 function matchTarget(el: HTMLElement, ref: ComponentPublicInstance | HTMLElement | undefined) {
 	if (!ref) return false;
@@ -32,9 +32,8 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged, onStartDrag }: {
 	onDragged?: (el: HTMLElement, mediaPct: number, tl: Timeline) => void
 }) {
 
-	// current element being dragged.
+	// element being dragged.
 	const curDragElm = shallowRef<HTMLElement | null>(null);
-
 
 	function startDrag(e: MouseEvent) {
 
@@ -53,12 +52,11 @@ export function useRangeDrag({ tl, fromElm, toElm, onDragged, onStartDrag }: {
 	function onDrag(e: MouseEvent) {
 
 		const cur = curDragElm.value;
-		if (cur == null) {
+		if (cur) {
+			onDragged?.(cur, tl.posToGlobalPct(e.clientX), tl);
+		} else {
 			endDrag();
-			return;
 		}
-
-		onDragged?.(cur, tl.posToGlobalPct(e.clientX), tl);
 
 	}
 

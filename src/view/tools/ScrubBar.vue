@@ -15,10 +15,10 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 
 </script>
 <template>
-	<div class="flex items-center gap-x-1 text-xs w-full">
-		<TimeStamp :time="media.time ?? 0" class="text-xxs" />
-		<div ref="barRef" id="scrubBar"
-			 class="flex items-center w-full min-h-2 relative border bg-sky-200 border-sky-700">
+	<div class="flex w-full justify-stretch items-stretch select-none h-4 min-h-4 gap-x-1 text-xxs">
+		<TimeStamp :time="media.time ?? 0" />
+		<div ref="barRef"
+			 class="relative flex grow items-center border bg-sky-200 border-sky-700">
 
 			<div class="absolute bg-green-500/75 h-full left-0
 				pointer-events-none select-none"
@@ -38,8 +38,8 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 			}">
 			</div>
 		</div>
-		<TimeStamp :time="media.duration ?? 0" class="text-xxs" hide-ms
+		<TimeStamp :time="media.duration ?? 0" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
-		<ViewSize :timeline="tl" class="text-xxs" />
+		<ViewSize :timeline="tl" />
 	</div>
 </template>

@@ -22,14 +22,14 @@ const emit = defineEmits<{
 const curCut = shallowRef<MediaCut | null>(null);
 
 /**
- * set slice start to current play position.
+ * set start to current play position.
  */
 function setStart() {
 	props.media.from = props.media.time;
 }
 
 /**
- * set slice start to current play position.
+ * set end to current play position.
  */
 function setEnd() {
 	props.media.to = props.media.time;
@@ -51,7 +51,7 @@ function addCut() {
 
 </script>
 <template>
-	<div class="flex flex-col w-full items-stretch gap-y-3">
+	<div class="flex flex-col items-stretch gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="disabled:opacity-50 px-1 max-h-6
@@ -98,19 +98,18 @@ function addCut() {
 			<button type="button" class="disabled:opacity-50"
 					:disabled="!hasFFMpeg || (edit.cuts.length == 0)
 						|| (task?.state == 'active' || task?.state == 'pending')"
-					title="Save sliced clips"
+					title="Save edited clip"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>
 		<SliceBar :media="media">
-			<template v-slot:bar="{ timeline }">
+			<template v-slot:overlay="{ timeline }">
 				<CutRange v-for="cut in edit.cuts" :id="cut.id"
 						  :cut="cut"
 						  :timeline="timeline"
 						  :selected="cut.id == curCut?.id"
-						  @select="curCut = cut"
-						  class="absolute" />
+						  @select="curCut = cut" />
 			</template>
 		</SliceBar>
 	</div>

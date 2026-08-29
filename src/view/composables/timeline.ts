@@ -5,7 +5,7 @@ import { useDebounceFn, useEventListener } from "@vueuse/core";
 export type Timeline = ReturnType<typeof useTimeline>;
 
 /**
- * Enable select current play state on timeline.
+ * Link media with a timeline element.
  * @param media 
  * @param scrubElm 
  * @param barRef 

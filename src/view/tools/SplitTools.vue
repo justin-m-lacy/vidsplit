@@ -42,7 +42,7 @@ function deleteCut() {
 
 </script>
 <template>
-	<div class="flex flex-col w-full items-center gap-y-3">
+	<div class="flex flex-col items-stretch gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="flex disabled:opacity-50 p-[1px] text-sm
