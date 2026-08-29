@@ -31,13 +31,12 @@ useRangeDrag({
 </script>
 <template>
 
-	<div class="flex grow justify-stretch items-center select-none
+	<div class="flex justify-stretch items-center select-none
 	text-xxs min-h-5">
 		<TimeStamp :time="media.time ?? 0" class="text-xxs pr-4" />
 		<div ref="barElm"
 			 class="relative flex grow items-center box-content
-			pointer-events-auto
-			 min-h-2 bg-orange-200">
+			pointer-events-auto min-h-2 outline outline-orange-700/50 bg-orange-200">
 
 			<div id="blueBarFill"
 				 class="absolute h-full bg-sky-200/90
@@ -49,7 +48,7 @@ useRangeDrag({
 				select-none pointer-events-none"
 				 :style="pctRangeToPos(toBarPct(media.fromPct), scrubPct)"></div>
 
-			<slot name="bar" :timeline="tl">&nbsp;</slot>
+			<slot name="overlay" :timeline="tl">&nbsp;</slot>
 
 			<div ref="fromElm"
 				 class="absolute z-10 w-3 h-5 min-h-4
@@ -68,7 +67,7 @@ useRangeDrag({
 				 :style="pctToPos(scrubPct)">&nbsp;</div>
 
 			<div class="absolute w-full h-full pointer-events-none
-			border border-orange-500" :style="{
+			border-none" :style="{
 				backgroundImage: `repeating-linear-gradient( 90deg,
 				#00000077,
 				transparent 1px,

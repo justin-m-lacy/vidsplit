@@ -52,12 +52,11 @@ useRangeDrag({
 			...pctRangeToPos(timeline.timeToPct(fromTime), timeline.timeToPct(toTime))
 		}">
 		<SplitPoint ref="fromElm"
-					:color="selected ? 'bg-red-700' : 'bg-red-700'"
-					class="h-4 left-0
-			 shadow-sm" />
+					color="bg-red-700"
+					class="h-4 left-0 shadow-sm" />
 		<SplitPoint ref="toElm" :selected="selected"
-					:color="selected ? 'bg-red-700' : 'bg-red-700'"
-					class=" h-4 right-0 shadow-sm" />
+					color="bg-red-700"
+					class="h-4 right-0 shadow-sm" />
 
 	</div>
 </template>
