@@ -128,7 +128,7 @@ function addSlice() {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch gap-y-3">
+	<div class="flex flex-col items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button" id="btnSetStart"
 					class="disabled:opacity-50 px-1 max-h-6
@@ -171,7 +171,7 @@ function addSlice() {
 				<Download />
 			</button>
 		</div>
-		<SliceBar :media="media" />
+		<SliceBar :media="media" class="w-11/12" />
 		<div ref="snapsElm"
 			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
 			 @dragover.prevent>

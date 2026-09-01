@@ -50,10 +50,10 @@ function addCut() {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch gap-y-3">
-		<div class="flex justify-center gap-x-2">
+	<div class="flex flex-col items-center gap-y-3">
+		<div class="flex justify-center items-stretch h-6 gap-x-2">
 			<button type="button"
-					class="disabled:opacity-50 px-1 max-h-6
+					class="disabled:opacity-50 px-1
 					flex items-center justify-center text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
@@ -65,7 +65,7 @@ function addCut() {
 				&nbsp;
 			</button>
 			<button type="button"
-					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm max-h-6
+					class="disabled:opacity-50 flex items-center justify-center px-1 text-sm
 					border border-green-800/40 rounded-sm bg-green-700/25
 					hover:bg-green-700/40 transition-colors"
 					title="Set slice End to current time"
@@ -80,7 +80,7 @@ function addCut() {
 					title="Remove Split Point"
 					:disabled="!curCut"
 					@click="removeCut">
-				<Trash />
+				<Trash class="h-full" />
 			</button>
 			<button type="button"
 					class="disabled:opacity-50 p-[1px] text-sm
@@ -102,7 +102,7 @@ function addCut() {
 				<Download />
 			</button>
 		</div>
-		<SliceBar :media="media">
+		<SliceBar :media="media" class="w-11/12">
 			<template v-slot:overlay="{ timeline }">
 				<CutRange v-for="cut in edit.cuts" :id="cut.id"
 						  :cut="cut"

@@ -15,7 +15,7 @@ const tl = useTimeline(props.media, scrubRef, barRef);
 
 </script>
 <template>
-	<div class="flex w-full justify-stretch items-stretch select-none h-4 min-h-4 gap-x-1 text-xxs">
+	<div class="flex w-full justify-center items-stretch select-none h-4 min-h-4 gap-x-1 text-xxs">
 		<TimeStamp :time="media.time ?? 0" />
 		<div ref="barRef"
 			 class="relative flex grow items-center border bg-sky-200 border-sky-700">

@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch gap-y-3">
+	<div class="flex flex-col items-center gap-y-3">
 
 		<div class="flex justify-center gap-x-8">
 
@@ -38,7 +38,7 @@ const emit = defineEmits<{
 				<Download />
 			</button>
 		</div>
-		<ScrubBar :media="media" />
+		<ScrubBar :media="media" class="max-w-11/12" />
 
 	</div>
 </template>

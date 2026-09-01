@@ -41,7 +41,7 @@ function deleteCut() {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch gap-y-3">
+	<div class="flex flex-col items-center gap-y-3">
 		<div class="flex justify-center gap-x-2">
 			<button type="button"
 					class="flex disabled:opacity-50 p-[1px] text-sm
@@ -66,7 +66,7 @@ function deleteCut() {
 				<Download />
 			</button>
 		</div>
-		<SplitBar :edit="edit" :media="media"
+		<SplitBar :edit="edit" :media="media" class="w-11/12"
 				  v-model:cur-cut="curCut"
 				  @new-cut="addCut($event)" />
 
