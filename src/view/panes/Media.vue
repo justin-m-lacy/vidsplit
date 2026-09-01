@@ -35,7 +35,8 @@ const tools = useEditTool();
 
 const media = useMediaState(videoElm);
 
-const taskBusy = computed(() => (curTask.value?.state == 'active' || curTask.value?.state == 'pending'));
+const taskBusy = computed(() =>
+	(curTask.value?.state == 'active' || curTask.value?.state == 'pending'));
 
 onMounted(() => {
 	if (!tools.tool) {
@@ -133,8 +134,7 @@ async function onFilePicked(event: Event) {
 			</div>
 		</div>
 
-		<MediaControls :state="media"
-					   class="flex w-full mx-4">
+		<MediaControls :state="media" class="flex w-full mx-4">
 
 			<button type="button" class="icon-btn" id="drop-file"
 					title="Load Media"
@@ -163,22 +163,22 @@ async function onFilePicked(event: Event) {
 		</div>
 
 		<SliceTools v-if="IsSliceEdit(tools.curEdit)"
-					@apply="applyEdit($event)"
 					class="my-1"
+					@apply="applyEdit($event)"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
 					:busy="taskBusy" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
-				  @apply="applyEdit($event)"
 				  class="my-1"
+				  @apply="applyEdit($event)"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
 				  :busy="taskBusy" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
-					@apply="applyEdit($event)"
 					class="my-1"
+					@apply="applyEdit($event)"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
@@ -186,6 +186,7 @@ async function onFilePicked(event: Event) {
 		<EncodeTools v-else-if="videoElm"
 					 class="my-1"
 					 @apply="applyEdit($event)"
+					 :hasFFMpeg="appState.hasFFMpeg"
 					 :busy="taskBusy"
 					 :codecs="opts.codecs"
 					 :media="media" />

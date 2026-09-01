@@ -18,6 +18,8 @@ export type TMediaInfo = {
 
 }
 
+export type VCodec = 'libx264' | 'libx265' | 'libvpx-vp9' | 'libsvtav1';
+
 export function createMediaInfo(media: HTMLMediaElement): TMediaInfo {
 
 	return {

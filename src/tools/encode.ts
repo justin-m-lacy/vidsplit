@@ -1,4 +1,5 @@
 import type { TEditTool, TMediaEdit } from "@/model/edit";
+import { VCodec } from "@/model/media";
 import type { MediaState } from "@/view/composables/media-state";
 
 
@@ -6,7 +7,7 @@ import type { MediaState } from "@/view/composables/media-state";
  * Cut sections from the source video into a new video.
  */
 export type EncodeEdit = TMediaEdit & {
-	codec?: 'libx264' | 'libx265' | 'libvpx-vp9' | 'libsvtav1',
+	codec?: VCodec,
 	duration: number
 }
 
@@ -19,6 +20,8 @@ export function IsEncodeEdit(edit?: TMediaEdit): edit is EncodeEdit {
 
 
 function newEncodeEdit(this: TEditTool, media: MediaState): EncodeEdit {
+
+	const codec = shallowRef<VCodec>();
 
 	/// apply operation.
 	async function apply(this: EncodeEdit) {
@@ -38,7 +41,8 @@ function newEncodeEdit(this: TEditTool, media: MediaState): EncodeEdit {
 		toolId: this.id,
 		apply,
 		media,
-		codec: undefined,
+		get codec() { return codec.value },
+		set codec(v) { codec.value = v },
 		get duration() { return media.duration },
 		reset() {
 			this.codec = undefined;

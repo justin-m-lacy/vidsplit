@@ -5,7 +5,7 @@ import path from "path";
 import { NodeEncodeOp, NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { ProgressUpdater, saveSimpleSlice } from "./ffmpeg/slice";
+import { ProgressUpdater, saveSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
@@ -80,7 +80,7 @@ export function handleEncode(ipcMain: IpcMain, _app: App) {
 		const outPath = copyExt((dialogRes.filePath), inPath);
 		const updates = createUpdaters(evt.sender, op.id);
 
-		await saveSimpleSlice({
+		await saveSlice({
 			range: { from: 0, to: op.duration },
 			inUrl: inPath,
 			outUrl: outPath,
@@ -152,7 +152,7 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		if (op.slices.length === 1) {
 
-			await saveSimpleSlice({
+			await saveSlice({
 				range: op.slices[0],
 				inUrl: inPath,
 				outUrl: outPath,
@@ -184,7 +184,7 @@ async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, 
 
 	try {
 		// copy parts to temp files.
-		await Promise.all(tmpFiles.map((tmpFile, i) => saveSimpleSlice({
+		await Promise.all(tmpFiles.map((tmpFile, i) => saveSlice({
 			range: op.slices[i],
 			inUrl: inPath,
 			outUrl: tmpFile,
@@ -222,7 +222,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
-			saves.push(saveSimpleSlice({
+			saves.push(saveSlice({
 				range: {
 					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd

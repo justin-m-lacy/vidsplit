@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('electron', {
 		return ipcRenderer.invoke('encodeMedia', {
 			id: edit.id,
 			filePath: webUtils.getPathForFile(edit.file),
+			duration: edit.duration,
 			audio: edit.audio,
 			video: edit.video,
 			codec: edit.codec

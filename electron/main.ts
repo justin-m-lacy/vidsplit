@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import {
 	handleCheckFFMpeg,
+	handleEncode,
 	handleInstallFFMpeg,
 	handleOpenMedia, handleSlice, handleSplit
 } from './handlers';
@@ -42,3 +43,4 @@ handleInstallFFMpeg(ipcMain);
 handleOpenMedia(ipcMain);
 handleSlice(ipcMain, app);
 handleSplit(ipcMain, app);
+handleEncode(ipcMain, app);

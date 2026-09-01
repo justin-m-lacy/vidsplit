@@ -4,7 +4,7 @@ defineProps<{
 	codecs: string[]
 }>();
 
-const model = defineModel<string>('default');
+const model = defineModel<string>();
 
 const codec = computed({
 
@@ -19,7 +19,7 @@ const codec = computed({
 		<label v-if="label" for="videoCodec" class="font-semibold">{{ label }}</label>
 		<select id="videoCodec" v-model="codec"
 				class="flex items-start justify-center h-8 py-0 p-1 pl-2">
-			<option v-for="s in codecs" :label="s" :value="s">
+			<option v-for="s in codecs" :label="s" :value="s" :selected="s == codec">
 				{{ s }}
 			</option>
 		</select>

@@ -14,6 +14,10 @@ const props = defineProps<{
 
 const edit = ref<EncodeEdit>(EncodeTool.newEdit(props.media));
 
+watch(() => props.media, (media) => {
+	edit.value.media = media;
+});
+
 const emit = defineEmits<{
 	(e: 'apply', edit: EncodeEdit): void;
 }>();
