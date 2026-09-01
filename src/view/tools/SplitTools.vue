@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TEditTask } from '@/store/task-store';
 import { MediaCut, SplitEdit } from '@/tools/split';
 import SplitBar from '@/view/tools/SplitBar.vue';
 import { Download, SplitSquareHorizontal, Trash } from 'lucide-vue-next';
@@ -10,7 +9,7 @@ const props = defineProps<{
 	media: MediaState,
 	hasFFMpeg?: boolean,
 	// running task.
-	task?: TEditTask | null
+	busy?: boolean
 }>();
 
 
@@ -61,7 +60,7 @@ function deleteCut() {
 				<Trash />
 			</button>
 			<button type="button" class="disabled:opacity-50"
-					:disabled="!hasFFMpeg || Object.keys(edit.cuts).length == 0 || (task?.state == 'active' || task?.state == 'pending')"
+					:disabled="!hasFFMpeg || Object.keys(edit.cuts).length == 0 || busy"
 					title="Split video"
 					@click="emit('apply', edit)">
 				<Download />

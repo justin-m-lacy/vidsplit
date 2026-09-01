@@ -1,5 +1,6 @@
 import { TEditTool, TMediaEdit } from "@/model/edit";
 import { CutTool } from "@/tools/cut";
+import { EncodeTool } from "@/tools/encode";
 import { SliceTool } from "@/tools/slice";
 import { SplitTool } from "@/tools/split";
 import type { MediaState } from "@/view/composables/media-state";
@@ -11,8 +12,8 @@ export const useEditTool = defineStore('editTool', () => {
 	const curEdit = shallowRef<TMediaEdit>();
 
 	function clearTool() {
-		curTool.value = undefined;
 		curEdit.value = undefined;
+		curTool.value = undefined;
 	}
 
 	function toggleTool(tool: TEditTool, media?: MediaState) {
@@ -32,6 +33,10 @@ export const useEditTool = defineStore('editTool', () => {
 
 	}
 
+	function setEncodeMode(media: MediaState) {
+		toggleTool(EncodeTool, media)
+	}
+
 	const setSliceMode = (media?: MediaState) => {
 		toggleTool(SliceTool, media)
 	}
@@ -49,6 +54,7 @@ export const useEditTool = defineStore('editTool', () => {
 		setSliceMode,
 		setSplitMode,
 		setCutMode,
+		setEncodeMode,
 		tool: curTool,
 		toggleTool,
 		clearTool

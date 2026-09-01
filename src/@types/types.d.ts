@@ -1,4 +1,4 @@
-import type { WebCutOp, WebSliceOp, WebSplitOp } from "shared/edits";
+import type { WebCutOp, WebEncodeOp, WebSliceOp, WebSplitOp } from "shared/edits";
 
 declare global {
 	interface Window {
@@ -8,6 +8,7 @@ declare global {
 			checkFFMpeg(): Promise<{ version: string } | { err: string }>,
 			onProgress(cb: (id: string, cur: number, total: number) => void),
 			cutMedia(edit: WebCutOp): Promise<any>,
+			encodeMedia(edit: WebEncodeOp): Promise<any>,
 			sliceMedia(edit: WebSliceOp): Promise<any>,
 			splitMedia(edit: WebSplitOp): Promise<any>
 		}

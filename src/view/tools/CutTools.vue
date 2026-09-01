@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TEditTask } from '@/store/task-store';
 import { CutEdit, MediaCut } from '@/tools/cut.js';
 import CutRange from '@/view/tools/CutRange.vue';
 import SliceBar from '@/view/tools/SliceBar.vue';
@@ -11,7 +10,7 @@ const props = defineProps<{
 	edit: CutEdit,
 	media: MediaState,
 	hasFFMpeg?: boolean,
-	task?: TEditTask | null
+	busy?: boolean
 }>();
 
 const emit = defineEmits<{
@@ -97,7 +96,7 @@ function addCut() {
 
 			<button type="button" class="disabled:opacity-50"
 					:disabled="!hasFFMpeg || (edit.cuts.length == 0)
-						|| (task?.state == 'active' || task?.state == 'pending')"
+						|| busy"
 					title="Save edited clip"
 					@click="emit('apply', edit)">
 				<Download />

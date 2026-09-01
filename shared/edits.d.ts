@@ -29,6 +29,8 @@ type With<T extends object, K extends keyof T> = T & { [p in K]-?: T[p] };
 
 export type SliceInfo = RangeFilter & Partial<FpsFilter> & Partial<CurvesFilter>;
 
+export type WebEncodeOp = Omit<WebVideoOp, 'perfect'> & { duration: number };
+
 export type WebCutOp = WebVideoOp & {
 	cuts: RangeFilter[],
 	duration: number,
@@ -46,6 +48,8 @@ type NodeVideoOp<T extends WebVideoOp> = Omit<T, 'file' | 'perfect'> & {
 	// seconds to seek before encoding for better accuracy.
 	lead?: number,
 }
+
+export type NodeEncodeOp = NodeVideoOp<WebEncodeOp>;
 
 export type NodeSplitOp = NodeVideoOp<WebSplitOp>;
 

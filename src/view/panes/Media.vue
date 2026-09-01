@@ -3,17 +3,18 @@ import { TMediaEdit } from '@/model/edit';
 import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
+import { useOptions } from '@/store/options-store.js';
 import { TEditTask, useTaskStore } from '@/store/task-store';
 import { IsCutEdit } from '@/tools/cut.js';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
 import { useMediaState } from '@/view/composables/media-state';
 import CutTools from '@/view/tools/CutTools.vue';
+import EncodeTools from '@/view/tools/EncodeTools.vue';
 import SplitTools from '@/view/tools/SplitTools.vue';
 import { Upload, X } from 'lucide-vue-next';
 import MediaControls from '../components/MediaControls.vue';
 import ToolsBar from '../components/ToolsBar.vue';
-import ScrubBar from '../tools/ScrubBar.vue';
 import SliceTools from '../tools/SliceTools.vue';
 
 const videoElm = shallowRef<HTMLVideoElement>();
@@ -28,9 +29,13 @@ const curTask = shallowRef<TEditTask | null>(null);
 
 const fileInput = shallowRef<HTMLInputElement>();
 
+const opts = useOptions();
+
 const tools = useEditTool();
 
 const media = useMediaState(videoElm);
+
+const taskBusy = computed(() => (curTask.value?.state == 'active' || curTask.value?.state == 'pending'));
 
 onMounted(() => {
 	if (!tools.tool) {
@@ -163,24 +168,27 @@ async function onFilePicked(event: Event) {
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
-					:task="curTask" />
+					:busy="taskBusy" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  @apply="applyEdit($event)"
 				  class="my-1"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
-				  :task="curTask" />
+				  :busy="taskBusy" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					@apply="applyEdit($event)"
 					class="my-1"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
-					:task="curTask" />
-		<ScrubBar v-else-if="videoElm"
-				  class="my-1"
-				  :media="media" />
+					:busy="taskBusy" />
+		<EncodeTools v-else-if="videoElm"
+					 class="my-1"
+					 @apply="applyEdit($event)"
+					 :busy="taskBusy"
+					 :codecs="opts.codecs"
+					 :media="media" />
 
 		<input ref="fileInput" type="file" accept="video/*"
 			   class="hidden" @change="onFilePicked">

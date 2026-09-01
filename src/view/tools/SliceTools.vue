@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useSnapshot } from '@/store/snapshot';
-import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { useDrag } from '@/view/composables/drag-elm';
 import { Download, X } from 'lucide-vue-next';
@@ -12,7 +11,7 @@ const props = defineProps<{
 	edit: SliceEdit,
 	media: MediaState,
 	hasFFMpeg?: boolean,
-	task?: TEditTask | null
+	busy?: boolean
 }>();
 
 const emit = defineEmits<{
@@ -166,8 +165,7 @@ function addSlice() {
 			</span>
 
 			<button type="button" class="disabled:opacity-50"
-					:disabled="!hasFFMpeg || (edit.slices.length == 0)
-						|| (task?.state == 'active' || task?.state == 'pending')"
+					:disabled="!hasFFMpeg || busy || (edit.slices.length == 0)"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
 				<Download />

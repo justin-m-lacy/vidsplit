@@ -8,20 +8,17 @@ export type MediaCut = RangeFilter & {
 	id: string
 }
 
+export const CutTool: TEditTool<CutEdit> = {
 
-/**
- * Cut sections from the source video into a new video.
- */
-export type CutEdit = TMediaEdit & ReturnType<typeof makeCutEdit>;
+	id: Symbol('cut'),
 
-// removed from tool to avoid circular typescript ref.
-const CutId = Symbol('cut');
+	canUse: true,
 
-export function IsCutEdit(edit?: TMediaEdit): edit is CutEdit {
-	return edit?.toolId === CutId;
+	newEdit: newCutEdit
+
 }
 
-function makeCutEdit(media: MediaState) {
+function newCutEdit(this: TEditTool, media: MediaState) {
 
 	const cuts = shallowRef<MediaCut[]>([]);
 
@@ -56,7 +53,7 @@ function makeCutEdit(media: MediaState) {
 	}
 
 	/// apply operation.
-	async function apply(this: MediaCut) {
+	async function apply(this: TMediaEdit) {
 
 		if (cuts.value.length === 0) return;
 
@@ -76,7 +73,7 @@ function makeCutEdit(media: MediaState) {
 
 	return {
 		id: window.crypto.randomUUID(),
-		toolId: CutId,
+		toolId: this.id,
 		apply,
 		media,
 		duration: () => media.duration,
@@ -91,12 +88,11 @@ function makeCutEdit(media: MediaState) {
 
 }
 
-export const CutTool: TEditTool<CutEdit> = {
+/**
+ * Cut sections from the source video into a new video.
+ */
+export type CutEdit = ReturnType<typeof newCutEdit>;
 
-	id: CutId,
-
-	canUse: true,
-
-	newEdit: makeCutEdit
-
+export function IsCutEdit(edit?: TMediaEdit): edit is CutEdit {
+	return edit?.toolId === CutTool.id;
 }
