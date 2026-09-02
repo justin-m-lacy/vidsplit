@@ -41,11 +41,11 @@ function onDblClickBar(e: MouseEvent) {
 </script>
 <template>
 
-	<div class="flex justify-stretch w-full items-center select-none
+	<div class="flex shrink items-center select-none
 	text-xxs gap-x-2 min-h-5">
 		<TimeStamp :time="media.time ?? 0" />
 		<div ref="barElm"
-			 class="relative flex grow items-center h-3 min-h-2
+			 class="relative flex grow shrink items-center h-3 min-h-2
 			 bg-sky-200 outline outline-sky-800 "
 			 :disabled="!media.ready"
 			 @dblclick="onDblClickBar($event)">
@@ -76,7 +76,7 @@ function onDblClickBar(e: MouseEvent) {
 			</div>
 
 		</div>
-		<TimeStamp :time="media.duration ?? 0" hide-ms
+		<TimeStamp :time="media.duration" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>

@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import {
 	handleCheckFFMpeg,
+	handleEncode,
 	handleInstallFFMpeg,
 	handleOpenMedia, handleSlice, handleSplit
 } from './handlers';
@@ -10,7 +11,7 @@ const createWindow = () => {
 
 	const win = new BrowserWindow({
 		width: 800,
-		height: 640,
+		height: 720,
 		show: false,
 		autoHideMenuBar: true,
 		webPreferences: {
@@ -42,3 +43,4 @@ handleInstallFFMpeg(ipcMain);
 handleOpenMedia(ipcMain);
 handleSlice(ipcMain, app);
 handleSplit(ipcMain, app);
+handleEncode(ipcMain, app);

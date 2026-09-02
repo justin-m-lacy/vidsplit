@@ -18,13 +18,10 @@ export type MediaCut = {
 }
 
 export function IsSplitEdit(edit?: TMediaEdit): edit is SplitEdit {
-	return edit?.toolId === SplitId;
+	return edit?.toolId === SplitTool.id;
 }
 
-
-const SplitId = Symbol('split');
-
-function makeSplitEdit(media: MediaState) {
+function makeSplitEdit(this: TEditTool, media: MediaState) {
 
 	const cuts = ref<Record<string, MediaCut>>(Object.create(null));
 
@@ -98,7 +95,7 @@ function makeSplitEdit(media: MediaState) {
 
 	return {
 		id: window.crypto.randomUUID(),
-		toolId: SplitId,
+		toolId: this.id,
 		apply,
 		media,
 		get cuts() { return cuts.value },
@@ -110,7 +107,7 @@ function makeSplitEdit(media: MediaState) {
 
 export const SplitTool: TEditTool<SplitEdit> = {
 
-	id: SplitId,
+	id: Symbol('split'),
 
 	canUse: true,
 

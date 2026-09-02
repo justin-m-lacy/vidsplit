@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import type { WebCutOp, WebSliceOp, WebSplitOp } from '../shared/edits';
+import type { WebCutOp, WebEncodeOp, WebSliceOp, WebSplitOp } from '../shared/edits';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
@@ -17,6 +17,22 @@ contextBridge.exposeInMainWorld('electron', {
 
 	installFFMpeg(): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> {
 		return ipcRenderer.invoke('installFFMpeg');
+	},
+
+	/**
+	 * reencode media with new encoder,fps, etc.
+	 */
+	encodeMedia: (edit: WebEncodeOp) => {
+
+		return ipcRenderer.invoke('encodeMedia', {
+			id: edit.id,
+			filePath: webUtils.getPathForFile(edit.file),
+			duration: edit.duration,
+			audio: edit.audio,
+			video: edit.video,
+			codec: edit.codec
+		});
+
 	},
 
 	cutMedia: (edit: WebCutOp) => {

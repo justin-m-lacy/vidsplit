@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useOptions } from '@/store/options-store';
+import CodecSelect from '@/view/components/CodecSelect.vue';
 
 const opts = useOptions();
 
@@ -38,16 +39,9 @@ const codec = computed({
 					   title="Frame Perfect Video Slices">
 				<label>Frame-Perfect Cuts</label>
 			</div>
-			<div class="flex gap-x-2 items-center text-sm">
-				<label for="videoCodec" class="font-semibold">Video Codec</label>
-				<select id="videoCodec" v-model="codec"
-						class="flex items-center justify-center p-1 pl-2">
-					<option v-for="s in opts.codecs" :value="s"
-							:selected="opts.store.video?.codec == s">
-						{{ s }}
-					</option>
-				</select>
-			</div>
+			<CodecSelect v-model="codec"
+						 :codecs="opts.codecs"
+						 label="Video Codec" />
 		</section>
 
 	</div>

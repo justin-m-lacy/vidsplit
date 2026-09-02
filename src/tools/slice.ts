@@ -12,16 +12,13 @@ export type MediaSlice = SliceInfo & {
 /**
  * Slice sections from the source video into a new video.
  */
-export type SliceEdit = TMediaEdit & ReturnType<typeof makeSliceEdit>;
-
-// removed from tool to avoid circular typescript ref.
-const SliceId = Symbol('slice');
+export type SliceEdit = ReturnType<typeof makeSliceEdit>;
 
 export function IsSliceEdit(edit?: TMediaEdit): edit is SliceEdit {
-	return edit?.toolId === SliceId;
+	return edit?.toolId === SliceTool.id;
 }
 
-function makeSliceEdit(media: MediaState) {
+function makeSliceEdit(this: TEditTool, media: MediaState) {
 
 	const slices = shallowRef<MediaSlice[]>([]);
 
@@ -54,7 +51,7 @@ function makeSliceEdit(media: MediaState) {
 	}
 
 	/// apply operation.
-	async function apply(this: MediaSlice) {
+	async function apply(this: SliceEdit) {
 
 		if (slices.value.length === 0) return;
 
@@ -72,7 +69,7 @@ function makeSliceEdit(media: MediaState) {
 
 	return {
 		id: window.crypto.randomUUID(),
-		toolId: SliceId,
+		toolId: this.id,
 		apply,
 		media,
 		reset() {
@@ -88,7 +85,7 @@ function makeSliceEdit(media: MediaState) {
 
 export const SliceTool: TEditTool<SliceEdit> = {
 
-	id: SliceId,
+	id: Symbol('slice'),
 
 	canUse: true,
 

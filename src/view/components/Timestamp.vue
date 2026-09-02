@@ -26,7 +26,7 @@ watch(() => prop.time, (time) => {
 
 	mins.value = Math.floor(time / 60) - 60 * hrs.value;
 
-});
+}, { immediate: true });
 
 </script>
 <template>

@@ -58,11 +58,9 @@ export function useMediaState(mediaElm: WatchSource<HTMLMediaElement | undefined
 
 		mediaRef.value = media;
 		if (media) {
-
 			media.volume = volume.value;
 			media.loop = loop.value;
 			duration.value = Number.isNaN(media.duration) ? media.duration : 0;
-
 		} else {
 			duration.value = 0;
 		}

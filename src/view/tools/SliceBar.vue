@@ -31,8 +31,7 @@ useRangeDrag({
 </script>
 <template>
 
-	<div class="flex justify-stretch items-center select-none
-	text-xxs min-h-5">
+	<div class="flex justify-stretch items-center select-none text-xxs min-h-5">
 		<TimeStamp :time="media.time ?? 0" class="text-xxs pr-4" />
 		<div ref="barElm"
 			 class="relative flex grow items-center box-content
@@ -75,7 +74,7 @@ useRangeDrag({
 			}"></div>
 		</div>
 		<TimeStamp class="pl-4 text-xxs"
-				   :time="media.duration ?? 0" hide-ms
+				   :time="media.duration" hide-ms
 				   :title="media.duration ? formatTime(media.duration) : '00:00'" />
 		<ViewSize :timeline="tl" />
 	</div>

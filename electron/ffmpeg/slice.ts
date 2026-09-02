@@ -117,7 +117,7 @@ export type ProgressUpdater = (cur: number, tot: number) => void;
  * for frame-perfect slicing. Slower encoding and video is lossy.
  * @returns 
  */
-export async function saveSimpleSlice({
+export async function saveSlice({
 	range,
 	inUrl,
 	outUrl,

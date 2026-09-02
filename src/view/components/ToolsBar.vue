@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useEditTool } from '@/store/edit-tool';
 import { useSnapshot } from '@/store/snapshot';
-import { IsCutEdit } from '@/tools/cut';
-import { IsSliceEdit } from '@/tools/slice';
-import { IsSplitEdit } from '@/tools/split';
+import { CutTool } from '@/tools/cut';
+import { SliceTool } from '@/tools/slice';
+import { SplitTool } from '@/tools/split';
 import { MediaState } from '@/view/composables/media-state';
 import { Camera, Film, SquareSplitHorizontal } from 'lucide-vue-next';
 
@@ -59,7 +59,7 @@ function setSplitMode() {
 		<button type="button" title="Join Slices"
 				class="icon-btn flex justify-center disabled:opacity-50 p-0.5 text-sm
 				transition-colors"
-				:class="IsSliceEdit(tools.curEdit) ?
+				:class="tools.tool == SliceTool ?
 					'bg-amber-500/40 rounded-md border border-amber-700' :
 					''"
 				:disabled="!media?.media"
@@ -69,14 +69,14 @@ function setSplitMode() {
 		<button type="button" title="Cut/Remove Slices"
 				class="icon-btn flex justify-center disabled:opacity-50 p-0.5 text-sm
 				transition-colors"
-				:class="IsCutEdit(tools.curEdit) ?
+				:class="tools.tool == CutTool ?
 					'bg-amber-500/40 rounded-md border border-amber-700' :
 					''"
 				:disabled="!media?.media"
 				@click="setCutMode">✂</button>
 		<button type="button" title="Split Media"
 				class="icon-btn flex justify-center transition-colors items-center disabled:opacity-50 p-0.5 text-sm max-h-7"
-				:class="IsSplitEdit(tools.curEdit) ?
+				:class="tools.tool == SplitTool ?
 					'bg-amber-500/40 rounded-md border border-amber-700' : ''"
 				:disabled="!media?.media"
 				@click="setSplitMode">

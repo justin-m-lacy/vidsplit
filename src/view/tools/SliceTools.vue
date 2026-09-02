@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useSnapshot } from '@/store/snapshot';
-import { TEditTask } from '@/store/task-store';
 import { MediaSlice, SliceEdit } from '@/tools/slice';
 import { useDrag } from '@/view/composables/drag-elm';
 import { Download, X } from 'lucide-vue-next';
@@ -12,7 +11,7 @@ const props = defineProps<{
 	edit: SliceEdit,
 	media: MediaState,
 	hasFFMpeg?: boolean,
-	task?: TEditTask | null
+	busy?: boolean
 }>();
 
 const emit = defineEmits<{
@@ -129,8 +128,9 @@ function addSlice() {
 
 </script>
 <template>
-	<div class="flex flex-col items-stretch gap-y-3">
-		<div class="flex justify-center gap-x-2">
+	<div
+		 class="flex flex-col flex-nowrap items-center grow shrink gap-y-2 mb-1 pb-1">
+		<div class="flex justify-center gap-x-2 mb-1">
 			<button type="button" id="btnSetStart"
 					class="disabled:opacity-50 px-1 max-h-6
 					flex items-center justify-center text-sm
@@ -166,24 +166,23 @@ function addSlice() {
 			</span>
 
 			<button type="button" class="disabled:opacity-50"
-					:disabled="!hasFFMpeg || (edit.slices.length == 0)
-						|| (task?.state == 'active' || task?.state == 'pending')"
+					:disabled="!hasFFMpeg || busy || (edit.slices.length == 0)"
 					title="Save sliced clips"
 					@click="emit('apply', edit)">
 				<Download />
 			</button>
 		</div>
-		<SliceBar :media="media" />
+		<SliceBar :media="media" class="w-11/12" />
 		<div ref="snapsElm"
-			 class="flex w-full justify-center items-center  mt-1 gap-x-1 min-h-12 overflow-x-auto scroll-x-auto"
+			 class="flex w-full max-h-20 h-20 justify-center items-start gap-x-1 overflow-x-auto scroll-x-auto"
 			 @dragover.prevent>
 			<div v-for="s in edit.slices" :key="s.id" :data-slice="s.id" draggable="true"
-				 class="relative h-12 hover:h-24 w-auto transition-transform border border-black"
+				 class="relative h-10 hover:h-20 z-100 transition-[transform_height] border border-black"
 				 @dragstart="onDragSnapshot($event, s)"
 				 @click="setViewRange(s.from, s.to)">
 
 				<X class="absolute rounded-full -right-1 -top-0.5
-					drop-shadow-2xl border border-red-700 bg-red-600 max-h-6 h-1/3 w-auto p-0.5"
+					drop-shadow-2xl border border-red-700 bg-red-600 max-h-5 h-1/3 w-auto p-0.5"
 				   @click.stop.prevent="removeSlice(s)" stroke-width="2.5" />
 
 				<img v-if="s.snapshot" :src="s.snapshot"

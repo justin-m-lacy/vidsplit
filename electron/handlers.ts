@@ -2,10 +2,10 @@ import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'elec
 import { unlink } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from "path";
-import { NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
+import { NodeEncodeOp, NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
 import { concatFromFiles } from "./ffmpeg/concat";
 import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { ProgressUpdater, saveSimpleSlice } from "./ffmpeg/slice";
+import { ProgressUpdater, saveSlice } from "./ffmpeg/slice";
 import { copyExt } from './util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
@@ -48,6 +48,7 @@ export function handleCheckFFMpeg(ipcMain: IpcMain) {
 
 }
 
+
 export function handleInstallFFMpeg(ipcMain: IpcMain) {
 
 	ipcMain.handle('installFFMpeg',
@@ -58,6 +59,39 @@ export function handleInstallFFMpeg(ipcMain: IpcMain) {
 				return { err: errToStr(err) }
 			}
 		});
+
+}
+
+/**
+ * Handle rencoding with no slicing/cutting.
+ */
+export function handleEncode(ipcMain: IpcMain, _app: App) {
+
+	ipcMain.handle('encodeMedia', async (evt, op: NodeEncodeOp) => {
+
+		const dialogRes = await dialog.showSaveDialog({
+			title: 'Save Output',
+			defaultPath: op.filePath,
+
+		});
+		if (dialogRes.canceled) return null;
+
+		const inPath = op.filePath;
+		const outPath = copyExt((dialogRes.filePath), inPath);
+		const updates = createUpdaters(evt.sender, op.id);
+
+		await saveSlice({
+			range: { from: 0, to: op.duration },
+			inUrl: inPath,
+			outUrl: outPath,
+			progress: updates[0],
+			codec: op.codec
+		});
+
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		return outPath;
+
+	});
 
 }
 
@@ -118,7 +152,7 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		if (op.slices.length === 1) {
 
-			await saveSimpleSlice({
+			await saveSlice({
 				range: op.slices[0],
 				inUrl: inPath,
 				outUrl: outPath,
@@ -133,7 +167,7 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		}
 
-		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
 		return outPath;
 
 	});
@@ -150,7 +184,7 @@ async function saveMultiSlice(inPath: string, outPath: string, op: NodeSliceOp, 
 
 	try {
 		// copy parts to temp files.
-		await Promise.all(tmpFiles.map((tmpFile, i) => saveSimpleSlice({
+		await Promise.all(tmpFiles.map((tmpFile, i) => saveSlice({
 			range: op.slices[i],
 			inUrl: inPath,
 			outUrl: tmpFile,
@@ -188,7 +222,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		let sliceEnd = op.duration;
 		for (let i = cuts.length; i >= 0; i--) {
 
-			saves.push(saveSimpleSlice({
+			saves.push(saveSlice({
 				range: {
 					from: i > 0 ? cuts[i - 1].t : 0,
 					to: sliceEnd
@@ -205,7 +239,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		// copy parts to files.
 		await Promise.allSettled(saves);
-		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(1);
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
 
 		return true;
 

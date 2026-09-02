@@ -67,6 +67,7 @@ export const useTaskStore = defineStore('progress', () => {
 		remove,
 		get(id: string) { return tasks.value[id] },
 
+		get busy() { return },
 		tasks
 	}
 
