@@ -113,9 +113,9 @@ async function onFilePicked(event: Event) {
 </script>
 <template>
 
-	<div class="flex flex-col shrink grow justify-stretch items-stretch gap-y-2">
+	<div class="flex flex-col justify-start items-stretch gap-y-2 overflow-y-clip">
 
-		<div class="flex max-h-9/12 grow justify-center gap-x-2">
+		<div class="flex max-w-11/12 self-center max-h-9/12 flex-9/12   grow shrink justify-center gap-x-2">
 
 			<ToolsBar :media="media" class="ml-3 justify-end"
 					  @settings="appState.showSettings = true" />

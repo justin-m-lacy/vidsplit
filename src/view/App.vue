@@ -17,7 +17,7 @@ const state = useAppState();
       Can't connect to main process.</div>
     <FFMpegState class="min-h-fit mb-2" />
     <Settings v-if="state.showSettings" @close="state.showSettings = false" />
-    <Media class="shrink max-h-10/12 h-10/12 min-w-1/2 mb-2"
+    <Media class="shrink grow max-h-11/12 h-10/12 min-w-1/2 "
            :class="state.showSettings ? 'hidden' : 'visible'" />
   </div>
 </template>
