@@ -17,6 +17,15 @@ const hrs = shallowRef<number>(0);
 
 watch(() => prop.time, (time) => {
 
+	if (Number.isNaN(time)) {
+
+		ms.value = 0;
+		secs.value = 0;
+		hrs.value = 0;
+		mins.value = 0;
+		return;
+	}
+
 	ms.value = Math.round(1000 * (time - Math.floor(time)));
 
 	secs.value = Math.floor(time) % 60;

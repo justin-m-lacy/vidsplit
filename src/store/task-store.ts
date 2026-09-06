@@ -61,7 +61,15 @@ export const useTaskStore = defineStore('progress', () => {
 			total: 0
 		});
 
-		promise.catch(() => {
+		promise.then(() => {
+
+			const t = tasks.value[id];
+			if (t) {
+				t.state = 'complete';
+				t.current = t.total;
+			}
+
+		}).catch(() => {
 			const t = tasks.value[id];
 			if (t) t.state = 'failed'
 		});
