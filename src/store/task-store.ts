@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
+import { TaskState, TaskUpdate } from 'shared/types';
 
 export type TEditTask = {
 
 	id: string,
 	promise: Promise<any>,
 
-	state: 'pending' | 'active' | 'complete' | 'failed',
+	state: TaskState,
 
 	/**
 	 * current progress towards complete. any unit.
@@ -21,15 +22,32 @@ export const useTaskStore = defineStore('progress', () => {
 
 	const tasks = ref<Record<string, TEditTask>>(Object.create(null));
 
+	function TaskDone(task?: TEditTask) {
+		return task == null || (task.state !== 'pending' && task.state !== 'active');
+	}
+
 	// window.electron won't exist when testing front-end only.
 	window.electron?.onProgress((id: string, cur: number, total: number) => {
 
 		const task = tasks.value[id];
-		if (!task || task.state == 'complete' || task.state === 'failed') return;
+		if (TaskDone(task)) return;
 		task.state = 'active';
 
 		task.current = cur;
 		task.total = total;
+
+	});
+
+	window.electron?.onTaskState((info: TaskUpdate) => {
+
+		const task = tasks.value[info.id];
+		if (TaskDone(task)) return;
+
+		task.state = info.state;
+		if (task.state === 'canceled') {
+			remove(task.id);
+		}
+
 
 	});
 
@@ -43,13 +61,7 @@ export const useTaskStore = defineStore('progress', () => {
 			total: 0
 		});
 
-		promise.then(() => {
-			const t = tasks.value[id];
-			if (t) {
-				t.state = 'complete';
-				t.current = t.total;
-			}
-		}).catch(() => {
+		promise.catch(() => {
 			const t = tasks.value[id];
 			if (t) t.state = 'failed'
 		});
@@ -59,15 +71,22 @@ export const useTaskStore = defineStore('progress', () => {
 	}
 
 	function remove(id: string) {
+		console.log(`remove task: ${id}`);
 		delete tasks.value[id];
 	}
 
 	return {
 		add,
 		remove,
+		get busy() {
+			for (const id in tasks.value) {
+				const task = tasks.value[id];
+				if (task.state == 'active' || task.state == 'pending')
+					return true;
+			}
+			return false;
+		},
 		get(id: string) { return tasks.value[id] },
-
-		get busy() { return },
 		tasks
 	}
 

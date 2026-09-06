@@ -35,9 +35,6 @@ const tools = useEditTool();
 
 const media = useMediaState(videoElm);
 
-const taskBusy = computed(() =>
-	(curTask.value?.state == 'active' || curTask.value?.state == 'pending'));
-
 onMounted(() => {
 	if (!tools.tool) {
 		tools.setSliceMode(media);
@@ -47,7 +44,7 @@ onMounted(() => {
 function applyEdit(edit: TMediaEdit) {
 
 	if (appState.hasFFMpeg) {
-		curTask.value = tasks.add(edit.id, edit.apply());
+		tasks.add(edit.id, edit.apply());
 	}
 
 }
@@ -145,15 +142,15 @@ async function onFilePicked(event: Event) {
 			</button>
 		</MediaControls>
 
-		<div v-if="curTask" class="flex justify-center items-center 
+		<div v-for="task in tasks.tasks" class="flex justify-center items-center 
 			w-full gap-x-1 h-3">
-			<span class="text-sm font-bold">{{ curTask.total > 0 ?
-				Math.round(100 * curTask.current / curTask.total) : 0 }}%</span>
+			<span class="text-sm font-bold">{{ task.total > 0 ?
+				Math.round(100 * task.current / task.total) : 0 }}%</span>
 			<div class="relative h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
 				<div class="absolute left-0 h-full bg-green-600 border-r-2 transition-[width] border-green-800/60"
 					 :style="{
-						width: curTask.state == 'complete' ? '100%' :
-							(curTask.total > 0 ? `${(100 * curTask.current / curTask.total)}%` : 0)
+						width: task.state == 'complete' ? '100%' :
+							(task.total > 0 ? `${(100 * task.current / task.total)}%` : 0)
 					}">
 				</div>
 			</div>
@@ -168,26 +165,26 @@ async function onFilePicked(event: Event) {
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
-					:busy="taskBusy" />
+					:busy="tasks.busy" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  class="my-1"
 				  @apply="applyEdit($event)"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
-				  :busy="taskBusy" />
+				  :busy="tasks.busy" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					class="my-1"
 					@apply="applyEdit($event)"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
-					:busy="taskBusy" />
+					:busy="tasks.busy" />
 		<EncodeTools v-else-if="videoElm"
 					 class="my-1"
 					 @apply="applyEdit($event)"
 					 :hasFFMpeg="appState.hasFFMpeg"
-					 :busy="taskBusy"
+					 :busy="tasks.busy"
 					 :codecs="opts.codecs"
 					 :media="media" />
 

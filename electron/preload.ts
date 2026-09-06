@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
+import { TaskUpdate } from 'shared/types';
 import type { WebCutOp, WebEncodeOp, WebSliceOp, WebSplitOp } from '../shared/edits';
 
 // Safe exposure of Node features
@@ -9,6 +10,10 @@ contextBridge.exposeInMainWorld('electron', {
 	 */
 	onProgress(cb: (id: string, cur: number, total: number) => void) {
 		ipcRenderer.on('progress', (_evt, id, cur, total) => cb(id, cur, total));
+	},
+
+	onTaskState(cb: (info: TaskUpdate) => void) {
+		ipcRenderer.on('taskstate', (_evt, task,) => cb(task));
 	},
 
 	checkFFMpeg(): Promise<{ path: string, version: string } | { err: string }> {

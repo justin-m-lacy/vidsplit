@@ -32,7 +32,7 @@ const emit = defineEmits<{
 			<CodecSelect :codecs="codecs" v-model="edit.codec" label="Codec" />
 
 			<button type="button" class="disabled:opacity-50"
-					:disabled="!hasFFMpeg || busy"
+					:disabled="!media.ready || !hasFFMpeg || busy"
 					title="Re-encode Media"
 					@click="emit('apply', edit)">
 				<Download />

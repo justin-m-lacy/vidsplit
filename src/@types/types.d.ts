@@ -7,6 +7,7 @@ declare global {
 			installFFMpeg(): Promise<{ path: string | undefined, version: string } | { err: string }>,
 			checkFFMpeg(): Promise<{ version: string } | { err: string }>,
 			onProgress(cb: (id: string, cur: number, total: number) => void),
+			onTaskState(cb: (info: TaskResult) => void),
 			cutMedia(edit: WebCutOp): Promise<any>,
 			encodeMedia(edit: WebEncodeOp): Promise<any>,
 			sliceMedia(edit: WebSliceOp): Promise<any>,
