@@ -2,8 +2,8 @@ import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'elec
 import { unlink } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from "path";
+import { TaskUpdate } from 'shared/tasks';
 import { NodeEncodeOp, NodeSliceOp, NodeSplitOp, SliceInfo } from "../../shared/edits";
-import { TaskUpdate } from '../../shared/types';
 import { concatFromFiles } from "../ffmpeg/concat";
 import { ProgressUpdater, saveSlice } from "../ffmpeg/slice";
 import { copyExt } from '../util/files';
@@ -31,7 +31,7 @@ export function handleOpenMedia(ipcMain: IpcMain) {
  */
 export function handleEncode(ipcMain: IpcMain, _app: App) {
 
-	ipcMain.handle('encodeMedia', async (evt, op: NodeEncodeOp) => {
+	ipcMain.handle('encodeMedia', async (evt, op: NodeEncodeOp): Promise<TaskUpdate> => {
 
 		const dialogRes = await dialog.showSaveDialog({
 			title: 'Save Output',
@@ -39,8 +39,8 @@ export function handleEncode(ipcMain: IpcMain, _app: App) {
 
 		});
 		if (dialogRes.canceled) {
-			sendTaskState(evt.sender, { id: op.id, state: 'canceled' });
-			return;
+			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+			return { id: op.id, state: 'canceled' };
 		}
 
 		const inPath = op.filePath;
@@ -55,21 +55,16 @@ export function handleEncode(ipcMain: IpcMain, _app: App) {
 			codec: op.codec
 		});
 
-		sendTaskState(evt.sender,
-			{ id: op.id, state: 'complete', result: outPath });
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		return { id: op.id, state: 'complete', result: outPath };
 
 	});
 
 }
 
-function sendTaskState(web: WebContents, state: TaskUpdate) {
-	web.send('taskstate', state);
-	BrowserWindow.fromWebContents(web)?.setProgressBar(0);
-}
-
 export function handleSlice(ipcMain: IpcMain, _app: App) {
 
-	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
+	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp): Promise<TaskUpdate> => {
 
 		const dialogRes = await dialog.showSaveDialog({
 			title: 'Save Output',
@@ -77,8 +72,8 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 
 		});
 		if (dialogRes.canceled) {
-			sendTaskState(evt.sender, { id: op.id, state: 'canceled' });
-			return;
+			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+			return { id: op.id, state: 'canceled' };
 		}
 
 		const inPath = op.filePath;
@@ -104,8 +99,8 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 			await saveMultiSlice(inPath, outPath, op, updates);
 		}
 
-		sendTaskState(evt.sender,
-			{ id: op.id, state: 'complete', result: outPath });
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		return { id: op.id, state: 'complete', result: outPath };
 
 	});
 
@@ -176,7 +171,8 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 
 		// copy parts to files.
 		await Promise.allSettled(saves);
-		sendTaskState(evt.sender, { id: op.id, state: 'complete', result: saves.join('\n') });
+		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+		return { id: op.id, state: 'complete', result: saves.join('\n') };
 
 	});
 

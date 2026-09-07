@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { TaskState, TaskUpdate } from 'shared/types';
+import { TaskState, TaskUpdate } from '../../shared/tasks';
 
 export type TEditTask = {
 
@@ -22,6 +22,9 @@ export const useTaskStore = defineStore('progress', () => {
 
 	const tasks = ref<Record<string, TEditTask>>(Object.create(null));
 
+	const currentId = shallowRef<string | null>(null);
+	const current = computed(() => currentId.value ? tasks.value[currentId.value] : null);
+
 	function TaskDone(task?: TEditTask) {
 		return task == null || (task.state !== 'pending' && task.state !== 'active');
 	}
@@ -38,59 +41,66 @@ export const useTaskStore = defineStore('progress', () => {
 
 	});
 
-	window.electron?.onTaskState((info: TaskUpdate) => {
+	function runTask<T extends TaskUpdate>(id: string, task: () => Promise<T>) {
 
-		const task = tasks.value[info.id];
-		if (TaskDone(task)) return;
+		return task().then((res) => {
 
-		task.state = info.state;
-		if (task.state === 'canceled') {
-			remove(task.id);
-		}
+			const t = tasks.value[id];
+			if (!t) return res;
 
+			t.state = res.state;
 
-	});
+			if (res.state == 'canceled') {
+				remove(res.id);
+			} else {
+				t.current = t.total;
+			}
 
-	function add<T extends any>(id: string, promise: Promise<T>): TEditTask {
+		}).catch((e) => {
 
-		const task = tasks.value[id] = shallowReactive({
+			const t = tasks.value[id];
+			if (t) {
+				t.state = 'failed';
+			}
+
+			return undefined;
+
+		});
+
+	}
+
+	function add<T extends TaskUpdate>(id: string, task: () => Promise<T>): TEditTask {
+
+		const info = tasks.value[id] = shallowReactive({
 			id,
-			promise,
+			promise: runTask(id, task),
 			state: 'pending',
 			current: 0,
 			total: 0
 		});
 
-		promise.then(() => {
+		currentId.value = id;
 
-			const t = tasks.value[id];
-			if (t) {
-				t.state = 'complete';
-				t.current = t.total;
-			}
-
-		}).catch(() => {
-			const t = tasks.value[id];
-			if (t) t.state = 'failed'
-		});
-
-		return task;
+		return info;
 
 	}
 
 	function remove(id: string) {
-		console.log(`remove task: ${id}`);
+		if (currentId.value == id) {
+			currentId.value = null;
+		}
 		delete tasks.value[id];
 	}
 
 	return {
 		add,
 		remove,
+		current,
 		get busy() {
 			for (const id in tasks.value) {
-				const task = tasks.value[id];
-				if (task.state == 'active' || task.state == 'pending')
+				if (!TaskDone(tasks.value[id])) {
 					return true;
+				}
 			}
 			return false;
 		},

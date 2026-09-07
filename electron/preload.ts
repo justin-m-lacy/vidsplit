@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
-import { TaskUpdate } from 'shared/types';
 import type { WebCutOp, WebEncodeOp, WebSliceOp, WebSplitOp } from '../shared/edits';
+import { TaskUpdate } from '../shared/tasks';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
@@ -10,10 +10,6 @@ contextBridge.exposeInMainWorld('electron', {
 	 */
 	onProgress(cb: (id: string, cur: number, total: number) => void) {
 		ipcRenderer.on('progress', (_evt, id, cur, total) => cb(id, cur, total));
-	},
-
-	onTaskState(cb: (info: TaskUpdate) => void) {
-		ipcRenderer.on('taskstate', (_evt, task,) => cb(task));
 	},
 
 	checkFFMpeg(): Promise<{ path: string, version: string } | { err: string }> {
@@ -27,7 +23,7 @@ contextBridge.exposeInMainWorld('electron', {
 	/**
 	 * reencode media with new encoder,fps, etc.
 	 */
-	encodeMedia: (edit: WebEncodeOp) => {
+	encodeMedia: (edit: WebEncodeOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('encodeMedia', {
 			id: edit.id,
@@ -57,7 +53,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	},
 
-	sliceMedia: (edit: WebSliceOp) => {
+	sliceMedia: (edit: WebSliceOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('sliceMedia', {
 			id: edit.id,
@@ -72,7 +68,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	},
 
-	splitMedia: (edit: WebSplitOp) => {
+	splitMedia: (edit: WebSplitOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('splitMedia', {
 			id: edit.id,

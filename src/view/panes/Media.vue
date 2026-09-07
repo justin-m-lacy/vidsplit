@@ -4,7 +4,7 @@ import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { useOptions } from '@/store/options-store.js';
-import { TEditTask, useTaskStore } from '@/store/task-store';
+import { useTaskStore } from '@/store/task-store';
 import { IsCutEdit } from '@/tools/cut.js';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
@@ -25,8 +25,6 @@ const tasks = useTaskStore();
 
 const appState = useAppState();
 
-const curTask = shallowRef<TEditTask | null>(null);
-
 const fileInput = shallowRef<HTMLInputElement>();
 
 const opts = useOptions();
@@ -44,7 +42,7 @@ onMounted(() => {
 function applyEdit(edit: TMediaEdit) {
 
 	if (appState.hasFFMpeg) {
-		tasks.add(edit.id, edit.apply());
+		tasks.add(edit.id, () => edit.apply());
 	}
 
 }
@@ -142,19 +140,19 @@ async function onFilePicked(event: Event) {
 			</button>
 		</MediaControls>
 
-		<div v-for="task in tasks.tasks" class="flex justify-center items-center 
+		<div v-if="tasks.current" class="flex justify-center items-center 
 			w-full gap-x-1 h-3">
-			<span class="text-sm font-bold">{{ task.total > 0 ?
-				Math.round(100 * task.current / task.total) : 0 }}%</span>
+			<span class="text-sm font-bold">{{ tasks.current.total > 0 ?
+				Math.round(100 * tasks.current.current / tasks.current.total) : 0 }}%</span>
 			<div class="relative h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
 				<div class="absolute left-0 h-full bg-green-600 border-r-2 transition-[width] border-green-800/60"
 					 :style="{
-						width: task.state == 'complete' ? '100%' :
-							(task.total > 0 ? `${(100 * task.current / task.total)}%` : 0)
+						width: tasks.current.state == 'complete' ? '100%' :
+							(tasks.current.total > 0 ? `${(100 * tasks.current.current / tasks.current.total)}%` : 0)
 					}">
 				</div>
 			</div>
-			<button type="button" @click="curTask = null" class="h-10">
+			<button type="button" @click="tasks.remove(tasks.current.id)" class="h-10">
 				<X class="rounded-full border border-red-600 h-1/3 w-auto bg-red-600" />
 			</button>
 		</div>
