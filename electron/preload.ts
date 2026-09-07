@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import type { WebCutOp, WebEncodeOp, WebSliceOp, WebSplitOp } from '../shared/edits';
+import { TaskUpdate } from '../shared/tasks';
 
 // Safe exposure of Node features
 contextBridge.exposeInMainWorld('electron', {
@@ -22,7 +23,7 @@ contextBridge.exposeInMainWorld('electron', {
 	/**
 	 * reencode media with new encoder,fps, etc.
 	 */
-	encodeMedia: (edit: WebEncodeOp) => {
+	encodeMedia: (edit: WebEncodeOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('encodeMedia', {
 			id: edit.id,
@@ -52,7 +53,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	},
 
-	sliceMedia: (edit: WebSliceOp) => {
+	sliceMedia: (edit: WebSliceOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('sliceMedia', {
 			id: edit.id,
@@ -67,7 +68,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	},
 
-	splitMedia: (edit: WebSplitOp) => {
+	splitMedia: (edit: WebSplitOp): Promise<TaskUpdate> => {
 
 		return ipcRenderer.invoke('splitMedia', {
 			id: edit.id,

@@ -2,11 +2,11 @@ import { BrowserWindow, dialog, WebContents, type App, type IpcMain } from 'elec
 import { unlink } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from "path";
-import { NodeEncodeOp, NodeSliceOp, NodeSplitOp, SliceInfo } from "../shared/edits";
-import { concatFromFiles } from "./ffmpeg/concat";
-import { getFFMpegVers, installFFmpeg } from './ffmpeg/install';
-import { ProgressUpdater, saveSlice } from "./ffmpeg/slice";
-import { copyExt } from './util/files';
+import { TaskUpdate } from 'shared/tasks';
+import { NodeEncodeOp, NodeSliceOp, NodeSplitOp, SliceInfo } from "../../shared/edits";
+import { concatFromFiles } from "../ffmpeg/concat";
+import { ProgressUpdater, saveSlice } from "../ffmpeg/slice";
+import { copyExt } from '../util/files';
 
 export function handleOpenMedia(ipcMain: IpcMain) {
 
@@ -26,55 +26,22 @@ export function handleOpenMedia(ipcMain: IpcMain) {
 
 }
 
-function errToStr(err: unknown) {
-	if (typeof err == 'string') {
-		return err;
-	} else if (err instanceof Error) {
-		return err.message
-	}
-	return 'An unknown error has occurred.';
-}
-
-export function handleCheckFFMpeg(ipcMain: IpcMain) {
-
-	ipcMain.handle('checkFFMpeg',
-		async (evt): Promise<{ path: string, version: string } | { err: string }> => {
-			try {
-				return await getFFMpegVers()
-			} catch (err) {
-				return { err: errToStr(err) }
-			}
-		});
-
-}
-
-
-export function handleInstallFFMpeg(ipcMain: IpcMain) {
-
-	ipcMain.handle('installFFMpeg',
-		async (evt): Promise<{ path: string | undefined, version: string | undefined } | { err: string }> => {
-			try {
-				return await installFFmpeg();
-			} catch (err) {
-				return { err: errToStr(err) }
-			}
-		});
-
-}
-
 /**
  * Handle rencoding with no slicing/cutting.
  */
 export function handleEncode(ipcMain: IpcMain, _app: App) {
 
-	ipcMain.handle('encodeMedia', async (evt, op: NodeEncodeOp) => {
+	ipcMain.handle('encodeMedia', async (evt, op: NodeEncodeOp): Promise<TaskUpdate> => {
 
 		const dialogRes = await dialog.showSaveDialog({
 			title: 'Save Output',
 			defaultPath: op.filePath,
 
 		});
-		if (dialogRes.canceled) return null;
+		if (dialogRes.canceled) {
+			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+			return { id: op.id, state: 'canceled' };
+		}
 
 		const inPath = op.filePath;
 		const outPath = copyExt((dialogRes.filePath), inPath);
@@ -89,58 +56,25 @@ export function handleEncode(ipcMain: IpcMain, _app: App) {
 		});
 
 		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
-		return outPath;
+		return { id: op.id, state: 'complete', result: outPath };
 
 	});
 
 }
 
-/**
- * Convert slice points to skip points.
- * (Used for cut operation.)
- */
-function invertSlices(op: NodeSliceOp) {
-
-	const cuts = op.slices;
-	const slices = <SliceInfo[]>[];
-
-	// sort cuts by earliest cutting point.
-	cuts.sort((a, b) => a.from - b.from)
-
-	let sliceStart = 0;
-
-	for (let i = 0; i < cuts.length; i++) {
-
-		if (sliceStart < cuts[i].from) {
-			// add video up to next cut.
-			slices.push({
-				from: sliceStart,
-				to: cuts[i].from
-			})
-		}
-		// resume after next cut.
-		sliceStart = cuts[i].to;
-
-	}
-
-	// add final slice
-	if (sliceStart < op.duration) {
-		slices.push({ from: sliceStart, to: op.duration });
-	}
-	op.slices = slices;
-
-}
-
 export function handleSlice(ipcMain: IpcMain, _app: App) {
 
-	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp) => {
+	ipcMain.handle('sliceMedia', async (evt, op: NodeSliceOp): Promise<TaskUpdate> => {
 
 		const dialogRes = await dialog.showSaveDialog({
 			title: 'Save Output',
 			defaultPath: op.filePath,
 
 		});
-		if (dialogRes.canceled) return null;
+		if (dialogRes.canceled) {
+			BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
+			return { id: op.id, state: 'canceled' };
+		}
 
 		const inPath = op.filePath;
 		const outPath = copyExt((dialogRes.filePath), inPath);
@@ -162,13 +96,11 @@ export function handleSlice(ipcMain: IpcMain, _app: App) {
 			});
 
 		} else {
-
 			await saveMultiSlice(inPath, outPath, op, updates);
-
 		}
 
 		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
-		return outPath;
+		return { id: op.id, state: 'complete', result: outPath };
 
 	});
 
@@ -240,8 +172,7 @@ export function handleSplit(ipcMain: IpcMain, app: App) {
 		// copy parts to files.
 		await Promise.allSettled(saves);
 		BrowserWindow.fromWebContents(evt.sender)?.setProgressBar(0);
-
-		return true;
+		return { id: op.id, state: 'complete', result: saves.join('\n') };
 
 	});
 
@@ -287,5 +218,41 @@ function createUpdaters(web: WebContents,
 		}
 
 	});
+
+}
+
+/**
+ * Convert slice points to skip points.
+ * (Used for cut operation.)
+ */
+function invertSlices(op: NodeSliceOp) {
+
+	const cuts = op.slices;
+	const slices = <SliceInfo[]>[];
+
+	// sort cuts by earliest cutting point.
+	cuts.sort((a, b) => a.from - b.from)
+
+	let sliceStart = 0;
+
+	for (let i = 0; i < cuts.length; i++) {
+
+		if (sliceStart < cuts[i].from) {
+			// add video up to next cut.
+			slices.push({
+				from: sliceStart,
+				to: cuts[i].from
+			})
+		}
+		// resume after next cut.
+		sliceStart = cuts[i].to;
+
+	}
+
+	// add final slice
+	if (sliceStart < op.duration) {
+		slices.push({ from: sliceStart, to: op.duration });
+	}
+	op.slices = slices;
 
 }

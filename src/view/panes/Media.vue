@@ -4,7 +4,7 @@ import { useAppState } from '@/store/app-state';
 import { useEditTool } from '@/store/edit-tool';
 import { useMediaStore } from '@/store/media-store';
 import { useOptions } from '@/store/options-store.js';
-import { TEditTask, useTaskStore } from '@/store/task-store';
+import { useTaskStore } from '@/store/task-store';
 import { IsCutEdit } from '@/tools/cut.js';
 import { IsSliceEdit } from '@/tools/slice';
 import { IsSplitEdit } from '@/tools/split';
@@ -25,8 +25,6 @@ const tasks = useTaskStore();
 
 const appState = useAppState();
 
-const curTask = shallowRef<TEditTask | null>(null);
-
 const fileInput = shallowRef<HTMLInputElement>();
 
 const opts = useOptions();
@@ -34,9 +32,6 @@ const opts = useOptions();
 const tools = useEditTool();
 
 const media = useMediaState(videoElm);
-
-const taskBusy = computed(() =>
-	(curTask.value?.state == 'active' || curTask.value?.state == 'pending'));
 
 onMounted(() => {
 	if (!tools.tool) {
@@ -47,7 +42,7 @@ onMounted(() => {
 function applyEdit(edit: TMediaEdit) {
 
 	if (appState.hasFFMpeg) {
-		curTask.value = tasks.add(edit.id, edit.apply());
+		tasks.add(edit.id, () => edit.apply());
 	}
 
 }
@@ -145,19 +140,19 @@ async function onFilePicked(event: Event) {
 			</button>
 		</MediaControls>
 
-		<div v-if="curTask" class="flex justify-center items-center 
+		<div v-if="tasks.current" class="flex justify-center items-center 
 			w-full gap-x-1 h-3">
-			<span class="text-sm font-bold">{{ curTask.total > 0 ?
-				Math.round(100 * curTask.current / curTask.total) : 0 }}%</span>
+			<span class="text-sm font-bold">{{ tasks.current.total > 0 ?
+				Math.round(100 * tasks.current.current / tasks.current.total) : 0 }}%</span>
 			<div class="relative h-2 w-1/4 bg-slate-400 rounded-sm overflow-clip">
 				<div class="absolute left-0 h-full bg-green-600 border-r-2 transition-[width] border-green-800/60"
 					 :style="{
-						width: curTask.state == 'complete' ? '100%' :
-							(curTask.total > 0 ? `${(100 * curTask.current / curTask.total)}%` : 0)
+						width: tasks.current.state == 'complete' ? '100%' :
+							(tasks.current.total > 0 ? `${(100 * tasks.current.current / tasks.current.total)}%` : 0)
 					}">
 				</div>
 			</div>
-			<button type="button" @click="curTask = null" class="h-10">
+			<button type="button" @click="tasks.remove(tasks.current.id)" class="h-10">
 				<X class="rounded-full border border-red-600 h-1/3 w-auto bg-red-600" />
 			</button>
 		</div>
@@ -168,26 +163,26 @@ async function onFilePicked(event: Event) {
 					:hasFFMpeg="appState.hasFFMpeg"
 					:edit="tools.curEdit"
 					:media="media"
-					:busy="taskBusy" />
+					:busy="tasks.busy" />
 		<CutTools v-else-if="IsCutEdit(tools.curEdit)"
 				  class="my-1"
 				  @apply="applyEdit($event)"
 				  :hasFFMpeg="appState.hasFFMpeg"
 				  :edit="tools.curEdit"
 				  :media="media"
-				  :busy="taskBusy" />
+				  :busy="tasks.busy" />
 		<SplitTools v-else-if="IsSplitEdit(tools.curEdit)"
 					class="my-1"
 					@apply="applyEdit($event)"
 					:edit="tools.curEdit"
 					:hasFFMpeg="appState.hasFFMpeg"
 					:media="media"
-					:busy="taskBusy" />
+					:busy="tasks.busy" />
 		<EncodeTools v-else-if="videoElm"
 					 class="my-1"
 					 @apply="applyEdit($event)"
 					 :hasFFMpeg="appState.hasFFMpeg"
-					 :busy="taskBusy"
+					 :busy="tasks.busy"
 					 :codecs="opts.codecs"
 					 :media="media" />
 
